@@ -1,4 +1,4 @@
 const getbabelRelayPlugin = require('babel-relay-plugin');
-const schema = require('../graph/schema.json');
+const schema = require('../public/schema.json');
 
 export default getbabelRelayPlugin(schema.data);

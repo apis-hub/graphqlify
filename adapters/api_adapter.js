@@ -65,7 +65,6 @@ class APIAdapter {
             all:  () => {
                 return new Promise(function (resolve, reject) {
                     adapter.jsonapi.resource(type).index().then(function (collection) {
-                        debugger;
                         resolve(collection.map(function (instance) {
                             return new GraphQLifiedJsonAPIInstance(instance)
                         }));
@@ -78,26 +77,32 @@ class APIAdapter {
                         resolve(new GraphQLifiedJsonAPIInstance(instance))
                     }).catch(reject);
                 });
-            }
+            },
             //delete: (id) => {
-            //    var url = baseUrl + '/' + `${endpoint}/${id}`;
-            //    requestify.delete(url, options).then(function (response) {
-            //        return response.getCode();
+            //    return new Promise(function (resolve, reject) {
+            //       adapter.jsonapi.resource(type).read(id).then(function (instance) {
+            //           resolve(instance.delete(id).then(function(){
+            //               // What should the response be here?
+            //           });
+            //       }).catch(reject);
             //    });
             //},
+            //
             //create: (record) => {
-            //    var url = baseUrl + '/' + endpoint;
-            //    requestify.post(url, record, options).then(function (response) {
-            //        return JSON.parse(response.body);
+            //    return new Promise(function (resolve, reject) {
+            //        adapter.jsonapi.resource(type).create(record).then(function (instance) {
+            //            resolve(new GraphQLifiedJsonAPIInstance(instance))
+            //        }).catch(reject);
             //    });
             //},
             //update: (id, record) => {
-            //    var url = baseUrl + `${endpoint}/${id}`;
-            //    options.method = 'PATCH';
-            //    options.body = body;
-            //    requestify.request(url, record, options).then(function (response) {
-            //        return JSON.parse(response.body);
-            //    });
+            //    return new Promise(function (resolve, reject) {
+            //        adapter.jsonapi.resource(type).read(id).then(function (instance) {
+            //            resolve(instance.update(record).then(function(instance) {
+            //                resolve(new GraphQLifiedJsonAPIInstance(instace));
+            //            }))
+            //        }).catch(reject);
+            //    })
             //}
         }
     }

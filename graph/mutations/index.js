@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from 'graphql/type'
 //import { createAssetGroup, updateAssetGroup, deleteAssetGroup }       from './asset_group_mutations';
-//import { createAssetComments, updateAssetComments, deleteAssetComments } from './asset_comments_mutations';
+import { createAssetComments, updateAssetComments, deleteAssetComments } from './asset_comments_mutations';
 import { createAsset, updateAsset, deleteAsset }                         from './asset_mutations';
 import { createAttachment, updateAttachment, deleteAttachment }          from './attachment_mutations';
 import { createBrandfolder, updateBrandfolder, deleteBrandfolder }       from './brandfolder_mutations';
@@ -22,9 +22,9 @@ var mutationType = new GraphQLObjectType({
         //createAssetGroup:    createAssetGroup,
         //updateAssetGroup:    updateAssetGroup,
         //deleteAssetGroup:    deleteAssetGroup,
-        //createAssetComments: createAssetComments,
-        //updateAssetComments: updateAssetComments,
-        //deleteAssetComments: deleteAssetComments,
+        createAssetComments: createAssetComments,
+        updateAssetComments: updateAssetComments,
+        deleteAssetComments: deleteAssetComments,
         createAsset:         createAsset,
         updateAsset:         updateAsset,
         deleteAsset:         deleteAsset,
