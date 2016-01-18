@@ -12,5 +12,6 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/graphql', graphqlHTTP(() => ({
         schema: schema
     })));
-app.listen(8080);
-console.log('Started on http://localhost:8080/');
+var port = process.env.PORT || 8080;
+app.listen(port);
+console.log(`Started on http://localhost:${port}/`);

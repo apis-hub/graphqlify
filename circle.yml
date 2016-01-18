@@ -1,0 +1,39 @@
+dependencies:
+  pre:
+    - ./bin/prep-deployment
+
+  cache_directories:
+    - 'node_modules'
+
+test:
+  override:
+    - "true"
+
+# Deployment Scripts to Deploy the various environments to heroku
+deployment:
+
+  # Deploy the pre-release develop branch to staging
+  staging:
+    branch: develop
+    commands:
+      # Pull unshallow
+      - git pull --unshallow
+
+      # Deploy
+      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-staging.git'
+
+      # Upcheck
+      - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-staging.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
+
+  # Deploy the production apps, production and admin
+  production:
+    branch: master
+    commands:
+      # Pull unshallow
+      - git pull --unshallow
+
+      # Deploy
+      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-production.git'
+
+      # Upcheck
+      - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-production.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"

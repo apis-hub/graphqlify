@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+
+function fail {
+  echo $1 >&2
+  exit 1
+}
+
+function trycommand {
+  local n=1
+  local max=3
+  local delay=15
+  while true; do
+    $@ && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
+  done
+}
+
+# Set more descriptive info for git
+git config user.email deploy+$CIRCLE_USERNAME@brandfolder.com
+git config user.name $CIRCLE_USERNAME
+
+# Update package list
+trycommand gem install netrc
+ruby -r netrc -e "\
+    n = Netrc.read ; \
+    n['api.heroku.com'] = ENV['HEROKU_EMAIL'] || 'none', ENV['HEROKU_API_KEY'] || 'none' ; \
+    n['git.heroku.com'] = ENV['HEROKU_EMAIL'] || 'none', ENV['HEROKU_API_KEY'] || 'none' ; \
+    n.save"
+
+# Install dies client
+trycommand curl -sSL http://deis.io/deis-cli/install.sh | sh
+mv deis /home/ubuntu/bin/deis
+deis login https://deis.brandfolder.ninja --username=$DEIS_USERNAME --password=$DEIS_PASSWORD
