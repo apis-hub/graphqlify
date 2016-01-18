@@ -43,18 +43,6 @@ type assetEdge {
   cursor: String!
 }
 
-type AssetGroup implements Node, Slug {
-  id: ID!
-  created_at: String
-  updated_at: String
-  asset_keys: [String]
-}
-
-type assetGroupEdge {
-  node: AssetGroup
-  cursor: String!
-}
-
 type Attachment implements Node, Slug {
   id: ID!
   mimetype: String
@@ -148,16 +136,6 @@ type collectionConnection {
 type collectionEdge {
   node: Collection
   cursor: String!
-}
-
-input CreateAssetGroupInput {
-  asset_keys: [String]
-  clientMutationId: String!
-}
-
-type CreateAssetGroupPayload {
-  assetGroupEdge: assetGroupEdge
-  clientMutationId: String!
 }
 
 input CreateAssetInput {
@@ -347,16 +325,6 @@ type CreateUserPayload {
   clientMutationId: String!
 }
 
-input DeleteAssetGroupInput {
-  id: ID!
-  clientMutationId: String!
-}
-
-type DeleteAssetGroupPayload {
-  assetGroupEdge: assetGroupEdge
-  clientMutationId: String!
-}
-
 input DeleteAssetInput {
   id: ID!
   clientMutationId: String!
@@ -512,9 +480,6 @@ type Mutation {
   createBrandfolder(input: CreateBrandfolderInput!): CreateBrandfolderPayload
   updateBrandfolder(input: UpdateBrandfolderInput!): UpdateBrandfolderPayload
   deleteBrandfolder(input: DeleteBrandfolderInput!): DeleteBrandfolderPayload
-  createAssetGroup(input: CreateAssetGroupInput!): CreateAssetGroupPayload
-  updateAssetGroup(input: UpdateAssetGroupInput!): UpdateAssetGroupPayload
-  deleteAssetGroup(input: DeleteAssetGroupInput!): DeleteAssetGroupPayload
   createAsset(input: CreateAssetInput!): CreateAssetPayload
   updateAsset(input: UpdateAssetInput!): UpdateAssetPayload
   deleteAsset(input: DeleteAssetInput!): DeleteAssetPayload
@@ -653,17 +618,6 @@ type socialLinkConnection {
 type socialLinkEdge {
   node: SocialLink
   cursor: String!
-}
-
-input UpdateAssetGroupInput {
-  id: ID!
-  asset_keys: [String]
-  clientMutationId: String!
-}
-
-type UpdateAssetGroupPayload {
-  assetGroupEdge: assetGroupEdge
-  clientMutationId: String!
 }
 
 input UpdateAssetInput {

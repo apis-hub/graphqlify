@@ -4,6 +4,19 @@ import pluralize from 'pluralize';
 import decamelize from 'decamelize';
 import _ from 'lodash';
 import JSONAPIonify from 'jsonapionify-client';
+import crypto from 'crypto';
+
+_.mixin({
+    'sortKeysBy': function (obj, comparator) {
+        var keys = _.sortBy(_.keys(obj), function (key) {
+            return comparator ? comparator(obj[key], key) : key;
+        });
+
+        return _.object(keys, _.map(keys, function (key) {
+            return obj[key];
+        }));
+    }
+});
 
 class GraphQLifiedJsonAPIInstance {
     constructor(json_api_instance) {
@@ -29,7 +42,21 @@ class GraphQLifiedJsonAPIInstance {
 
 class APIAdapter {
     constructor(endpoint, options) {
+        options      = options || {};
         this.jsonapi = new JSONAPIonify(endpoint, options);
+        this.jsonapi.beforeRequest(function (method, path, headers, body) {
+            var sig_document = JSON.stringify({
+                request_method: method,
+                url:            path,
+                headers:        _.sortKeysBy(_.reduce(headers, (result, value, key) => {
+                    result[key.toLowerCase()] = value;
+                    return result
+                }, {})),
+                body:           body || ""
+            });
+            console.log(sig_document);
+            headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
+        });
     }
 
     getType(type) {
