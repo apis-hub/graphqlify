@@ -3,26 +3,27 @@ import { connectionArgs, connectionDefinitions, connectionFromPromisedArray, glo
 
 import { brandfolderConnection }    from './brandfolder_type';
 import { organizationConnection }   from './organization_type';
-import api                          from '../../adapters/api_adapter.js';
 
 var rootType = new GraphQLObjectType({
     name:   'Root',
     fields: () => ({
-        id:            {
+        url:           {
             type: GraphQLString
         },
         brandfolders:  {
             type:    brandfolderConnection,
             args:    connectionArgs,
-            resolve: (root, args) => connectionFromPromisedArray(
-                api.getType('brandfolders').all(), args
-            )
+            resolve: (root, args, context) => {
+                return connectionFromPromisedArray(
+                    context.rootValue.client.getType('brandfolders').all(), args
+                )
+            }
         },
         organizations: {
             type:    organizationConnection,
             args:    connectionArgs,
-            resolve: (root, args) => connectionFromPromisedArray(
-                api.getType('organizations').all(), args
+            resolve: (root, args, context) => connectionFromPromisedArray(
+                context.rootValue.client.getType('organizations').all(), args
             )
         }
     })

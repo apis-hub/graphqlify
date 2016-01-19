@@ -2,7 +2,6 @@ import { GraphQLObjectType } from 'graphql/type';
 import { nodeField }         from '../node_identification';
 import { slugField }         from '../slug_identification';
 import { rootType }          from './root_type';
-import api                   from '../../adapters/api_adapter'
 
 var queryType = new GraphQLObjectType({
     name:        'Query',
@@ -10,8 +9,8 @@ var queryType = new GraphQLObjectType({
     fields:      () => ({
         root: {
             type:    rootType,
-            resolve: () => {
-                return { id: api.jsonapi.url }
+            resolve: (context) => {
+                return context.client
             }
         },
         node: nodeField,

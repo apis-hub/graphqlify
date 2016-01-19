@@ -1,5 +1,4 @@
 import fromGlobalId from 'graphql-relay';
-import { baseUrl, options} from './config';
 import pluralize from 'pluralize';
 import decamelize from 'decamelize';
 import _ from 'lodash';
@@ -41,22 +40,14 @@ class GraphQLifiedJsonAPIInstance {
 }
 
 class APIAdapter {
-    constructor(endpoint, options) {
+    constructor(url, options) {
         options      = options || {};
-        this.jsonapi = new JSONAPIonify(endpoint, options);
-        this.jsonapi.beforeRequest(function (method, path, headers, body) {
-            var sig_document = JSON.stringify({
-                request_method: method,
-                url:            path,
-                headers:        _.sortKeysBy(_.reduce(headers, (result, value, key) => {
-                    result[key.toLowerCase()] = value;
-                    return result
-                }, {})),
-                body:           body || ""
-            });
-            console.log(sig_document);
-            headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
-        });
+        this.url     = url;
+        this.jsonapi = new JSONAPIonify(url, options);
+    }
+
+    beforeRequest(fn) {
+        this.jsonapi.beforeRequest(fn)
     }
 
     getType(type) {
@@ -108,12 +99,17 @@ class APIAdapter {
     }
 }
 
-var headers  = {};
-var endpoint = process.env.BRANDFOLDER_API_ENDPOINT || 'http://example.org';
-var token    = process.env.BRANDFOLDER_API_KEY;
+const signRequest = function (method, path, headers, body) {
+    var sig_document = JSON.stringify({
+        request_method: method,
+        url:            path,
+        headers:        _.sortKeysBy(_.reduce(headers, (result, value, key) => {
+            result[key.toLowerCase()] = value;
+            return result
+        }, {})),
+        body:           body || ""
+    });
+    // headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
+};
 
-if (token) {
-    headers.Authorization = `JWT ${token}`
-}
-
-export default new APIAdapter(endpoint, { headers: headers });
+export { APIAdapter, signRequest };
