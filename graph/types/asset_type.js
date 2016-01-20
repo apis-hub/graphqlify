@@ -9,7 +9,6 @@ import { sectionConnection }        from './section_type';
 import { collectionConnection }     from './collection_type';
 import { assetCommentsConnection }  from './asset_comments_type';
 import { reusableDataType }         from './reusable_data_type';
-import api                          from '../../adapters/api_adapter';
 
 
 
@@ -31,7 +30,7 @@ var assetType = new GraphQLObjectType({
                              description: 'The attachment used by the asset',
                              args: connectionArgs,
                              resolve: (asset, args) => connectionFromPromisedArray(
-                                 asset.__related('attachments'), args
+                                 asset.related('attachments'), args
                              )},
         //events:            { type: eventConnection,
         //                     description: 'An event tied to the asset',
@@ -43,7 +42,7 @@ var assetType = new GraphQLObjectType({
                              description: 'The collections the asset belongs to',
                              args: connectionArgs,
                              resolve: (asset, args) => connectionFromPromisedArray(
-                                 asset.__related('collections'), args
+                                 asset.related('collections'), args
                             )},
         comments:          { type: assetCommentsConnection,}
 

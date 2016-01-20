@@ -17,13 +17,13 @@ var assetCommentsType = new GraphQLObjectType({
                       description: 'The asset the asset comment belongs to',
                       args: connectionArgs,
                       resolve: (asset, args) => connectionFromPromisedArray(
-                          assetComment.__related('assets'), args
+                          assetComment.related('assets'), args
                       )},
         replies:   { type: assetCommentsConnection,
                      description: 'The asset comment replies',
                      args: connectionArgs,
                      resolve: (asset, args) => connectionFromPromisedArray(
-                         assetComment.__related('asset_comments'), args
+                         assetComment.related('asset_comments'), args
                      )}
 
     }),

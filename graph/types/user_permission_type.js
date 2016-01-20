@@ -4,7 +4,6 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
 import { eventConnection } from './event_type';
-import api                 from '../../adapters/api_adapter';
 
 var userPermissionType = new GraphQLObjectType({
     name: 'UserPermission',
@@ -20,7 +19,7 @@ var userPermissionType = new GraphQLObjectType({
         //                    description: 'The events tied to the user permission',
         //                    args: connectionArgs,
         //                    resolve: (userPermission, args) => connectionFromPromisedArray(
-        //                        userPermission.__related('events'), args
+        //                        userPermission.related('events'), args
         //                    )}
     }),
     interfaces: [nodeInterface, slugInterface]

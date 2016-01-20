@@ -14,8 +14,9 @@ var rootType = new GraphQLObjectType({
             type:    brandfolderConnection,
             args:    connectionArgs,
             resolve: (root, args, context) => {
+                debugger;
                 return connectionFromPromisedArray(
-                    context.rootValue.client.getType('brandfolders').all(), args
+                    context.rootValue.client.resource('brandfolders').index(), args
                 )
             }
         },
@@ -23,7 +24,7 @@ var rootType = new GraphQLObjectType({
             type:    organizationConnection,
             args:    connectionArgs,
             resolve: (root, args, context) => connectionFromPromisedArray(
-                context.rootValue.client.getType('organizations').all(), args
+                context.rootValue.client.resource('organizations').index(), args
             )
         }
     })

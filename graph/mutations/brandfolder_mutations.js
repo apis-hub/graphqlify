@@ -2,12 +2,12 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLBrandfolderEdge } from '../types/brandfolder_type';
+import { GraphQLBrandfolderEdge, brandfolderType } from '../types/brandfolder_type';
 import { organizationType }       from '../types/organization_type';
-import api                       from '../../adapters/api_adapter';
+import { APIAdapter } from '../../adapters/api_adapter';
 
 const createBrandfolder = mutationWithClientMutationId({
-    name: 'CreateBrandfolder',
+    name: 'createBrandfolder',
     inputFields: {
         name: { type: new GraphQLNonNull(GraphQLString) },
         organization_id: { type: new GraphQLNonNull(GraphQLID)}
@@ -15,27 +15,30 @@ const createBrandfolder = mutationWithClientMutationId({
     outputFields: {
         brandfolderEdge: {
             type: GraphQLBrandfolderEdge,
-            resolve: ({brandfolderId}) => {
-                const brandfolder = api.getType('brandfolder').find(brandfolderId);
+            resolve: ({brandfolderId}, context) => {
+                const brandfolder = context.rootValue.client.resource('brandfolders').read(brandfolderId);
                 return {
-                    cursor: cursorForObjectInConnection(api.getType('brandfolder').all(), brandfolder),
+                    cursor: cursorForObjectInConnection(context.rootValue.client.resource('brandfolders').index(), brandfolder),
                     node: brandfolder
                 };
             }
         },
         organization: {
             type: organizationType,
-            resolve: ({localOrganizationId}) => {
-                api.getType('organization').find({localOrganizationId});
+            resolve: ({localOrganizationId}, context) => {
+                context.rootValue.client.resource('organizations').read({localOrganizationId});
             }
         }
     },
-    mutateAndGetPayload: ({name, organization_id}) => {
-        const localOrganizationId = fromGlobalId(organization_id).id;
-        api.getType('brandfolder')
-               .create({name: name, organization_id: localOrganizationId})
-               .then(result => { return { brandfolderId: result.id, localOrganizationId, }; });
-    },
+    mutateAndGetPayload: ({name, organization_id}, context) => {
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('organizations').read(organization_id).then(function(organization){
+                organization.related('brandfolders').then(function(brandfolders){
+                    brandfolders.create('brandfolders', {name: name}).then(resolve).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
+    }
 });
 
 const updateBrandfolder = mutationWithClientMutationId({
@@ -59,10 +62,10 @@ const updateBrandfolder = mutationWithClientMutationId({
     outputFields: {
         brandfolderEdge: {
             type: GraphQLBrandfolderEdge,
-            resolve: ({brandfolderId}) => {
-                const brandfolder = api.getType('brandfolder').find(brandfolderId);
+            resolve: ({brandfolderId}, context) => {
+                const brandfolder = context.rootValue.client.getType('brandfolders').find(brandfolderId);
                 return {
-                    cursor: cursorForObjectInConnection(api.getType('brandfolder').all(), brandfolder),
+                    cursor: cursorForObjectInConnection(context.rootValue.client.getType('brandfolders').all(), brandfolder),
                     node: brandfolder
                 };
             }
@@ -71,9 +74,9 @@ const updateBrandfolder = mutationWithClientMutationId({
     },
     mutateAndGetPayload: ({id, name, tagline, is_public, stealth, request_access_enabled, request_access_prompt,
                             slug, google_analytics_id, organization_id, whitelisted_domains, enable_simple_password,
-                            card_image, header_image }) => {
+                            card_image, header_image }, context) => {
         const brandfolderId = fromGlobalId(id).id;
-        api.getType('brandfolder')
+        context.rootValue.client.getType('brandfolder')
                .update(brandfolderId, {name: name, tagline: tagline, public: is_public, stealth: stealth,
                                       request_access_enabled: request_access_enabled, request_access_prompt: request_access_prompt,
                                       slug: slug, google_analytics_id: google_analytics_id, organization_id: organization_id,
@@ -94,9 +97,9 @@ const deleteBrandfolder = mutationWithClientMutationId({
            resolve: () => null
        }
     },
-    mutateAndGetPayload: ({id}) => {
+    mutateAndGetPayload: ({id}, context) => {
         var brandfolderId = fromGlobalId(id).id;
-        api.getType('brandfolder').remove(brandfolderId);
+        context.rootValue.client.getType('brandfolder').remove(brandfolderId);
     }
 });
 

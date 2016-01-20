@@ -6,7 +6,6 @@ import { nodeInterface }    from '../node_identification';
 import { slugInterface }    from '../slug_identification';
 import { eventConnection }  from './event_type';
 import { reusableDataType } from './reusable_data_type';
-import api                  from '../../adapters/api_adapter';
 
 var attachmentType = new GraphQLObjectType({
     name: 'Attachment',

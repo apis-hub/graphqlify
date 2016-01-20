@@ -4,7 +4,6 @@ import { connectionArgs, connectionFromArray, globalIdField, connectionDefinitio
 import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
 import { eventConnection } from './event_type';
-import api                 from '../../adapters/api_adapter';
 
 var socialLinkType = new GraphQLObjectType({
     name: 'SocialLink',
@@ -21,7 +20,7 @@ var socialLinkType = new GraphQLObjectType({
         //                  description: 'An event tied to the social link',
         //                  args: connectionArgs,
         //                  resolve: (link, args) => connectionFromPromisedArray(
-        //                    link.__related('events'), args
+        //                    link.related('events'), args
         //                  )},
     }),
     interfaces: [nodeInterface, slugInterface]

@@ -5,8 +5,7 @@ _.mixin(_inflection);
 
 var {nodeInterface: slugInterface, nodeField: slugField} = nodeDefinitions(
     (slug, context) => {
-        debugger;
-        return context.rootValue.client.getType('slug').find(slug);
+        return context.rootValue.client.resource('slug').read(slug);
     },
     (obj) => {
         var singular = _.singularize(obj.__api.data.type);

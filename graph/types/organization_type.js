@@ -7,7 +7,6 @@ import { slugInterface }          from '../slug_identification';
 import { eventConnection }        from './event_type';
 import { brandfolderConnection }  from './brandfolder_type';
 import { userConnection }         from './user_type';
-import api                        from '../../adapters/api_adapter';
 
 var organizationType = new GraphQLObjectType({
     name: 'Organization',
@@ -23,43 +22,43 @@ var organizationType = new GraphQLObjectType({
                                description: 'The brandfolders tied to the organization',
                                args: connectionArgs,
                                resolve: (organization, args) => connectionFromPromisedArray(
-                                   organization.__related('brandfolders'), args
+                                   organization.related('brandfolders'), args
                                )},
         //events:              { type: eventConnection,
         //                       description: 'The event tied to the organization',
         //                       args: connectionArgs,
         //                       resolve: (organization, args) => connectionFromPromisedArray(
-        //                           organization.__related('events')
+        //                           organization.related('events')
         //                       )},
         owners:             { type: userConnection,
                                description: 'The owners tied to the organization',
                                args: connectionArgs,
                                resolve: (organization, args) => connectionFromPromisedArray(
-                                   organization.__related('owners'), args
+                                   organization.related('owners'), args
                                )},
         admins:             { type: userConnection,
                               description: 'The adminss tied to the organization',
                               args: connectionArgs,
                               resolve: (organization, args) => connectionFromPromisedArray(
-                                  organization.__related('admins'), args
+                                  organization.related('admins'), args
                               )},
         collaborators:      { type: userConnection,
                                description: 'The collaborators tied to the organization',
                                args: connectionArgs,
                                resolve: (organization, args) => connectionFromPromisedArray(
-                                   organization.__related('collaborators'), args
+                                   organization.related('collaborators'), args
                                )},
         guests:             { type: userConnection,
                               description: 'The guests tied to the organization',
                               args: connectionArgs,
                               resolve: (organization, args) => connectionFromPromisedArray(
-                                 organization.__related('guests'), args
+                                 organization.related('guests'), args
                               )},
         users:              { type: userConnection,
                               description: 'The users tied to the organization',
                               args: connectionArgs,
                               resolve: (organization, args) => connectionFromPromisedArray(
-                                  organization.__related('users'), args
+                                  organization.related('users'), args
                               )},
     }),
     interfaces: [nodeInterface, slugInterface]

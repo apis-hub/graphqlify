@@ -12,7 +12,6 @@ import { userConnection }           from './user_type';
 import { userPermissionConnection } from './user_permission_type';
 import { invitationConnection }     from './invitation_type';
 import { assetConnection }          from './asset_type';
-import api                          from '../../adapters/api_adapter';
 
 var brandfolderType = new GraphQLObjectType({
     name:        'Brandfolder',
@@ -39,7 +38,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The collection used by the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('collections')
+                brandfolder.__related('collections'), args
             )
         },
         sections:               {
@@ -47,7 +46,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The section used by thte brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('sections'), args
+                brandfolder.related('sections'), args
             )
         },
         //events:                 {
@@ -55,7 +54,7 @@ var brandfolderType = new GraphQLObjectType({
         //    description: 'The event tied to the brandfolder',
         //    args:        connectionArgs,
         //    resolve:     (brandfolder, args) => connectionFromPromisedArray(
-        //        brandfolder.__related('collectio')
+        //        brandfolder.related('collectio'), args
         //    )
         //},
         social_links:           {
@@ -63,7 +62,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The link tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('social_links')
+                brandfolder.related('social_links'), args
             )
         },
         admins:                 {
@@ -71,7 +70,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The admins tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('admins')
+                brandfolder.related('admins'), args
             )
         },
         collaborators:          {
@@ -79,7 +78,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The collaborators tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('collaborators')
+                brandfolder.related('collaborators'), args
             )
         },
         guests:                 {
@@ -87,7 +86,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The guests tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('guests')
+                brandfolder.related('guests'), args
             )
         },
         users:                  {
@@ -95,7 +94,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The users tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('users')
+                brandfolder.related('users'), args
             )
         },
         user_permissions:       {
@@ -103,7 +102,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The user permissions tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('user_permissions')
+                brandfolder.related('user_permissions'), args
             )
         },
         assets:                 {
@@ -111,7 +110,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The assets tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('assets')
+                brandfolder.related('assets'), args
             )
         },
         invitations:            {
@@ -119,7 +118,7 @@ var brandfolderType = new GraphQLObjectType({
             description: 'The invitations tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('invitations')
+                brandfolder.related('invitations'), args
             )
         },
 

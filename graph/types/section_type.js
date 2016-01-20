@@ -5,7 +5,6 @@ import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
 import { eventConnection } from './event_type';
 import { assetConnection } from './asset_type';
-import api                 from '../../adapters/api_adapter';
 
 var sectionType = new GraphQLObjectType({
     name: 'section',
@@ -22,13 +21,13 @@ var sectionType = new GraphQLObjectType({
         //                      description: 'The events tied to the section',
         //                      args: connectionArgs,
         //                      resolve: (section, args) => connectionFromPromisedArray(
-        //                          section.__related('events'), args
+        //                          section.related('events'), args
         //                      )},
         assets:             { type: assetConnection,
                               description: 'The assets tied to the section',
                               args: connectionArgs,
                               resolve: (section, args) => connectionFromPromisedArray(
-                                  section.__related('assets'), args
+                                  section.related('assets'), args
                               )}
     }),
     interfaces: [nodeInterface, slugInterface]

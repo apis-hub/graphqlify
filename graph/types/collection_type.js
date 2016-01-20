@@ -8,7 +8,6 @@ import { assetConnection }  from './asset_type';
 import { userConnection }   from './user_type';
 import { sectionConnection} from './section_type';
 import { reusableDataType } from './reusable_data_type';
-import api                  from '../../adapters/api_adapter';
 
 var collectionType = new GraphQLObjectType({
     name: 'Collection',
@@ -27,31 +26,31 @@ var collectionType = new GraphQLObjectType({
                           description: 'The assets tied to the collection',
                           args: connectionArgs,
                           resolve: (collection, args) => connectionFromPromisedArray(
-                              collection.__related('assets'), args
+                              collection.related('assets'), args
                           )},
         sections:       { type: sectionConnection,
                           description: 'The sections tied to the collection',
                           args: connectionArgs,
                           resolve: (collection, args) => connectionFromPromisedArray(
-                              collection.__related('sections'), args
+                              collection.related('sections'), args
                           )},
         admins:         { type: userConnection,
                           description: 'The admins tied to the collection',
                           args: connectionArgs,
                           resolve: (collection, args) => connectionFromPromisedArray(
-                              collection.__related('admins'), args
+                              collection.related('admins'), args
                           )},
         collaborators:  { type: userConnection,
                           description: 'The collaborators tied to the collection',
                           args: connectionArgs,
                           resolve: (collection, args) => connectionFromPromisedArray(
-                              collection.__related('collaborators'), args
+                              collection.related('collaborators'), args
                           )},
         guests:         { type: userConnection,
                           description: 'The guests tied to the collection',
                           args: connectionArgs,
                           resolve: (collection, args) => connectionFromPromisedArray(
-                              collection.__related('guests'), args
+                              collection.related('guests'), args
                           )},
     }),
     interfaces: [nodeInterface, slugInterface]

@@ -8,7 +8,6 @@ import { brandfolderConnection }   from './brandfolder_type';
 import { organizationConnection }  from './organization_type';
 import { collectionConnection }    from './collection_type';
 import { userPermissionConnection} from './user_permission_type';
-import api                         from '../../adapters/api_adapter';
 
 var userType = new GraphQLObjectType({
     name: 'User',
@@ -25,31 +24,31 @@ var userType = new GraphQLObjectType({
         //                                 description: 'The events tied to the user',
         //                                 args: connectionArgs,
         //                                 resolve: (user, args) => connectionFromPromisedArray(
-        //                                     user.__related('events'), args
+        //                                     user.related('events'), args
         //                                 )},
         user_permissions:              { type: userPermissionConnection,
                                          description: 'The user permissions tied to the user',
                                          args: connectionArgs,
                                          resolve: (user, args) => connectionFromPromisedArray(
-                                             user.__related('user_permissions'), args
+                                             user.related('user_permissions'), args
                                          )},
         brandfolders:                  { type: brandfolderConnection,
                                          description: 'The brandfolders tied to the user',
                                          args: connectionArgs,
                                          resolve: (user, args) => connectionFromPromisedArray(
-                                             user.__related('brandfolders'), args
+                                             user.related('brandfolders'), args
                                          )},
         organizations:                 { type: organizationConnection,
                                          description: 'The organizations tied to the user',
                                          args: connectionArgs,
                                          resolve: (user, args) => connectionFromPromisedArray(
-                                           user.__related('organizations'), args
+                                           user.related('organizations'), args
                                        )},
         collections:                   { type: collectionConnection,
                                          description: 'The collections tied to the user',
                                          args: connectionArgs,
                                          resolve: (user, args) => connectionFromPromisedArray(
-                                             user.__related('collections'), args
+                                             user.related('collections'), args
                                          )},
     }),
     interfaces: [nodeInterface, slugInterface]

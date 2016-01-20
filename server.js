@@ -7,7 +7,7 @@ import webpackMiddleware from 'webpack-dev-middleware';
 import url from 'url';
 import {graphql}      from 'graphql';
 import bodyParser     from 'body-parser';
-import { APIAdapter, signRequest }     from './adapters/api_adapter';
+import { GraphQLifiedJsonAPI, signRequest }     from './adapters/api_adapter';
 
 const webPackConfig = {
     entry:   path.resolve(__dirname, 'lib', 'console.jsx'),
@@ -44,10 +44,10 @@ app.use('/graphql', graphqlHTTP((request) => {
         headers.authorization = request.headers.authorization
     }
 
-    var client = new APIAdapter(endpoint, { headers: headers });
+    var client = new GraphQLifiedJsonAPI(endpoint, { headers: headers });
 
     // Sign the requests if they are external.
-    client.jsonapi.beforeRequest(signRequest);
+    client.beforeRequest(signRequest);
 
     return {
         schema:    schema,

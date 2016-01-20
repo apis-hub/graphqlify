@@ -4,7 +4,6 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 import { nodeInterface }    from '../node_identification';
 import { slugInterface }    from '../slug_identification';
 import { eventConnection }  from './event_type';
-import api                  from '../../adapters/api_adapter';
 
 var invitationType = new GraphQLObjectType({
     name: 'Invitation',
@@ -23,7 +22,7 @@ var invitationType = new GraphQLObjectType({
         //                    description: 'The event tied to the invitation',
         //                    args: connectionArgs,
         //                    resolve: (invitation, args) => connectionFromPromisedArray(
-        //                       invitation.__related('events'), args
+        //                       invitation.related('events'), args
         //                    )}
     }),
     interfaces: [nodeInterface, slugInterface]

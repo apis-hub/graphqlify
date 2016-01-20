@@ -7,7 +7,7 @@ _.mixin(_inflection);
 var {nodeInterface, nodeField} = nodeDefinitions(
     (globalId) => {
         var {type, id} = fromGlobalId(globalId);
-        return api.getType(_.pluralize(type)).find(id);
+        return api.resource(_.pluralize(type)).read(id);
     },
     (obj) => {
         var singular = _.singularize(obj.__api.data.type);
