@@ -20,6 +20,24 @@ _.mixin({
     }
 });
 
+
+function rejectWithGraphQL(fn){ 
+    return function(jsonapiError) { 
+        if (!typeof error instanceof Array){ 
+            return error 
+        } 
+        var reason = jsonapiError.map(function (error) { 
+            var message =  `${error.status} ${error.title}`; 
+            if (error.detail){ 
+                message += `: ${error.detail}` 
+            } 
+            return message 
+        }).join(', '); 
+        fn(reason) 
+    } 
+}
+
+
 class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
     constructor(name, client) {
         super(name, client);
@@ -30,7 +48,7 @@ class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
         return new Promise(function(resolve, reject) {
             superPromise.then(function (jsonAPICollection) {
                 resolve (new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client));
-            }).catch(reject)
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 
@@ -39,16 +57,19 @@ class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
         return new Promise(function(resolve, reject) {
             superPromise.then(function (jsonAPIInstance) {
                 resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
-            }).catch(reject)
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 
     read(id) {
+        var outerInstance = this;
         var superPromise = super.read(id);
+;
         return new Promise(function(resolve, reject) {
+            var innerInstance = outerInstance;
             superPromise.then(function (jsonAPIInstance) {
                 resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
-            }).catch(reject)
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 
@@ -60,7 +81,7 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance  {
     }
 
     graphQLObject(){
-        return _.extend({ __api__: this, id: this.attribute(id) }, this.attributes())
+        return _.extend({ __api__: this, id: this.id() }, this.attributes())
     }
 
     related(name) {
@@ -72,16 +93,18 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance  {
                 } else if (objOrAry instanceof Object) {
                     resolve(new GraphQLifiedJsonAPIInstance(objOrAry.data, objOrAry.client).graphQLObject());
                 }
-            }).catch(reject);
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 
-    save(params) {
-        var superPromise = super.save(params);
+    save() {
+        var superPromise = super.save();
+debugger;
         return new Promise(function(resolve, reject) {
             superPromise.then(function (jsonAPIInstance) {
+                debugger;
                 resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
-            }).catch(reject);
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 }
@@ -89,22 +112,31 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance  {
 class GraphQLifiedJsonAPICollection extends JSONAPIonifyCollection {
     constructor(responseJson, client) {
         super(responseJson, client);
+
+        while(this.length){
+            this.pop()
+        }
+
+        var collection = this;
+        responseJson.data.forEach(function (data) {
+            collection.push(new GraphQLifiedJsonAPIInstance(data, client).graphQLObject());
+        });
     }
 
     create(type, data){
         var superPromise = super.create(type, data);
         return new Promise(function(resolve, reject){
             superPromise.then(function(jsonApiInstance){
-                resolve(new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client));
-            }).catch(reject)
+                resolve(new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.client).graphQLObject());
+            }).catch(rejectWithGraphQL(reject));
         })
     }
 }
 
 
 class GraphQLifiedJsonAPI extends JSONAPIonify {
-    constructor(baseUrl, clientOptions) {
-        super(baseUrl, clientOptions);
+    constructor(baseUrl, ClientOptions) {
+        super(baseUrl, ClientOptions);
     }
 
     resource(name) {
@@ -122,7 +154,7 @@ var signRequest = function (method, path, headers, body) {
         }, {})),
         body:           body || ""
     });
-    // headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
+     headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
 };
 
 module.exports = { GraphQLifiedJsonAPI: GraphQLifiedJsonAPI, signRequest: signRequest };

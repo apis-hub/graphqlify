@@ -29,16 +29,16 @@ var brandfolderType = new GraphQLObjectType({
         organization_id:        { type: GraphQLID },
         whitelisted_domains:    { type: new GraphQLList(GraphQLString) },
         enable_simple_password: { type: GraphQLBoolean },
-        card_image:             { type: GraphQLString },
-        header_image:           { type: GraphQLString },
-        created_at:             { type: GraphQLString },
-        updated_at:             { type: GraphQLString },
+        //card_image:             { type: GraphQLString },
+        //header_image:           { type: GraphQLString },
+        //created_at:             { type: GraphQLString },
+        //updated_at:             { type: GraphQLString },
         collections:            {
             type:        collectionConnection,
             description: 'The collection used by the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.__related('collections'), args
+                brandfolder.related('collections'), args
             )
         },
         sections:               {
