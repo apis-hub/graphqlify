@@ -2,114 +2,117 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLAttachmentEdge } from '../types/attachment_type';
+import { GraphQLAttachmentEdge, attachmentType } from '../types/attachment_type';
 import { assetType }             from '../types/asset_type';
 import { reusableDataType }      from '../types/reusable_data_type';
-import api                       from '../../adapters/api_adapter';
 
 const createAttachment = mutationWithClientMutationId({
-    name: 'CreateAttachment',
+    name: 'createAttachment',
     inputFields: {
         mimetype:      { type: GraphQLString },
         extension:     { type: GraphQLString },
         filename:      { type: GraphQLString },
         size:          { type: GraphQLInt },
+        url:           { type: GraphQLString },
         file_url:      { type: GraphQLString },
         thumbnail_url: { type: GraphQLString },
         preview_url:   { type: GraphQLString },
         thumbnailed:   { type: GraphQLBoolean },
-        position:      { type: GraphQLInt },
         width:         { type: GraphQLInt },
         height:        { type: GraphQLInt },
         metadata:      { type: reusableDataType },
         asset_id:      { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        attachmentEdge: {
-            type: GraphQLAttachmentEdge,
-            resolve: ({attachmentId}) => {
-                const attachment = api.getType('attachment').find(attachmentId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('attachment').all(), attachment),
-                    node: attachment
-                };
-            }
+        attachment: {
+            type: attachmentType,
+            resolve: ({attachment}) => attachment
         },
         asset: {
             type: assetType,
-            resolve: ({localAssetId}) => {
-                api.getType('asset').find(localAssetId);
+            resolve: ({ assetId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('assets').read(assetId).then(function(asset){
+                        resolve(asset)
+                    }).catch(reject);
+                })
             }
         }
     },
-    mutateAndGetPayload: ({mimetype, extension, asset_id, filename, size, file_url, thumbnail_url, preview_url,
-                            thumbnailed, position, width, height, metadata}) => {
-        const localAssetId = fromGlobalId(asset_id).id;
-        api.getType('attachment')
-               .create({ mimetype: mimetype, extension: extension, filename: filename, size: size, file_url: file_url,
-                         thumbnail_url: thumbnail_url, preview_url: preview_url, thumbnailed: thumbnailed,
-                         position: position, width: width, height: height, metadata: metadata, asset_id: localAssetId })
-               .then(result => { return { attachmentId: result.id, localAssetId, }; });
+    mutateAndGetPayload: ({mimetype, extension, asset_id, filename, size, url, file_url, thumbnail_url, preview_url,
+                            thumbnailed, width, height, metadata}, context) => {
+        const assetId = asset_id;
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('assets').read(assetId).then(function(asset){
+                asset.__api__.related('attachments').then(function(attachments){
+                    attachments.create(
+                        'attachments',
+                        {
+                            mimetype: mimetype, url: url, extension: extension, filename: filename, size: size,
+                            file_url: file_url, thumbnail_url: thumbnail_url, preview_url: preview_url,
+                            thumbnailed: thumbnailed, width: width, height: height, metadata: metadata
+                        }
+                    ).then(function(attachment){
+                        resolve( {attachment, assetId, rootContext })
+                    }).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
     },
 });
 
 const updateAttachment = mutationWithClientMutationId({
-    name: 'UpdateAttachment',
+    name: 'updateAttachment',
     inputFields: {
         id:            { type: new GraphQLNonNull(GraphQLID) },
-        mimetype:      { type: GraphQLString },
-        extension:     { type: GraphQLString },
-        asset_id:      { type: GraphQLID },
-        filename:      { type: GraphQLString },
-        size:          { type: GraphQLInt },
-        file_url:      { type: GraphQLString },
-        thumbnail_url: { type: GraphQLString },
-        preview_url:   { type: GraphQLString },
-        thumbnailed:   { type: GraphQLBoolean },
         position:      { type: GraphQLInt },
-        width:         { type: GraphQLInt },
-        height:        { type: GraphQLInt },
-        metadata:      { type: reusableDataType },
+        url:           { type: GraphQLString }
     },
     outputFields: {
-        attachmentEdge: {
-            type: GraphQLAttachmentEdge,
-            resolve: ({attachmentId}) => {
-                const attachment = api.getType('attachment').find(attachmentId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('attachment').all(), attachment),
-                    node: attachment
-                }
-            }
+        attachment: {
+            type: attachmentType,
+            resolve: ({attachment}) => attachment
         },
     },
-    mutateAndGetPayload: ({ id, mimetype, extension, asset_id, filename, size, file_url, thumbnail_url,
-                            preview_url, thumbnailed, position, width, height, metadata}) => {
-    const attachmentId = fromGlobalId(id).id;
-        api.getType('attachment')
-               .update(attachmentId, {asset_keys: asset_keys, mimetype: mimetype, extension: extension, asset_id: asset_id,
-                                     filename: filename, size: size, file_url: file_url, thumbnail_url: thumbnail_url,
-                                     preview_url: preview_url, thumbnailed: thumbnailed, position: position, width: width,
-                                     height: height, metadata: metadata})
-               .then(result => { return { attachmentId: result.id}; });
-    },
+    mutateAndGetPayload: ({ id, position, url}, context) => {
+        const attachmentId = id;
+        var attachmentPosition = position,
+            attachmentUrl      = url;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
+                if (attachmentPosition) { attachment.position = attachmentPosition }
+                if (attachmentUrl) { attachment.url = attachmentUrl}
+
+                attachment.__api__.update(attachment).then(function (attachment) {
+                    resolve({ attachment });
+                }).catch(reject);
+            }).catch(reject);
+        })
+    }
 });
 
 const deleteAttachment = mutationWithClientMutationId({
-    name: 'DeleteAttachment',
+    name: 'deleteAttachment',
     inputFields: {
         id:   { type: new GraphQLNonNull(GraphQLID) },
 
     },
     outputFields: {
-        attachmentEdge: {
-            type: GraphQLAttachmentEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({attachmentId}) => attachmentId
         }
     },
-    mutateAndGetPayload: ({id}) => {
-        var attachmentId = fromGlobalId(id).id;
-        api.getType('attachment').remove(attachmentId);
+    mutateAndGetPayload: ({id}, context) => {
+        var attachmentId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
+                attachment.__api__.delete().then(function(){
+                    return attachmentId;
+                })
+            }).catch(reject)
+        })
     }
 });
 

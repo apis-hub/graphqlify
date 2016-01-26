@@ -3,24 +3,18 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 
 import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
-import { eventConnection } from './event_type';
+import { userType }        from './user_type';
 
 var userPermissionType = new GraphQLObjectType({
     name: 'UserPermission',
     description: 'A user permissions item',
     fields: () => ({
         id:               globalIdField('userPermission'),
-        user_id:          { type: GraphQLID },
         permission_level: { type: new GraphQLNonNull(GraphQLString) },
         email:            { type: new GraphQLNonNull(GraphQLString) },
         created_at:       { type: GraphQLString },
         updated_at:       { type: GraphQLString },
-        //events:           { type: eventConnection,
-        //                    description: 'The events tied to the user permission',
-        //                    args: connectionArgs,
-        //                    resolve: (userPermission, args) => connectionFromPromisedArray(
-        //                        userPermission.related('events'), args
-        //                    )}
+        user:             { type: userType }
     }),
     interfaces: [nodeInterface, slugInterface]
 });

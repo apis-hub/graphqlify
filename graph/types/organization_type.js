@@ -2,11 +2,12 @@ import { GraphQLObjectType, GraphQLNonNull, GraphQLString, GraphQLBoolean,
          GraphQLID, GraphQLScalarType } from 'graphql/type';
 import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionDefinitions } from 'graphql-relay';
 
-import { nodeInterface }          from '../node_identification';
-import { slugInterface }          from '../slug_identification';
-import { eventConnection }        from './event_type';
-import { brandfolderConnection }  from './brandfolder_type';
-import { userConnection }         from './user_type';
+import { nodeInterface }            from '../node_identification';
+import { slugInterface }            from '../slug_identification';
+import { eventConnection }          from './event_type';
+import { brandfolderConnection }    from './brandfolder_type';
+import { userConnection }           from './user_type';
+import { userPermissionConnection } from './user_permission_type';
 
 var organizationType = new GraphQLObjectType({
     name: 'Organization',
@@ -24,12 +25,6 @@ var organizationType = new GraphQLObjectType({
                                resolve: (organization, args) => connectionFromPromisedArray(
                                    organization.related('brandfolders'), args
                                )},
-        //events:              { type: eventConnection,
-        //                       description: 'The event tied to the organization',
-        //                       args: connectionArgs,
-        //                       resolve: (organization, args) => connectionFromPromisedArray(
-        //                           organization.related('events')
-        //                       )},
         owners:             { type: userConnection,
                                description: 'The owners tied to the organization',
                                args: connectionArgs,
@@ -60,6 +55,12 @@ var organizationType = new GraphQLObjectType({
                               resolve: (organization, args) => connectionFromPromisedArray(
                                   organization.related('users'), args
                               )},
+        user_permissions:   { type: userPermissionConnection,
+                              description: 'The user permissions tied to the organization',
+                              args: connectionArgs,
+                              resolve: (collection, args) => connectionFromPromisedArray(
+                                    collection.related('user_permissions'), args
+                              )}
     }),
     interfaces: [nodeInterface, slugInterface]
 });

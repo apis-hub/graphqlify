@@ -2,61 +2,81 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLInvitationEdge } from '../types/invitation_type';
+import { GraphQLInvitationEdge, invitationType } from '../types/invitation_type';
 import { userType }              from '../types/user_type';
-import api                       from '../../adapters/api_adapter';
+import { brandfolderType }       from '../types/brandfolder_type';
 
 const createInvitation = mutationWithClientMutationId({
-    name: 'CreateInvitation',
+    name: 'createInvitation',
     inputFields: {
         email:            { type: new GraphQLNonNull(GraphQLString) },
-        token:            { type: GraphQLString },
         permission_level: { type: new GraphQLNonNull(GraphQLString) },
         personal_message: { type: GraphQLString },
-        active:           { type: GraphQLBoolean },
-        inviter_id:       { type: new GraphQLNonNull(GraphQLID) }
+        inviter_id:       { type: new GraphQLNonNull(GraphQLID) },
+        brandfolder_id:   { type: new GraphQLNonNull(GraphQLID) }
     },
     outputFields: {
-        invitationEdge: {
-            type: GraphQLInvitationEdge,
-            resolve: ({invitationId}) => {
-                const invitation = api.getType('invitation').find(invitationId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('invitation').all(), invitation),
-                    node: invitation
-                };
-            }
+        invitation: {
+            type: invitationType,
+            resolve: ({invitation}) => invitation
         },
         inviter: {
             type: userType,
-            resolve: ({localUserId}) => {
-                api.getType('user').find(localUserId);
+            resolve: ({ userId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('users').read(userId).then(function(user){
+                        resolve(user)
+                    }).catch(reject);
+                })
+            }
+        },
+        brandfolder: {
+            type: brandfolderType,
+            resolve: ({ brandfolderId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+                        resolve(brandfolder)
+                    }).catch(reject);
+                })
             }
         }
     },
-    mutateAndGetPayload: ({email, token, inviter_id, permission_level, personal_message, active }) => {
-        const localUserId = fromGlobalId(inviter_id).id;
-        api.getType('invitation')
-               .create({email: email, token: token, inviter_id: localUserId, permission_level: permission_level,
-                        personal_message: personal_message, active: active})
-               .then(result => { return { invitationId: result.id,  localUserId, }; });
+    mutateAndGetPayload: ({email, inviter_id, permission_level, personal_message, brandfolder_id}, context) => {
+        const userId = inviter_id;
+        const brandfolderId = brandfolder_id;
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+                brandfolder.__api__.related('invitations').then(function(invitations){
+                    invitations.create('invitations', {email: email, permission_level: permission_level, personal_message}).then(function(invitation){
+                        resolve( {invitation, userId, brandfolderId, rootContext })
+                    }).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
     },
 });
 
 const deleteInvitation = mutationWithClientMutationId({
-    name: 'DeleteInvitation',
+    name: 'deleteInvitation',
     inputFields: {
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        invitationEdge: {
-            type: GraphQLInvitationEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({invitationId}) => invitationId
         }
     },
-    mutateAndGetPayload: ({id}) => {
-        var invitationId = fromGlobalId(id).id;
-        api.getType('invitation').remove(invitationId);
+    mutateAndGetPayload: ({id}, context) => {
+        var invitationId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('invitations').read(invitationId).then(function (invitation) {
+                invitation.__api__.delete().then(function(){
+                    return invitationId;
+                })
+            }).catch(reject)
+        })
     }
 });
 

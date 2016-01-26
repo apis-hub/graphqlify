@@ -3,8 +3,8 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 
 import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
-import { eventConnection } from './event_type';
 import { assetConnection } from './asset_type';
+import { brandfolderType } from './brandfolder_type';
 
 var sectionType = new GraphQLObjectType({
     name: 'section',
@@ -14,15 +14,9 @@ var sectionType = new GraphQLObjectType({
         name:               { type: new GraphQLNonNull(GraphQLString) },
         default_asset_type: { type: new GraphQLNonNull(GraphQLString) },
         position:           { type: GraphQLInt },
-        brandfolder_id:     { type: GraphQLID},
         created_at:         { type: GraphQLString },
         updated_at:         { type: GraphQLString },
-        //events:             { type: eventConnection,
-        //                      description: 'The events tied to the section',
-        //                      args: connectionArgs,
-        //                      resolve: (section, args) => connectionFromPromisedArray(
-        //                          section.related('events'), args
-        //                      )},
+        brandfolder:        { type: brandfolderType },
         assets:             { type: assetConnection,
                               description: 'The assets tied to the section',
                               args: connectionArgs,

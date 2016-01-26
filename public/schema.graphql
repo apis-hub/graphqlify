@@ -1,35 +1,35 @@
 type Asset implements Node, Slug {
   id: ID!
   name: String!
-  description: String
   asset_type: String
-  asset_data: reusable_data_type
   thumbnail_url: String
   preview_url: String
+  description: String
+  asset_data: reusable_data_type
   tag_names: [String]
   created_at: String
   updated_at: String
   attachments(after: String, first: Int, before: String, last: Int): attachmentConnection
   collections(after: String, first: Int, before: String, last: Int): collectionConnection
-  comments: assetCommentsConnection
+  comments: assetCommentConnection
 }
 
-type AssetComments implements Node, Slug {
+type AssetComment implements Node, Slug {
   id: ID!
   body: String
   created_at: String
   updated_at: String
-  assets(after: String, first: Int, before: String, last: Int): assetConnection
-  replies(after: String, first: Int, before: String, last: Int): assetCommentsConnection
+  asset: Asset
+  replies(after: String, first: Int, before: String, last: Int): assetCommentConnection
 }
 
-type assetCommentsConnection {
+type assetCommentConnection {
   pageInfo: PageInfo!
-  edges: [assetCommentsEdge]
+  edges: [assetCommentEdge]
 }
 
-type assetCommentsEdge {
-  node: AssetComments
+type assetCommentEdge {
+  node: AssetComment
   cursor: String!
 }
 
@@ -45,21 +45,22 @@ type assetEdge {
 
 type Attachment implements Node, Slug {
   id: ID!
+  position: Int
+  url: String
   mimetype: String
   extension: String
-  asset_id: ID
   filename: String
   size: Int
   file_url: String
   thumbnail_url: String
   preview_url: String
   thumbnailed: Boolean
-  position: Int
   width: Int
   height: Int
   metadata: reusable_data_type
   created_at: String!
   updated_at: String!
+  asset: Asset
 }
 
 type attachmentConnection {
@@ -75,19 +76,23 @@ type attachmentEdge {
 type Brandfolder implements Node, Slug {
   id: ID!
   name: String!
+  slug: String!
   tagline: String
   public: Boolean
   stealth: Boolean
   request_access_enabled: Boolean
   request_access_prompt: String
-  slug: String!
-  google_analytics_id: ID
-  organization_id: ID
   whitelisted_domains: [String]
   enable_simple_password: Boolean
-  collections(after: String, first: Int, before: String, last: Int): collectionConnection
+  card_image: String
+  header_image: String
+  google_analytics_id: ID
+  created_at: String
+  updated_at: String
+  organization: Organization
   sections(after: String, first: Int, before: String, last: Int): sectionConnection
   social_links(after: String, first: Int, before: String, last: Int): socialLinkConnection
+  collections(after: String, first: Int, before: String, last: Int): collectionConnection
   admins(after: String, first: Int, before: String, last: Int): userConnection
   collaborators(after: String, first: Int, before: String, last: Int): userConnection
   guests(after: String, first: Int, before: String, last: Int): userConnection
@@ -109,7 +114,6 @@ type brandfolderEdge {
 
 type Collection implements Node, Slug {
   id: ID!
-  brandfolder_id: ID
   name: String!
   slug: String!
   public: Boolean
@@ -117,11 +121,14 @@ type Collection implements Node, Slug {
   options: reusable_data_type
   created_at: String!
   updated_at: String!
+  brandfolder: Brandfolder
   assets(after: String, first: Int, before: String, last: Int): assetConnection
   sections(after: String, first: Int, before: String, last: Int): sectionConnection
   admins(after: String, first: Int, before: String, last: Int): userConnection
   collaborators(after: String, first: Int, before: String, last: Int): userConnection
   guests(after: String, first: Int, before: String, last: Int): userConnection
+  users(after: String, first: Int, before: String, last: Int): userConnection
+  user_permissions(after: String, first: Int, before: String, last: Int): userPermissionConnection
 }
 
 type collectionConnection {
@@ -132,6 +139,56 @@ type collectionConnection {
 type collectionEdge {
   node: Collection
   cursor: String!
+}
+
+input createAssetCommentInput {
+  body: String
+  asset_id: ID!
+  clientMutationId: String!
+}
+
+type createAssetCommentPayload {
+  assetComment: AssetComment
+  asset: Asset
+  clientMutationId: String!
+}
+
+input createAssetInput {
+  name: String!
+  description: String
+  asset_data: reusable_data_type
+  tag_names: String
+  section_id: ID!
+  clientMutationId: String!
+}
+
+type createAssetPayload {
+  asset: Asset
+  section: section
+  clientMutationId: String!
+}
+
+input createAttachmentInput {
+  mimetype: String
+  extension: String
+  filename: String
+  size: Int
+  url: String
+  file_url: String
+  thumbnail_url: String
+  preview_url: String
+  thumbnailed: Boolean
+  width: Int
+  height: Int
+  metadata: reusable_data_type
+  asset_id: ID!
+  clientMutationId: String!
+}
+
+type createAttachmentPayload {
+  attachment: Attachment
+  asset: Asset
+  clientMutationId: String!
 }
 
 input createBrandfolderInput {
@@ -146,13 +203,218 @@ type createBrandfolderPayload {
   clientMutationId: String!
 }
 
-input DeleteBrandfolderInput {
+input createBrandfolderUserPermissionInput {
+  permission_level: String!
+  brandfolder_id: ID!
+  clientMutationId: String!
+}
+
+type createBrandfolderUserPermissionPayload {
+  userPermission: UserPermission
+  brandfolder: Brandfolder
+  clientMutationId: String!
+}
+
+input createCollectionInput {
+  name: String!
+  slug: String!
+  brandfolder_id: ID!
+  clientMutationId: String!
+}
+
+type createCollectionPayload {
+  collection: Collection
+  brandfolder: Brandfolder
+  clientMutationId: String!
+}
+
+input createCollectionUserPermissionInput {
+  permission_level: String!
+  collection_id: ID!
+  clientMutationId: String!
+}
+
+type createCollectionUserPermissionPayload {
+  userPermission: UserPermission
+  collection: Collection
+  clientMutationId: String!
+}
+
+input createInvitationInput {
+  email: String!
+  permission_level: String!
+  personal_message: String
+  inviter_id: ID!
+  brandfolder_id: ID!
+  clientMutationId: String!
+}
+
+type createInvitationPayload {
+  invitation: Invitation
+  inviter: User
+  brandfolder: Brandfolder
+  clientMutationId: String!
+}
+
+input createOrganizationInput {
+  name: String
+  slug: String!
+  clientMutationId: String!
+}
+
+type createOrganizationPayload {
+  organization: Organization
+  clientMutationId: String!
+}
+
+input createOrganizationUserPermissionInput {
+  permission_level: String!
+  organization_id: ID!
+  clientMutationId: String!
+}
+
+type createOrganizationUserPermissionPayload {
+  userPermission: UserPermission
+  organization: Organization
+  clientMutationId: String!
+}
+
+input createSectionInput {
+  name: String!
+  default_asset_type: String!
+  brandfolder_id: ID!
+  clientMutationId: String!
+}
+
+type createSectionPayload {
+  section: section
+  brandfolder: Brandfolder
+  clientMutationId: String!
+}
+
+input createSocialLinkInput {
+  name: String
+  url: String!
+  brandfolder_id: ID!
+  clientMutationId: String!
+}
+
+type createSocialLinkPayload {
+  socialLink: SocialLink
+  brandfolder: Brandfolder
+  clientMutationId: String!
+}
+
+input createUserInput {
+  email: String!
+  first_name: String
+  last_name: String
+  password: String!
+  clientMutationId: String!
+}
+
+type createUserPayload {
+  user: User
+  clientMutationId: String!
+}
+
+input deleteAssetCommentInput {
   id: ID!
   clientMutationId: String!
 }
 
-type DeleteBrandfolderPayload {
-  brandfolderEdge: brandfolderEdge
+type deleteAssetCommentPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteAssetInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteAssetPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteAttachmentInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteAttachmentPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteBrandfolderInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteBrandfolderPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteCollectionInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteCollectionPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteInvitationInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteInvitationPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteOrganizationInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteOrganizationPayload {
+  organizationEdge: organizationEdge
+  clientMutationId: String!
+}
+
+input deleteSectionInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteSectionPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteSocialLinkInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteSocialLinkPayload {
+  deletedId: ID
+  clientMutationId: String!
+}
+
+input deleteUserInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type deleteUserPayload {
+  deletedId: ID
   clientMutationId: String!
 }
 
@@ -183,13 +445,13 @@ type Event implements Node, Slug {
 type Invitation implements Node, Slug {
   id: ID!
   email: String!
-  token: String
-  inviter_id: ID
   permission_level: String!
   personal_message: String
+  token: String
   active: Boolean
   created_at: String
   updated_at: String
+  inviter: User
 }
 
 type invitationConnection {
@@ -205,7 +467,35 @@ type invitationEdge {
 type Mutation {
   createBrandfolder(input: createBrandfolderInput!): createBrandfolderPayload
   updateBrandfolder(input: updateBrandfolderInput!): updateBrandfolderPayload
-  deleteBrandfolder(input: DeleteBrandfolderInput!): DeleteBrandfolderPayload
+  deleteBrandfolder(input: deleteBrandfolderInput!): deleteBrandfolderPayload
+  createAssetComment(input: createAssetCommentInput!): createAssetCommentPayload
+  deleteAssetComment(input: deleteAssetCommentInput!): deleteAssetCommentPayload
+  createAsset(input: createAssetInput!): createAssetPayload
+  updateAsset(input: updateAssetInput!): updateAssetPayload
+  deleteAsset(input: deleteAssetInput!): deleteAssetPayload
+  createAttachment(input: createAttachmentInput!): createAttachmentPayload
+  updateAttachment(input: updateAttachmentInput!): updateAttachmentPayload
+  deleteAttachment(input: deleteAttachmentInput!): deleteAttachmentPayload
+  createCollection(input: createCollectionInput!): createCollectionPayload
+  updateCollection(input: updateCollectionInput!): updateCollectionPayload
+  deleteCollection(input: deleteCollectionInput!): deleteCollectionPayload
+  createInvitation(input: createInvitationInput!): createInvitationPayload
+  deleteInvitation(input: deleteInvitationInput!): deleteInvitationPayload
+  createSocialLink(input: createSocialLinkInput!): createSocialLinkPayload
+  updateSocialLink(input: updateSocialLinkInput!): updateSocialLinkPayload
+  deleteSocialLink(input: deleteSocialLinkInput!): deleteSocialLinkPayload
+  createOrganization(input: createOrganizationInput!): createOrganizationPayload
+  updateOrganization(input: updateOrganizationInput!): updateOrganizationPayload
+  deleteOrganization(input: deleteOrganizationInput!): deleteOrganizationPayload
+  createSection(input: createSectionInput!): createSectionPayload
+  updateSection(input: updateSectionInput!): updateSectionPayload
+  deleteSection(input: deleteSectionInput!): deleteSectionPayload
+  createUser(input: createUserInput!): createUserPayload
+  updateUser(input: updateUserInput!): updateUserPayload
+  deleteUser(input: deleteUserInput!): deleteUserPayload
+  createBrandfolderUserPermission(input: createBrandfolderUserPermissionInput!): createBrandfolderUserPermissionPayload
+  createCollectionUserPermission(input: createCollectionUserPermissionInput!): createCollectionUserPermissionPayload
+  createOrganizationUserPermission(input: createOrganizationUserPermissionInput!): createOrganizationUserPermissionPayload
 }
 
 interface Node {
@@ -225,6 +515,7 @@ type Organization implements Node, Slug {
   collaborators(after: String, first: Int, before: String, last: Int): userConnection
   guests(after: String, first: Int, before: String, last: Int): userConnection
   users(after: String, first: Int, before: String, last: Int): userConnection
+  user_permissions(after: String, first: Int, before: String, last: Int): userPermissionConnection
 }
 
 type organizationConnection {
@@ -263,9 +554,9 @@ type section implements Node, Slug {
   name: String!
   default_asset_type: String!
   position: Int
-  brandfolder_id: ID
   created_at: String
   updated_at: String
+  brandfolder: Brandfolder
   assets(after: String, first: Int, before: String, last: Int): assetConnection
 }
 
@@ -288,9 +579,9 @@ type SocialLink implements Node, Slug {
   name: String!
   url: String!
   position: Int
-  brandfolder_id: ID
   created_at: String
   updated_at: String
+  brandfolder: Brandfolder
 }
 
 type socialLinkConnection {
@@ -301,6 +592,31 @@ type socialLinkConnection {
 type socialLinkEdge {
   node: SocialLink
   cursor: String!
+}
+
+input updateAssetInput {
+  id: ID!
+  description: String
+  asset_data: reusable_data_type
+  tag_names: String
+  clientMutationId: String!
+}
+
+type updateAssetPayload {
+  asset: Asset
+  clientMutationId: String!
+}
+
+input updateAttachmentInput {
+  id: ID!
+  position: Int
+  url: String
+  clientMutationId: String!
+}
+
+type updateAttachmentPayload {
+  attachment: Attachment
+  clientMutationId: String!
 }
 
 input updateBrandfolderInput {
@@ -323,15 +639,81 @@ type updateBrandfolderPayload {
   clientMutationId: String!
 }
 
-type User implements Node, Slug {
+input updateCollectionInput {
   id: ID!
-  email: String!
+  name: String
+  slug: String
+  is_public: Boolean
+  stealth: Boolean
+  options: reusable_data_type
+  clientMutationId: String!
+}
+
+type updateCollectionPayload {
+  collection: Collection
+  clientMutationId: String!
+}
+
+input updateOrganizationInput {
+  id: ID!
+  name: String
+  slug: String
+  clientMutationId: String!
+}
+
+type updateOrganizationPayload {
+  organization: Organization
+  clientMutationId: String!
+}
+
+input updateSectionInput {
+  id: ID!
+  name: String
+  default_asset_type: String
+  position: Int
+  clientMutationId: String!
+}
+
+type updateSectionPayload {
+  section: section
+  clientMutationId: String!
+}
+
+input updateSocialLinkInput {
+  id: ID!
+  name: String
+  url: String
+  position: Int
+  clientMutationId: String!
+}
+
+type updateSocialLinkPayload {
+  socialLink: SocialLink
+  clientMutationId: String!
+}
+
+input updateUserInput {
+  id: ID!
+  email: String
   first_name: String
   last_name: String
+  password: String
+  clientMutationId: String!
+}
+
+type updateUserPayload {
+  user: User
+  clientMutationId: String!
+}
+
+type User implements Node, Slug {
+  id: ID!
+  first_name: String
+  last_name: String
+  email: String!
   password: String!
   create_at: String
   updated_at: String
-  user_permissions(after: String, first: Int, before: String, last: Int): userPermissionConnection
   brandfolders(after: String, first: Int, before: String, last: Int): brandfolderConnection
   organizations(after: String, first: Int, before: String, last: Int): organizationConnection
   collections(after: String, first: Int, before: String, last: Int): collectionConnection
@@ -349,11 +731,11 @@ type userEdge {
 
 type UserPermission implements Node, Slug {
   id: ID!
-  user_id: ID
   permission_level: String!
   email: String!
   created_at: String
   updated_at: String
+  user: User
 }
 
 type userPermissionConnection {

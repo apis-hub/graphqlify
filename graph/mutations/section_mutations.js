@@ -2,86 +2,106 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLSectionEdge } from '../types/section_type';
+import { sectionType }        from '../types/section_type';
 import { brandfolderType }    from '../types/brandfolder_type';
-import api                    from '../../adapters/api_adapter';
 
 const createSection = mutationWithClientMutationId({
-    name: 'CreateSection',
+    name: 'createSection',
     inputFields: {
         name:               { type: new GraphQLNonNull(GraphQLString) },
         default_asset_type: { type: new GraphQLNonNull(GraphQLString) },
-        position:           { type: GraphQLInt },
         brandfolder_id:     { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        sectionEdge: {
-            type: GraphQLSectionEdge,
-            resolve: ({sectionId}) => {
-                const section = aapi.getType('section').find(sectionId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('section').all(), section),
-                    node: section
-                };
-            }
+        section: {
+            type: sectionType,
+            resolve: ({section}) =>  section
         },
         brandfolder: {
             type: brandfolderType,
-            resolve: ({localBrandfolderId}) => {
-                api.getType('brandfolder').find(localBrandfolderId);
+            resolve: ({brandfolderId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+                        resolve(brandfolder)
+                    }).catch(reject);
+                })
             }
         }
     },
-    mutateAndGetPayload: ({name, default_asset_type, position, brandfolder_id}) => {
-        const localBrandfolderId = fromGlobalId(brandfolder_id).id;
-       api.getType('section')
-               .create({name: name, default_asset_type: default_asset_type, position: position, brandfolder_id: localBrandfolderId})
-               .then(result => { return { sectionId: result.id,  localBrandfolderId } });
-    },
+    mutateAndGetPayload: ({name, default_asset_type, brandfolder_id}, context) => {
+        const brandfolderId = brandfolder_id;
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder) {
+                brandfolder.__api__.related('sections').then(function (sections) {
+                    sections.create(
+                        'sections',
+                        {
+                            name: name, default_asset_type: default_asset_type
+                        }
+                    ).then(function (section) {
+                        resolve({ section, brandfolderId, rootContext })
+                    }).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
+    }
 });
 
 const updateSection = mutationWithClientMutationId({
-    name: 'UpdateSection',
+    name: 'updateSection',
     inputFields: {
         id:                 { type: new GraphQLNonNull(GraphQLID) },
-        name:               { type: new GraphQLNonNull(GraphQLString) },
-        default_asset_type: { type: new GraphQLNonNull(GraphQLString) },
+        name:               { type: GraphQLString },
+        default_asset_type: { type: GraphQLString },
         position:           { type: GraphQLInt }
     },
     outputFields: {
-      sectionEdge: {
-          type: GraphQLSectionEdge,
-          resolve: ({sectionId}) => {
-              const section = api.getType('section').find(sectionId);
-              return {
-                  cursor: cursorForObjectInConnection(api.getType('section').all(), section),
-                  node: section
-              };
-          },
-      },
+      section: {
+          type: sectionType,
+          resolve: ({section}) => section
+      }
     },
-    mutateAndGetPayload: ({ id, name, default_asset_type, position }) => {
-        const sectionId = fromGlobalId(id).id;
-        api.getType('section')
-               .update(sectionId, {name: name, default_asset_type: default_asset_type, position: position})
-               .then(result => { return { sectionId: result.id }; });
-    },
+    mutateAndGetPayload: ({ id, name, default_asset_type, position }, context) => {
+        const sectionId = id;
+        var sectionName = name,
+            sectionDefaultAssetType = default_asset_type,
+            sectionPosition = position;
+
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
+                if (sectionName) { section.name = sectionName }
+                if (sectionDefaultAssetType) { section.default_asset_type = sectionDefaultAssetType }
+                if (sectionPosition) { section.position = sectionPosition }
+
+                section.__api__.update(section).then(function (section) {
+                    resolve({ section });
+                }).catch(reject);
+            }).catch(reject)
+        })
+    }
 });
 
 const deleteSection = mutationWithClientMutationId({
-    name: 'DeleteSection',
+    name: 'deleteSection',
     inputFields: {
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        sectionEdge: {
-            type: GraphQLSectionEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({sectionId}) => sectionId
         }
     },
-    mutateAndGetPayload: ({id}) => {
-        var sectionId = fromGlobalId(id).id;
-        api.getType('section').remove(sectionId);
+    mutateAndGetPayload: ({id}, context) => {
+        var sectionId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
+               section.__api__.delete().then(function(){
+                    return sectionId;
+                })
+            }).catch(reject)
+        })
     }
 });
 

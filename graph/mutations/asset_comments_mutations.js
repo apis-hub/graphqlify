@@ -2,74 +2,68 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLAssetCommentsEdge } from '../types/asset_comments_type';
-import api                          from '../../adapters/api_adapter';
+import { GraphQLAssetCommentEdge, assetCommentType } from '../types/asset_comment_type';
+import { assetType } from '../types/asset_type';
 
-const createAssetComments = mutationWithClientMutationId({
-    name: 'CreateAssetComments',
+const createAssetComment = mutationWithClientMutationId({
+    name: 'createAssetComment',
     inputFields: {
-        body: { type: GraphQLString }
+        body: { type: GraphQLString },
+        asset_id: { type: new GraphQLNonNull(GraphQLID)}
     },
     outputFields: {
-        assetCommentsEdge: {
-            type: GraphQLAssetCommentsEdge,
-            resolve: ({assetCommentsId}) => {
-                const assetComments = api.getType('assetComments').find(assetCommentsId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('assetComments').all(), assetComments),
-                    node: assetComments
-                };
+        assetComment: {
+            type: assetCommentType,
+            resolve: ({assetComment}) => assetComment
+        },
+        asset: {
+            type: assetType,
+            resolve: ({assetId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('assets').read(assetId).then(function(asset){
+                        resolve(asset)
+                    }).catch(reject);
+                })
             }
         }
+
     },
-    mutateAndGetPayload: ({body}) => {
-        api.getType('assetComments')
-            .create({body: body})
-            .then(result => { return { assetCommentsId: result.id }; });
+    mutateAndGetPayload: ({body, asset_id}, context) => {
+        const assetId = asset_id;
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('assets').read(assetId).then(function(asset){
+                asset.__api__.related('assetComments').then(function(assetComments){
+                    assetComments.create('assetComments', {body: body}).then(function(assetComment){
+                        resolve( {assetComment, assetId, rootContext })
+                    }).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
     },
 });
 
-const updateAssetComments = mutationWithClientMutationId({
-    name: 'UpdateAssetComments',
-    inputFields: {
-        id:   { type: new GraphQLNonNull(GraphQLID) },
-        body: { type: GraphQLString},
-    },
-    outputFields: {
-        assetCommentsEdge: { type: GraphQLAssetCommentsEdge,
-            resolve: ({assetCommentsId}) => {
-                const assetComments = api.getType('assetComments').find(assetCommentsId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('assetComments').all(), assetComments),
-                    node: assetComments
-                };
-            },
-        },
-
-    },
-    mutateAndGetPayload: ({ id, body }) => {
-        const assetCommentsId = fromGlobalId(id).id;
-        api.getType('assetComments')
-            .update(assetCommentsId, {body: body})
-            .then(result => { return { assetCommentsId: result.id }});
-    },
-});
-
-const deleteAssetComments = mutationWithClientMutationId({
-        name: 'DeleteAssetComments',
+const deleteAssetComment = mutationWithClientMutationId({
+        name: 'deleteAssetComment',
         inputFields: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
         outputFields: {
-            assetCommentsEdge: {
-                                type: GraphQLAssetCommentsEdge,
-                                resolve: () => null
+            deletedId: {
+                type: GraphQLID,
+                resolve: ({assetCommentId}) => assetCommentId
         }
     },
-    mutateAndGetPayload: ({id}) => {
-        var assetCommentsId = fromGlobalId(id).id;
-        api.getType('assetComments').remove(assetCommentsId);
+    mutateAndGetPayload: ({id}, context) => {
+        var assetCommentId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('assetComments').read(assetCommentId).then(function (assetComment) {
+                assetComment.__api__.delete().then(function(){
+                    return assetCommentId;
+                })
+            }).catch(reject)
+        })
     }
 });
 
-export { createAssetComments, updateAssetComments, deleteAssetComments };
+export { createAssetComment, deleteAssetComment };

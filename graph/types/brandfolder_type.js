@@ -12,6 +12,7 @@ import { userConnection }           from './user_type';
 import { userPermissionConnection } from './user_permission_type';
 import { invitationConnection }     from './invitation_type';
 import { assetConnection }          from './asset_type';
+import { organizationType }         from './organization_type';
 
 var brandfolderType = new GraphQLObjectType({
     name:        'Brandfolder',
@@ -19,28 +20,20 @@ var brandfolderType = new GraphQLObjectType({
     fields:      () => ({
         id:                     globalIdField('brandfolder'),
         name:                   { type: new GraphQLNonNull(GraphQLString) },
+        slug:                   { type: new GraphQLNonNull(GraphQLString) },
         tagline:                { type: GraphQLString },
         public:                 { type: GraphQLBoolean },
         stealth:                { type: GraphQLBoolean },
         request_access_enabled: { type: GraphQLBoolean },
         request_access_prompt:  { type: GraphQLString },
-        slug:                   { type: new GraphQLNonNull(GraphQLString) },
-        google_analytics_id:    { type: GraphQLID },
-        organization_id:        { type: GraphQLID },
         whitelisted_domains:    { type: new GraphQLList(GraphQLString) },
         enable_simple_password: { type: GraphQLBoolean },
-        //card_image:             { type: GraphQLString },
-        //header_image:           { type: GraphQLString },
-        //created_at:             { type: GraphQLString },
-        //updated_at:             { type: GraphQLString },
-        collections:            {
-            type:        collectionConnection,
-            description: 'The collection used by the brandfolder',
-            args:        connectionArgs,
-            resolve:     (brandfolder, args) => connectionFromPromisedArray(
-                brandfolder.related('collections'), args
-            )
-        },
+        card_image:             { type: GraphQLString },
+        header_image:           { type: GraphQLString },
+        google_analytics_id:    { type: GraphQLID },
+        created_at:             { type: GraphQLString },
+        updated_at:             { type: GraphQLString },
+        organization:           { type: organizationType },
         sections:               {
             type:        sectionConnection,
             description: 'The section used by thte brandfolder',
@@ -49,20 +42,20 @@ var brandfolderType = new GraphQLObjectType({
                 brandfolder.related('sections'), args
             )
         },
-        //events:                 {
-        //    type:        eventConnection,
-        //    description: 'The event tied to the brandfolder',
-        //    args:        connectionArgs,
-        //    resolve:     (brandfolder, args) => connectionFromPromisedArray(
-        //        brandfolder.related('collectio'), args
-        //    )
-        //},
         social_links:           {
             type:        socialLinkConnection,
             description: 'The link tied to the brandfolder',
             args:        connectionArgs,
             resolve:     (brandfolder, args) => connectionFromPromisedArray(
                 brandfolder.related('social_links'), args
+            )
+        },
+        collections:            {
+            type:        collectionConnection,
+            description: 'The collection used by the brandfolder',
+            args:        connectionArgs,
+            resolve:     (brandfolder, args) => connectionFromPromisedArray(
+                brandfolder.related('collections'), args
             )
         },
         admins:                 {

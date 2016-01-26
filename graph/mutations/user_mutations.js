@@ -2,79 +2,97 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLUserEdge } from '../types/user_type';
+import { GraphQLUserEdge, userType } from '../types/user_type';
 import api                 from '../../adapters/api_adapter';
 
 const createUser = mutationWithClientMutationId({
-    name: 'CreateUser',
+    name: 'createUser',
     inputFields: {
         email:                  { type: new GraphQLNonNull(GraphQLString) },
+        first_name:             { type: GraphQLString },
+        last_name:              { type: GraphQLString },
+        password:               { type: new GraphQLNonNull(GraphQLString) },
+    },
+    outputFields: {
+        user: {
+            type: userType,
+            resolve: ({user}) => user
+        }
+    },
+    mutateAndGetPayload: ({email, first_name, last_name, password}, context) => {
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('users').index().then(function(users){
+                users.create(
+                    'users',
+                    {
+                        email:email, first_name:first_name, last_name:last_name, password:password
+                    }
+                ).then(function(user){
+                    resolve({user, rootContext})
+                }).catch(reject);
+            }).catch(reject);
+        })
+    },
+});
+
+const updateUser = mutationWithClientMutationId({
+    name: 'updateUser',
+    inputFields: {
+        id:                     { type: new GraphQLNonNull(GraphQLID) },
+        email:                  { type: GraphQLString },
         first_name:             { type: GraphQLString },
         last_name:              { type: GraphQLString },
         password:               { type: GraphQLString },
     },
     outputFields: {
-        userEdge: {
-            type: GraphQLUserEdge,
-            resolve: ({userId}) => {
-                const user = api.getType('user').find(userId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('user').all(), user),
-                    node: user
-                };
-            }
+        user: {
+            type: userType,
+            resolve: ({user}) => user
         }
     },
-    mutateAndGetPayload: ({email, first_name, last_name, password, remember_token, superuser, password_recovery_token}) => {
-        api.getType('user')
-               .create({email: email, first_name: first_name, last_name: last_name, password: password })
-               .then(result => { return { userId: result.id }; });
-    },
-});
+    mutateAndGetPayload: ({ id, email, first_name, last_name, password }, context) => {
+        const userId = id;
+        var userEmail = email,
+            userFirstName = first_name,
+            userLastName = last_name,
+            userPassword = password;
 
-const updateUser = mutationWithClientMutationId({
-    name: 'UpdateUser',
-    inputFields: {
-        id:                     { type: new GraphQLNonNull(GraphQLID) },
-        email:                  { type: new GraphQLNonNull(GraphQLString) },
-        first_name:             { type: GraphQLString },
-        last_name:              { type: GraphQLString },
-        password:               { type: GraphQLString }
-    },
-    outputFields: {
-        userEdge: {
-            type: GraphQLUserEdge,
-            resolve: ({userId}) => {
-                const user = adapter.getType('user').find(userId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('user').all(), user),
-                    node: user
-                };
-            },
-        },
-    },
-    mutateAndGetPayload: ({ id, email, first_name, last_name, password }) => {
-        const userId = fromGlobalId(id);
-        api.getType('user')
-               .update(userId, {email: email, first_name: first_name, last_name: last_name, password: password })
-               .then(result=> { return { userId: result.id}; });
-    },
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('users').read(userId).then(function (user) {
+                if (userEmail) { user.email = userEmail }
+                if (userFirstName) { user.first_name = userFirstName }
+                if (userLastName) { user.last_name = userLastName }
+                if (userPassword) { user.password = userPassword }
+
+                user.__api__.update(user).then(function (user) {
+                    resolve({ user });
+                }).catch(reject);
+            }).catch(reject);
+        })
+    }
 });
 
 const deleteUser = mutationWithClientMutationId({
-    name: 'DeleteUser',
+    name: 'deleteUser',
     inputFields: {
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        userEdge: {
-            type: GraphQLUserEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({userId}) => userId
         }
     },
-    mutateAndGetPayload: ({id}) => {
-        var userId = fromGlobalId(id).id;
-        api.getType('user').remove(userId);
+    mutateAndGetPayload: ({id}, context) => {
+        var userId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('users').read(userId).then(function (user) {
+                user.__api__.delete().then(function(){
+                    return userId;
+                })
+            }).catch(reject)
+        })
     }
 });
 

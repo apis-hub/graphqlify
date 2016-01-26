@@ -1,12 +1,13 @@
 "use strict";
-var pluralize = require('pluralize');
-var decamelize = require('decamelize');
-var _ = require('lodash');
-var JSONAPIonify = require('jsonapionify-client');
+var pluralize              = require('pluralize');
+var decamelize             = require('decamelize');
+var _                      = require('lodash');
+var JSONAPIonify           = require('jsonapionify-client');
 var JSONAPIonifyCollection = require('jsonapionify-client/classes/collection');
-var JSONAPIonifyInstance = require('jsonapionify-client/classes/instance');
-var JSONAPIonifyResource = require('jsonapionify-client/classes/resource');
-var crypto = require('crypto');
+var JSONAPIonifyInstance   = require('jsonapionify-client/classes/instance');
+var JSONAPIonifyResource   = require('jsonapionify-client/classes/resource');
+var crypto                 = require('crypto');
+var processResponse        = require('jsonapionify-client/helpers/process_response');
 
 _.mixin({
     'sortKeysBy': function (obj, comparator) {
@@ -21,20 +22,20 @@ _.mixin({
 });
 
 
-function rejectWithGraphQL(fn){ 
-    return function(jsonapiError) { 
-        if (!typeof error instanceof Array){ 
-            return error 
-        } 
-        var reason = jsonapiError.map(function (error) { 
-            var message =  `${error.status} ${error.title}`; 
-            if (error.detail){ 
-                message += `: ${error.detail}` 
-            } 
-            return message 
-        }).join(', '); 
-        fn(reason) 
-    } 
+function rejectWithGraphQL(fn) {
+    return function (jsonapiError) {
+        if (!typeof error instanceof Array) {
+            return error
+        }
+        var reason = jsonapiError.map(function (error) {
+            var message = `${error.status} ${error.title}`;
+            if (error.detail) {
+                message += `: ${error.detail}`
+            }
+            return message
+        }).join(', ');
+        fn(reason)
+    }
 }
 
 
@@ -45,48 +46,46 @@ class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
 
     index() {
         var superPromise = super.index();
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             superPromise.then(function (jsonAPICollection) {
-                resolve (new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client));
+                resolve(new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client));
             }).catch(rejectWithGraphQL(reject));
         })
     }
 
     create(data) {
         var superPromise = super.create(data);
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             superPromise.then(function (jsonAPIInstance) {
-                resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
+                resolve(new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
             }).catch(rejectWithGraphQL(reject));
         })
     }
 
     read(id) {
-        var outerInstance = this;
         var superPromise = super.read(id);
-;
-        return new Promise(function(resolve, reject) {
-            var innerInstance = outerInstance;
+
+        return new Promise(function (resolve, reject) {
             superPromise.then(function (jsonAPIInstance) {
-                resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
+                resolve(new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
             }).catch(rejectWithGraphQL(reject));
         })
     }
 
 }
 
-class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance  {
+class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
     constructor(data, client) {
         super(data, client);
     }
 
-    graphQLObject(){
+    graphQLObject() {
         return _.extend({ __api__: this, id: this.id() }, this.attributes())
     }
 
     related(name) {
         var superPromise = super.related(name);
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             superPromise.then(function (objOrAry) {
                 if (objOrAry instanceof Array) {
                     resolve(new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.client));
@@ -97,14 +96,43 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance  {
         })
     }
 
-    save() {
-        var superPromise = super.save();
-debugger;
-        return new Promise(function(resolve, reject) {
-            superPromise.then(function (jsonAPIInstance) {
-                debugger;
-                resolve (new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
+    updateData() {
+        var instance = this;
+        var data     = _.extend({}, this.data);
+
+        return new Promise(function (resolve, reject) {
+            instance.options().then(function (response) {
+                data.attributes = _.pick(
+                    data.attributes,
+                    response.json.meta.requests.PATCH.attributes.map(function (attr) {
+                        return attr.name
+                    })
+                );
+                resolve(data)
             }).catch(rejectWithGraphQL(reject));
+        });
+    }
+
+    save() {
+        var instance = this;
+        return new Promise(function (resolve, reject) {
+            instance.updateData().then(function (data) {
+                var request = instance.client.patch(instance.data.links['self'], { data: data });
+                processResponse(request, function (response) {
+                    instance.data = response.json.data;
+                    resolve(instance.graphQLObject());
+                });
+            }).catch(reject);
+        });
+    }
+
+    delete() {
+        var superPromise = super.delete();
+        return new Promise(function (resolve, reject) {
+            superPromise.then(function (response) {
+                debugger;
+                resolve(response)
+            }).catch(rejectWithGraphQL(reject))
         })
     }
 }
@@ -113,7 +141,7 @@ class GraphQLifiedJsonAPICollection extends JSONAPIonifyCollection {
     constructor(responseJson, client) {
         super(responseJson, client);
 
-        while(this.length){
+        while (this.length) {
             this.pop()
         }
 
@@ -123,10 +151,10 @@ class GraphQLifiedJsonAPICollection extends JSONAPIonifyCollection {
         });
     }
 
-    create(type, data){
+    create(type, data) {
         var superPromise = super.create(type, data);
-        return new Promise(function(resolve, reject){
-            superPromise.then(function(jsonApiInstance){
+        return new Promise(function (resolve, reject) {
+            superPromise.then(function (jsonApiInstance) {
                 resolve(new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.client).graphQLObject());
             }).catch(rejectWithGraphQL(reject));
         })
@@ -144,17 +172,5 @@ class GraphQLifiedJsonAPI extends JSONAPIonify {
     }
 }
 
-var signRequest = function (method, path, headers, body) {
-    var sig_document = JSON.stringify({
-        request_method: method,
-        url:            path,
-        headers:        _.sortKeysBy(_.reduce(headers, (result, value, key) => {
-            result[key.toLowerCase()] = value;
-            return result
-        }, {})),
-        body:           body || ""
-    });
-     headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
-};
 
-module.exports = { GraphQLifiedJsonAPI: GraphQLifiedJsonAPI, signRequest: signRequest };
+module.exports = { GraphQLifiedJsonAPI: GraphQLifiedJsonAPI };

@@ -3,23 +3,18 @@ import { globalIdField, connectionDefinitions, connectionArgs, connectionFromPro
 
 import { nodeInterface } from '../node_identification';
 import { slugInterface } from '../slug_identification';
-import { assetConnection } from './asset_type';
+import { assetType } from './asset_type';
 
-var assetCommentsType = new GraphQLObjectType({
-    name: 'AssetComments',
+var assetCommentType = new GraphQLObjectType({
+    name: 'AssetComment',
     description: 'An asset comment',
     fields: () => ({
-        id:         globalIdField('assetComments'),
+        id:         globalIdField('assetComment'),
         body:       { type: GraphQLString },
         created_at: { type: GraphQLString },
         updated_at: { type: GraphQLString },
-        assets:     { type: assetConnection,
-                      description: 'The asset the asset comment belongs to',
-                      args: connectionArgs,
-                      resolve: (asset, args) => connectionFromPromisedArray(
-                          assetComment.related('assets'), args
-                      )},
-        replies:   { type: assetCommentsConnection,
+        asset:      { type: assetType },
+        replies:    { type: assetCommentConnection,
                      description: 'The asset comment replies',
                      args: connectionArgs,
                      resolve: (asset, args) => connectionFromPromisedArray(
@@ -30,7 +25,7 @@ var assetCommentsType = new GraphQLObjectType({
     interfaces: [nodeInterface, slugInterface]
 });
 
-var { connectionType: assetCommentsConnection, edgeType: GraphQLAssetCommentsEdge } =
-        connectionDefinitions({ name: 'assetComments', nodeType: assetCommentsType });
+var { connectionType: assetCommentConnection, edgeType: GraphQLAssetCommentEdge } =
+        connectionDefinitions({ name: 'assetComment', nodeType: assetCommentType });
 
-export { assetCommentsType, assetCommentsConnection, GraphQLAssetCommentsEdge  };
+export { assetCommentType, assetCommentConnection, GraphQLAssetCommentEdge  };

@@ -3,35 +3,21 @@ import { connectionArgs, connectionDefinitions, connectionFromPromisedArray, glo
 
 import { nodeInterface }           from '../node_identification';
 import { slugInterface }           from '../slug_identification';
-import { eventConnection }         from './event_type';
 import { brandfolderConnection }   from './brandfolder_type';
 import { organizationConnection }  from './organization_type';
 import { collectionConnection }    from './collection_type';
-import { userPermissionConnection} from './user_permission_type';
 
 var userType = new GraphQLObjectType({
     name: 'User',
     description: 'A user permissions item',
     fields: () => ({
         id:                            globalIdField('user'),
-        email:                         { type: new GraphQLNonNull(GraphQLString) },
         first_name:                    { type: GraphQLString },
         last_name:                     { type: GraphQLString },
+        email:                         { type: new GraphQLNonNull(GraphQLString) },
         password:                      { type: new GraphQLNonNull(GraphQLString) },
         create_at:                     { type: GraphQLString },
         updated_at:                    { type: GraphQLString },
-        //events:                        { type: eventConnection,
-        //                                 description: 'The events tied to the user',
-        //                                 args: connectionArgs,
-        //                                 resolve: (user, args) => connectionFromPromisedArray(
-        //                                     user.related('events'), args
-        //                                 )},
-        user_permissions:              { type: userPermissionConnection,
-                                         description: 'The user permissions tied to the user',
-                                         args: connectionArgs,
-                                         resolve: (user, args) => connectionFromPromisedArray(
-                                             user.related('user_permissions'), args
-                                         )},
         brandfolders:                  { type: brandfolderConnection,
                                          description: 'The brandfolders tied to the user',
                                          args: connectionArgs,

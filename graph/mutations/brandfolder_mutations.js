@@ -4,7 +4,6 @@ import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId
 
 import { GraphQLBrandfolderEdge, brandfolderType } from '../types/brandfolder_type';
 import { organizationType }       from '../types/organization_type';
-import { GraphQLifiedJsonAPI } from '../../adapters/api_adapter';
 
 const createBrandfolder = mutationWithClientMutationId({
     name: 'createBrandfolder',
@@ -15,9 +14,7 @@ const createBrandfolder = mutationWithClientMutationId({
     outputFields: {
         brandfolder: {
             type: brandfolderType,
-            resolve: ({brandfolder}) => {
-                return brandfolder;
-            }
+            resolve: ({brandfolder}) =>  brandfolder
         },
         organization: {
             type: organizationType,
@@ -27,7 +24,6 @@ const createBrandfolder = mutationWithClientMutationId({
                         resolve(organization)
                     }).catch(reject);
                 })
-
             }
         }
     },
@@ -64,24 +60,22 @@ const updateBrandfolder = mutationWithClientMutationId({
     outputFields: {
         brandfolder: {
             type: brandfolderType,
-            resolve: ({brandfolder}) => {
-                return brandfolder;
-            }
+            resolve: ({brandfolder}) => brandfolder
         }
     },
     mutateAndGetPayload: ({id, name, tagline, is_public, stealth, request_access_enabled, request_access_prompt,
                             slug, google_analytics_id, whitelisted_domains, enable_simple_password}, context) => {
-        const brandfolderId = id;
-        var brandfolderName=name,
-            brandfolderTagline=tagline,
-            brandfolderIs_public=is_public,
-            brandfolderStealth=stealth,
-            brandfolderRequest_access_enabled=request_access_enabled,
-            brandfolderRequest_acess_prompt=request_access_prompt,
-            brandfolderSlug=slug,
-            brandfolderGoogle_analytics_id=google_analytics_id,
-            brandfolderWhitelisted_domains=whitelisted_domains,
-            brandfolderEnable_simple_password=enable_simple_password;
+        const brandfolderId                     = id;
+        var brandfolderName                     = name,
+              brandfolderTagline                = tagline,
+              brandfolderIs_public              = is_public,
+              brandfolderStealth                = stealth,
+              brandfolderRequest_access_enabled = request_access_enabled,
+              brandfolderRequest_access_prompt   = request_access_prompt,
+              brandfolderSlug                   = slug,
+              brandfolderGoogle_analytics_id    = google_analytics_id,
+              brandfolderWhitelisted_domains    = whitelisted_domains,
+              brandfolderEnable_simple_password = enable_simple_password;
 
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -89,36 +83,41 @@ const updateBrandfolder = mutationWithClientMutationId({
                 if (brandfolderTagline) { brandfolder.tagline = brandfolderTagline}
                 if (brandfolderIs_public) { brandfolder.public = brandfolderIs_public}
                 if (brandfolderStealth) { brandfolder.stealth = brandfolderStealth }
+                if (brandfolderRequest_access_enabled) {brandfolder.request_access_enabled = brandfolderRequest_access_enabled}
+                if (brandfolderRequest_access_prompt) {brandfolder.request_access_prompt = brandfolderRequest_access_prompt}
+                if (brandfolderSlug) {brandfolder.slug = brandfolderSlug}
+                if (brandfolderGoogle_analytics_id) {brandfolder.google_analytics_id = brandfolderGoogle_analytics_id}
+                if (brandfolderWhitelisted_domains) {brandfolder.whitelisted_domains = brandfolderWhitelisted_domains}
+                if (brandfolderEnable_simple_password) {brandfolder.enable_simple_password = brandfolderEnable_simple_password}
 
-                brandfolder.__api__.save().then(function(brandfolder){
-                    resolve({brandfolder});
+                brandfolder.__api__.update(brandfolder).then(function (brandfolder) {
+                    resolve({ brandfolder });
                 }).catch(reject);
             }).catch(reject);
         })
-               //.update(brandfolderId, {name: name, tagline: tagline, public: is_public, stealth: stealth,
-               //                       request_access_enabled: request_access_enabled, request_access_prompt: request_access_prompt,
-               //                       slug: slug, google_analytics_id: google_analytics_id, organization_id: organization_id,
-               //                       whitelisted_domains: whitelisted_domains, enable_simple_password: enable_simple_password,
-               //                       card_image: card_image, header_image: header_image})
-               //.then(result=> { return { brandfolderId: result.id}; });
-        },
+    }
 });
 
 const deleteBrandfolder = mutationWithClientMutationId({
-    name: 'DeleteBrandfolder',
+    name: 'deleteBrandfolder',
     inputFields: {
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-       brandfolderEdge: {
-           type: GraphQLBrandfolderEdge,
-           resolve: () => null
-       }
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({brandfolderId}) => brandfolderId
+        }
     },
     mutateAndGetPayload: ({id}, context) => {
-        var brandfolderId = fromGlobalId(id).id;
-        context.rootValue.client.getType('brandfolder').remove(brandfolderId);
+        var brandfolderId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
+                brandfolder.__api__.delete().then(function(){
+                    return brandfolderId;
+                })
+            }).catch(reject)
+        })
     }
-});
-
+})
 export { createBrandfolder, updateBrandfolder, deleteBrandfolder };

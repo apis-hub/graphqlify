@@ -4,35 +4,31 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 
 import { nodeInterface }    from '../node_identification';
 import { slugInterface }    from '../slug_identification';
-import { eventConnection }  from './event_type';
 import { reusableDataType } from './reusable_data_type';
+import { assetType }        from './asset_type';
 
 var attachmentType = new GraphQLObjectType({
     name: 'Attachment',
     description: 'An attachment item',
     fields: () => ({
         id:                    globalIdField('attachment'),
+        position:              { type: GraphQLInt },
+        url:                   { type: GraphQLString },
         mimetype:              { type: GraphQLString },
         extension:             { type: GraphQLString },
-        asset_id:              { type: GraphQLID },
         filename:              { type: GraphQLString },
         size:                  { type: GraphQLInt },
         file_url:              { type: GraphQLString },
         thumbnail_url:         { type: GraphQLString },
         preview_url:           { type: GraphQLString },
         thumbnailed:           { type: GraphQLBoolean },
-        position:              { type: GraphQLInt },
         width:                 { type: GraphQLInt },
         height:                { type: GraphQLInt },
         metadata:              { type: reusableDataType },
         created_at:            { type: new GraphQLNonNull(GraphQLString) },
         updated_at:            { type: new GraphQLNonNull(GraphQLString) },
-        //events:                { type: eventConnection,
-        //                        description: 'The events tied to an attachment',
-        //                        args: connectionArgs,
-        //                        resolve: (attachment, args) => connectionFromPromisedArray(
-        //                            attachment.__related('events'), args
-        //                        )}
+        asset:                 { type: assetType }
+
     }),
     interfaces: [nodeInterface, slugInterface]
 });

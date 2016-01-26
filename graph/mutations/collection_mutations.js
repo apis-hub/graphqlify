@@ -2,92 +2,109 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLCollectionEdge } from '../types/collection_type';
+import { GraphQLCollectionEdge, collectionType } from '../types/collection_type';
 import { brandfolderType }       from '../types/brandfolder_type';
 import { reusableDataType }      from '../types/reusable_data_type';
-import api                       from '../../adapters/api_adapter';
 
 const createCollection = mutationWithClientMutationId({
-    name: 'CreateCollection',
+    name: 'createCollection',
     inputFields: {
         name:           { type: new GraphQLNonNull(GraphQLString) },
         slug:           { type: new GraphQLNonNull(GraphQLString) },
-        is_public:      { type: GraphQLBoolean },
-        stealth:        { type: GraphQLBoolean },
-        options:        { type: reusableDataType },
-        brandfolder_id: { type: new GraphQLNonNull(GraphQLID) },
+        brandfolder_id: { type: new GraphQLNonNull(GraphQLID) }
     },
     outputFields: {
-        collectionEdge: {
-            type: GraphQLCollectionEdge,
-            resolve: ({collectionId}) => {
-                const collection = api.getType('collection').find(collectionId);
-                return {
-                    cursor: cursorForObjectInConnection(adapter.getType('collection').all(), collection),
-                    node: collection
-                };
-            }
+        collection: {
+            type: collectionType,
+            resolve: ({collection}) => collection
         },
         brandfolder: {
             type: brandfolderType,
-            resolve: ({localBrandfolderId}) => {
-                api.getType('brandfolder').find(localBrandfolderId);
+            resolve: ({brandfolderId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+                        resolve(brandfolder)
+                    }).catch(reject);
+                })
             }
+
         }
     },
-    mutateAndGetPayload: ({name, brandfolder_id, is_public, slug, stealth, options}) => {
-        const localBrandfolderId = fromGlobalId(brandfolder_id).id;
-        api.getType('collection')
-               .create({name: name, brandfolder_id: localBrandfolderId, public: is_public, slug: slug, stealth: stealth,
-                        options: options})
-               .then(result => { return { collectionId: result.id, localBrandfolderId, }; });
+    mutateAndGetPayload: ({name, brandfolder_id, slug }, context) => {
+        const brandfolderId = brandfolder_id;
+        const rootContext = context;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+                brandfolder.__api__.related('collections').then(function(collections){
+                    collections.create('collections', {name: name, slug:slug}).then(function(collection){
+                        resolve( {collection, brandfolderId, rootContext })
+                    }).catch(reject);
+                }).catch(reject);
+            }).catch(reject);
+        })
     },
 });
 
 const updateCollection = mutationWithClientMutationId({
-    name: 'UpdateCollection',
+    name: 'updateCollection',
     inputFields: {
         id:             { type: new GraphQLNonNull(GraphQLID) },
-        name:           { type: new GraphQLNonNull(GraphQLString) },
-        slug:           { type: new GraphQLNonNull(GraphQLString) },
+        name:           { type: GraphQLString },
+        slug:           { type: GraphQLString },
         is_public:      { type: GraphQLBoolean },
         stealth:        { type: GraphQLBoolean },
         options:        { type: reusableDataType }
     },
     outputFields: {
-        collectionEdge: {
-            type: GraphQLCollectionEdge,
-            resolve: ({collectionId}) => {
-                const collection = api.getType('collection').find(collectionId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('collection').all(), collection),
-                    node: collection
-                };
-            },
-        },
+        collection: {
+            type: collectionType,
+            resolve: ({collection}) => collection
+        }
     },
-    mutateAndGetPayload: ({id, name, is_public, slug, stealth, options}) => {
-        const collectionId = fromGlobalId(globalId).id;
-        api.getType('collection')
-               .update(collectionId, {name: name, slug: slug, public: is_public, stealth: stealth, options: options})
-               .then(result=> { return { collectionId: result.id }; });
+    mutateAndGetPayload: ({id, name, is_public, slug, stealth, options}, context) => {
+        const collectionId     = id;
+        var collectionName     = name,
+            collectionIsPublic = is_public,
+            collectionSlug     = slug,
+            collectionStealth  = stealth,
+            collectionOptions  = options;
+
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('collections').read(collectionId).then(function (collection) {
+                if (collectionName) { collection.name = collectionName }
+                if (collectionIsPublic) { collection.is_public = collectionIsPublic}
+                if (collectionSlug) { collection.slug = collectionSlug}
+                if (collectionStealth) { collection.stealth = collectionStealth }
+                if (collectionOptions) {collection.options = collectionOptions}
+
+                collection.__api__.update(collection).then(function (collection) {
+                    resolve({ collection });
+                }).catch(reject);
+            }).catch(reject);
+        })
     },
 });
 
 const deleteCollection = mutationWithClientMutationId({
-    name: 'DeleteCollection',
+    name: 'deleteCollection',
     inputFields: {
         id: { type: new GraphQLNonNull(GraphQLID) }
     },
     outputFields: {
-        collectionEdge: {
-            type: GraphQLCollectionEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({collectionId}) => collecitonId
         }
     },
-    mutateAndGetPayload: ({id }) => {
-        var collectionId = fromGlobalId(id).id;
-        api.getType('collection').remove(collectionId);
+    mutateAndGetPayload: ({id }, context) => {
+        var collectionId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('collections').read(collectionId).then(function (collection) {
+                collection.__api__.delete().then(function(){
+                    return collectionId;
+                })
+            }).catch(reject)
+        })
     }
 });
 

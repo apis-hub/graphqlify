@@ -46,9 +46,6 @@ app.use('/graphql', graphqlHTTP((request) => {
 
     var client = new GraphQLifiedJsonAPI(endpoint, { headers: headers });
 
-    // Sign the requests if they are external.
-    client.beforeRequest(signRequest);
-
     return {
         schema:    schema,
         rootValue: { client: client }

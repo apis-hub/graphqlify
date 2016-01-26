@@ -3,7 +3,7 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 
 import { nodeInterface }    from '../node_identification';
 import { slugInterface }    from '../slug_identification';
-import { eventConnection }  from './event_type';
+import { userType }         from './user_type';
 
 var invitationType = new GraphQLObjectType({
     name: 'Invitation',
@@ -11,19 +11,13 @@ var invitationType = new GraphQLObjectType({
     fields: () => ({
         id:               globalIdField('invitation'),
         email:            { type: new GraphQLNonNull(GraphQLString) },
-        token:            { type: GraphQLString },
-        inviter_id:       { type: GraphQLID },
         permission_level: { type: new GraphQLNonNull(GraphQLString) },
         personal_message: { type: GraphQLString },
+        token:            { type: GraphQLString },
         active:           { type: GraphQLBoolean },
         created_at:       { type: GraphQLString },
         updated_at:       { type: GraphQLString },
-        //events:           { type: eventConnection,
-        //                    description: 'The event tied to the invitation',
-        //                    args: connectionArgs,
-        //                    resolve: (invitation, args) => connectionFromPromisedArray(
-        //                       invitation.related('events'), args
-        //                    )}
+        inviter:          { type: userType }
     }),
     interfaces: [nodeInterface, slugInterface]
 });

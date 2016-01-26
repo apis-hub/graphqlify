@@ -3,7 +3,7 @@ import { connectionArgs, connectionFromArray, globalIdField, connectionDefinitio
 
 import { nodeInterface }   from '../node_identification';
 import { slugInterface }   from '../slug_identification';
-import { eventConnection } from './event_type';
+import { brandfolderType } from './brandfolder_type';
 
 var socialLinkType = new GraphQLObjectType({
     name: 'SocialLink',
@@ -13,15 +13,10 @@ var socialLinkType = new GraphQLObjectType({
         name:           { type: new GraphQLNonNull(GraphQLString) },
         url:            { type: new GraphQLNonNull(GraphQLString) },
         position:       { type: GraphQLInt },
-        brandfolder_id: { type: GraphQLID },
         created_at:     { type: GraphQLString },
         updated_at:     { type: GraphQLString },
-        //events:         { type: eventConnection,
-        //                  description: 'An event tied to the social link',
-        //                  args: connectionArgs,
-        //                  resolve: (link, args) => connectionFromPromisedArray(
-        //                    link.related('events'), args
-        //                  )},
+        brandfolder:    { type: brandfolderType }
+
     }),
     interfaces: [nodeInterface, slugInterface]
 });
