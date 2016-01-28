@@ -1,9 +1,21 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLAssetGroupEdge, assetGroupType } from '../types/asset_group_type';
-import api                       from '../../adapters/api_adapter';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { GraphQLAssetGroupEdge } from "../types/asset_group_type";
+import api from "../../adapters/api_adapter";
 
 const createAssetGroup = mutationWithClientMutationId({
     name: 'CreateAssetGroup',
@@ -24,8 +36,8 @@ const createAssetGroup = mutationWithClientMutationId({
 const updateAssetGroup = mutationWithClientMutationId({
     name: 'UpdateAssetGroup',
     inputFields: {
-        id:         { type: new GraphQLNonNull(GraphQLID) },
-        asset_keys: { type: new GraphQLList(GraphQLString)},
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        asset_keys: { type: new GraphQLList(GraphQLString) },
     },
     outputFields: {
         assetGroup: {

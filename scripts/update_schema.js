@@ -1,13 +1,13 @@
 "use strict";
 
-import fs from 'fs';
-import path from 'path';
-import schema from '../graph/schema.js';
-import { graphql } from 'graphql';
-import { introspectionQuery, printSchema } from 'graphql/utilities';
+import fs from "fs";
+import path from "path";
+import schema from "../graph/schema.js";
+import { graphql } from "graphql";
+import { introspectionQuery, printSchema } from "graphql/utilities";
 
 // Save JSON of full schema introspection for Babel Relay Plugin to use
-(async () => {
+(async() => {
     var result = await (graphql(schema, introspectionQuery));
     if (result.errors) {
         console.error(

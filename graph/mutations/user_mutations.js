@@ -1,32 +1,47 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLUserEdge, userType } from '../types/user_type';
-import api                 from '../../adapters/api_adapter';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { userType } from "../types/user_type";
 
 const createUser = mutationWithClientMutationId({
     name: 'createUser',
     inputFields: {
-        email:                  { type: new GraphQLNonNull(GraphQLString) },
-        first_name:             { type: GraphQLString },
-        last_name:              { type: GraphQLString },
-        password:               { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        first_name: { type: GraphQLString },
+        last_name: { type: GraphQLString },
+        password: { type: new GraphQLNonNull(GraphQLString) },
     },
     outputFields: {
         user: {
             type: userType,
-            resolve: ({user}) => user
+            resolve: ({ user }) => user
         }
     },
     mutateAndGetPayload: ({email, first_name, last_name, password}, context) => {
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('users').create(
                     {
-                        email:email, first_name:first_name, last_name:last_name, password:password
+                        email: email,
+                        first_name: first_name,
+                        last_name: last_name,
+                        password: password
                     }
             ).then(function(user){
                 resolve({user})
+
             }).catch(reject);
         })
     },
@@ -35,16 +50,16 @@ const createUser = mutationWithClientMutationId({
 const updateUser = mutationWithClientMutationId({
     name: 'updateUser',
     inputFields: {
-        id:                     { type: new GraphQLNonNull(GraphQLID) },
-        email:                  { type: GraphQLString },
-        first_name:             { type: GraphQLString },
-        last_name:              { type: GraphQLString },
-        password:               { type: GraphQLString },
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        email: { type: GraphQLString },
+        first_name: { type: GraphQLString },
+        last_name: { type: GraphQLString },
+        password: { type: GraphQLString },
     },
     outputFields: {
         user: {
             type: userType,
-            resolve: ({user}) => user
+            resolve: ({ user }) => user
         }
     },
     mutateAndGetPayload: ({ id, email, first_name, last_name, password }, context) => {
@@ -56,10 +71,18 @@ const updateUser = mutationWithClientMutationId({
 
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('users').read(userId).then(function (user) {
-                if (userEmail) { user.email = userEmail }
-                if (userFirstName) { user.first_name = userFirstName }
-                if (userLastName) { user.last_name = userLastName }
-                if (userPassword) { user.password = userPassword }
+                if (userEmail) {
+                    user.email = userEmail
+                }
+                if (userFirstName) {
+                    user.first_name = userFirstName
+                }
+                if (userLastName) {
+                    user.last_name = userLastName
+                }
+                if (userPassword) {
+                    user.password = userPassword
+                }
 
                 user.__api__.update(user).then(function (user) {
                     resolve({ user });
@@ -77,10 +100,10 @@ const deleteUser = mutationWithClientMutationId({
     outputFields: {
         deletedId: {
             type: GraphQLID,
-            resolve: ({userId}) => userId
+            resolve: ({ userId }) => userId
         }
     },
-    mutateAndGetPayload: ({id}, context) => {
+    mutateAndGetPayload: ({ id }, context) => {
         var userId = id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('users').read(userId).then(function (user) {

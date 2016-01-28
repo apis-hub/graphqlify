@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql';
+import { GraphQLScalarType } from "graphql";
 
 var reusableDataType = new GraphQLScalarType({
     name: 'reusable_data_type',

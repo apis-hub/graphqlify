@@ -1,9 +1,21 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLShareManifestEdge, shareManifestType } from '../types/share_manifest_type';
-import api                          from '../../adapters/api_adapter';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { GraphQLShareManifestEdge } from "../types/share_manifest_type";
+import api from "../../adapters/api_adapter";
 
 const createShareManifest = mutationWithClientMutationId({
     name: 'CreateShareManifest',
