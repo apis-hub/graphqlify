@@ -6,7 +6,7 @@ import {
 import {
     createAsset,
     updateAsset,
-    deleteAsset
+    removeSectionAssets
 } from "./asset_mutations";
 import {
     createAttachment,
@@ -42,7 +42,8 @@ import {
     updateSection,
     deleteSection
 } from "./section_mutations";
-import {createUser,
+import {
+    createUser,
     updateUser,
     deleteUser
 } from "./user_mutations";
@@ -51,35 +52,6 @@ import {
     createCollectionUserPermission,
     createOrganizationUserPermission
 } from "./user_permission_mutations";
-//import {
-// createAssetGroup,
-// updateAssetGroup,
-// deleteAssetGroup }
-// from './asset_group_mutations';
-import {
-    createAssetComment,
-    deleteAssetComment
-} from './asset_comments_mutations';
-import {createAsset,
-    updateAsset,
-    removeSectionAssets
-} from './asset_mutations';
-import {
-    createAttachment,
-    updateAttachment,
-} from './attachment_mutations';
-import {
-    createBrandfolder,
-    updateBrandfolder,
-    deleteBrandfolder
-} from './brandfolder_mutations';
-import {
-    createCollection,
-    updateCollection,
-    deleteCollection
-} from './collection_mutations';
-
-
 
 var mutationType = new GraphQLObjectType({
     name:   'Mutation',
