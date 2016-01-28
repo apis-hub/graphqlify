@@ -4,14 +4,16 @@ import GraphiQL from 'graphiql';
 import fetch from 'isomorphic-fetch';
 import $ from 'jquery';
 import Url from 'url';
+import "jquery.cookie";
 
 window.$ = $;
 let graphqlEndpoint = window.location.origin + '/graphql';
 let params = {};
 if (window.location.search) {
     $.extend(params, document.location.search.replace(/(^\?)/, '').split("&").map(function (n) {
-        return n = n.split("="), this[n[0]] = n[1], this
-    }.bind({}))[0])
+        var kv = n.split("=");
+        params[kv[0]] = kv[1] === undefined ? true : kv[1];
+    }))
 }
 
 function graphQLFetcher(graphQLParams) {
@@ -19,8 +21,8 @@ function graphQLFetcher(graphQLParams) {
 
     headers['Content-Type'] = 'application/json';
 
-    if (params.token) {
-        headers['Authorization'] = `JWT ${params.token}`;
+    if ($.cookie('token')) {
+        headers['Authorization'] = `JWT ${$.cookie('token')}`;
     }
 
     return fetch(graphqlEndpoint, {
@@ -30,14 +32,20 @@ function graphQLFetcher(graphQLParams) {
     }).then(response => response.json());
 }
 
-if (!params.token) {
+if (params.token) {
+    $.cookie('token', params.token, {expires: 7});
+    window.location.search = '';
+} else if (params.reset) {
+    $.removeCookie('token');
+    window.location.search = '';
+} else if (!$.cookie('token')) {
     graphQLFetcher({query: "query {root{url}} "}).then(function (json) {
         var url = Url.parse(json.data.root.url);
         url.hostname = url.hostname.split('.').slice(-2).join('.');
         url.host = undefined;
         url.href = undefined;
         url.pathname = '/token';
-        url.search = $.param({ redirect_uri: window.location.href });
+        url.search = $.param({redirect_uri: window.location.href});
         window.location = Url.format(url);
     });
 
