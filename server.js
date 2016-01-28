@@ -38,7 +38,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 // Serve GraphQL
 app.use('/graphql', graphqlHTTP((request) => {
     var headers  = {};
-    var endpoint = process.env.BRANDFOLDER_API_ENDPOINT || 'http://example.org';
+    var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
     if (request.headers.authorization) {
         headers.authorization = request.headers.authorization
