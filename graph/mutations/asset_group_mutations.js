@@ -2,7 +2,7 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLAssetGroupEdge } from '../types/asset_group_type';
+import { GraphQLAssetGroupEdge, assetGroupType } from '../types/asset_group_type';
 import api                       from '../../adapters/api_adapter';
 
 const createAssetGroup = mutationWithClientMutationId({
@@ -11,22 +11,14 @@ const createAssetGroup = mutationWithClientMutationId({
         asset_keys: { type: new GraphQLList(GraphQLString) }
     },
     outputFields: {
-        assetGroupEdge: {
-            type: GraphQLAssetGroupEdge,
-            resolve: ({assetGroupId}) => {
-                const assetGroup = api.getType('assetGroup').find(assetGroupId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('assetGroup').all(), assetGroup),
-                    node: assetGroup
-                };
-            }
+        assetGroup: {
+            type: assetGroupType,
+            resolve: ({assetGroup}) => assetGroup
         }
     },
-    mutateAndGetPayload: ({asset_keys}) => {
-        api.getType('assetGroup')
-               .create({asset_keys: asset_keys})
-               .then(result => { return { assetGroupId: result.id }; });
-    },
+    mutateAndGetPayload: ({asset_keys, context}) => {
+        // TBD
+    }
 });
 
 const updateAssetGroup = mutationWithClientMutationId({
@@ -36,24 +28,14 @@ const updateAssetGroup = mutationWithClientMutationId({
         asset_keys: { type: new GraphQLList(GraphQLString)},
     },
     outputFields: {
-        assetGroupEdge: {
-            type: GraphQLAssetGroupEdge,
-            resolve: ({assetGroupId}) => {
-                const assetGroup = api.getType('assetGroup').find(assetGroupId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('assetGroup').all(), assetGroup),
-                    node: assetGroup
-                };
-            },
+        assetGroup: {
+            type: assetGroupType,
+            resolve: ({assetGroup}) => assetGroup
         },
-
     },
     mutateAndGetPayload: ({ id, asset_keys }) => {
-        const assetGroupId = fromGlobalId(id).id;
-        api.getType('assetGroup')
-               .update(assetGroupId, {asset_keys: asset_keys})
-               .then(result => { return { assetGroupId: result.id }});
-    },
+        // TBD
+    }
 });
 
 const deleteAssetGroup = mutationWithClientMutationId({
@@ -62,14 +44,20 @@ const deleteAssetGroup = mutationWithClientMutationId({
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        assetGroupEdge: {
-            type: GraphQLAssetGroupEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({deletedId}) => deletedId
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var assetGroupId = fromGlobalId(id).id;
-        api.getType('assetGroup').remove(assetGroupId);
+        var deletedId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('asset_groups').read(deletedId).then(function (assetGroup) {
+                assetGroup.__api__.delete().then(function(){
+                    resolve({deletedId});
+                })
+            }).catch(reject)
+        })
     }
 });
 

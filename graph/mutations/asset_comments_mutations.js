@@ -59,7 +59,7 @@ const deleteAssetComment = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('assetComments').read(assetCommentId).then(function (assetComment) {
                 assetComment.__api__.delete().then(function(){
-                    return assetCommentId;
+                    resolve({assetCommentId});
                 })
             }).catch(reject)
         })

@@ -2,39 +2,22 @@ import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
     GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
 
-import { GraphQLShareManifestEdge } from '../types/share_manifest_type';
+import { GraphQLShareManifestEdge, shareManifestType } from '../types/share_manifest_type';
 import api                          from '../../adapters/api_adapter';
 
 const createShareManifest = mutationWithClientMutationId({
     name: 'CreateShareManifest',
     inputFields: {
-        digest:                 { type: new GraphQLNonNull(GraphQLString) },
-        internal:               { type: new GraphQLNonNull(GraphQLBoolean) },
-        require_identification: { type: new GraphQLNonNull(GraphQLBoolean) },
-        expires:                { type: new GraphQLNonNull(GraphQLBoolean) },
-        availability_start:     { type: GraphQLString },
-        availability_end:       { type: GraphQLString },
-        time_zone:              { type: new GraphQLNonNull(GraphQLString) },
+      //TBD
     },
     outputFields: {
-        shareManifestEdge: {
-            type: GraphQLShareManifestEdge,
-            resolve: ({shareManifestId}) => {
-                const shareManifest = api.getType('shareManifest').find(shareManifestId);
-                return {
-                    cursor: cursorForObjectInConnection(api.getType('shareManifest').all(), shareManifest),
-                    node: shareManifest
-                };
-            }
+        shareManifest: {
+            type: shareManifestType,
+            resolve: ({shareManifest}) => shareManifest
         }
     },
-    mutateAndGetPayload: ({ digest, internal,
-                            require_identification, expires, availability_start, availability_end, time_zone }) => {
-        api.getType('shareManifest')
-               .create({digest: digest, internal: internal,require_identification: require_identification,
-                        expires: expires, availability_start: availability_start, availability_end: availability_end,
-                        time_zone: time_zone})
-               .then(result => { return { shareManifestId: result.id } });
+    mutateAndGetPayload: ({}, context) => {
+        //TBD
     },
 });
 
@@ -45,14 +28,20 @@ const deleteShareManifest = mutationWithClientMutationId({
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        shareManifestEdge: {
-            type: GraphQLShareManifestEdge,
-            resolve: () => null
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({shareManifestID}) => shareManifestID
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var shareManifestId = fromGlobalId(id).id;
-        api.getType('shareManifest').remove(shareManifestId);
+        var shareManifestId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('share_manifests').read(shareManifestId).then(function (shareManifest) {
+                shareManifest.__api__.delete().then(function(){
+                    resolve({shareMaifestId});
+                })
+            }).catch(reject)
+        })
     }
 });
 

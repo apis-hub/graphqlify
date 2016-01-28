@@ -5104,7 +5104,7 @@
               "deprecationReason": null
             },
             {
-              "name": "deleteAsset",
+              "name": "removeSectionAsset",
               "description": null,
               "args": [
                 {
@@ -5115,7 +5115,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "deleteAssetInput",
+                      "name": "removeSectionAssetsInput",
                       "ofType": null
                     }
                   },
@@ -5124,7 +5124,7 @@
               ],
               "type": {
                 "kind": "OBJECT",
-                "name": "deleteAssetPayload",
+                "name": "removeSectionAssetsPayload",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -5428,33 +5428,6 @@
               "deprecationReason": null
             },
             {
-              "name": "createOrganization",
-              "description": null,
-              "args": [
-                {
-                  "name": "input",
-                  "description": null,
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "createOrganizationInput",
-                      "ofType": null
-                    }
-                  },
-                  "defaultValue": null
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "createOrganizationPayload",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
               "name": "updateOrganization",
               "description": null,
               "args": [
@@ -5476,33 +5449,6 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "updateOrganizationPayload",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "deleteOrganization",
-              "description": null,
-              "args": [
-                {
-                  "name": "input",
-                  "description": null,
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "deleteOrganizationInput",
-                      "ofType": null
-                    }
-                  },
-                  "defaultValue": null
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "deleteOrganizationPayload",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -6539,12 +6485,12 @@
         },
         {
           "kind": "INPUT_OBJECT",
-          "name": "deleteAssetInput",
+          "name": "removeSectionAssetsInput",
           "description": null,
           "fields": null,
           "inputFields": [
             {
-              "name": "id",
+              "name": "section_id",
               "description": null,
               "type": {
                 "kind": "NON_NULL",
@@ -6578,16 +6524,16 @@
         },
         {
           "kind": "OBJECT",
-          "name": "deleteAssetPayload",
+          "name": "removeSectionAssetsPayload",
           "description": null,
           "fields": [
             {
-              "name": "deletedId",
+              "name": "section",
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "kind": "OBJECT",
+                "name": "section",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -7859,94 +7805,6 @@
         },
         {
           "kind": "INPUT_OBJECT",
-          "name": "createOrganizationInput",
-          "description": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "name": "name",
-              "description": null,
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "defaultValue": null
-            },
-            {
-              "name": "slug",
-              "description": null,
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            },
-            {
-              "name": "clientMutationId",
-              "description": null,
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            }
-          ],
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "createOrganizationPayload",
-          "description": null,
-          "fields": [
-            {
-              "name": "organization",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Organization",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "clientMutationId",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "INPUT_OBJECT",
           "name": "updateOrganizationInput",
           "description": null,
           "fields": null,
@@ -8016,84 +7874,6 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "Organization",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "clientMutationId",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "INPUT_OBJECT",
-          "name": "deleteOrganizationInput",
-          "description": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "name": "id",
-              "description": null,
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            },
-            {
-              "name": "clientMutationId",
-              "description": null,
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            }
-          ],
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "deleteOrganizationPayload",
-          "description": null,
-          "fields": [
-            {
-              "name": "organizationEdge",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "organizationEdge",
                 "ofType": null
               },
               "isDeprecated": false,

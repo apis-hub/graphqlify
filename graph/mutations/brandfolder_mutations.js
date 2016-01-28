@@ -114,7 +114,7 @@ const deleteBrandfolder = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
                 brandfolder.__api__.delete().then(function(){
-                    return brandfolderId;
+                    resolve({brandfolderId});
                 })
             }).catch(reject)
         })

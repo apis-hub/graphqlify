@@ -256,17 +256,6 @@ type createInvitationPayload {
   clientMutationId: String!
 }
 
-input createOrganizationInput {
-  name: String
-  slug: String!
-  clientMutationId: String!
-}
-
-type createOrganizationPayload {
-  organization: Organization
-  clientMutationId: String!
-}
-
 input createOrganizationUserPermissionInput {
   permission_level: String!
   organization_id: ID!
@@ -328,16 +317,6 @@ type deleteAssetCommentPayload {
   clientMutationId: String!
 }
 
-input deleteAssetInput {
-  id: ID!
-  clientMutationId: String!
-}
-
-type deleteAssetPayload {
-  deletedId: ID
-  clientMutationId: String!
-}
-
 input deleteAttachmentInput {
   id: ID!
   clientMutationId: String!
@@ -375,16 +354,6 @@ input deleteInvitationInput {
 
 type deleteInvitationPayload {
   deletedId: ID
-  clientMutationId: String!
-}
-
-input deleteOrganizationInput {
-  id: ID!
-  clientMutationId: String!
-}
-
-type deleteOrganizationPayload {
-  organizationEdge: organizationEdge
   clientMutationId: String!
 }
 
@@ -472,7 +441,7 @@ type Mutation {
   deleteAssetComment(input: deleteAssetCommentInput!): deleteAssetCommentPayload
   createAsset(input: createAssetInput!): createAssetPayload
   updateAsset(input: updateAssetInput!): updateAssetPayload
-  deleteAsset(input: deleteAssetInput!): deleteAssetPayload
+  removeSectionAsset(input: removeSectionAssetsInput!): removeSectionAssetsPayload
   createAttachment(input: createAttachmentInput!): createAttachmentPayload
   updateAttachment(input: updateAttachmentInput!): updateAttachmentPayload
   deleteAttachment(input: deleteAttachmentInput!): deleteAttachmentPayload
@@ -484,9 +453,7 @@ type Mutation {
   createSocialLink(input: createSocialLinkInput!): createSocialLinkPayload
   updateSocialLink(input: updateSocialLinkInput!): updateSocialLinkPayload
   deleteSocialLink(input: deleteSocialLinkInput!): deleteSocialLinkPayload
-  createOrganization(input: createOrganizationInput!): createOrganizationPayload
   updateOrganization(input: updateOrganizationInput!): updateOrganizationPayload
-  deleteOrganization(input: deleteOrganizationInput!): deleteOrganizationPayload
   createSection(input: createSectionInput!): createSectionPayload
   updateSection(input: updateSectionInput!): updateSectionPayload
   deleteSection(input: deleteSectionInput!): deleteSectionPayload
@@ -539,6 +506,16 @@ type Query {
   root: Root
   node(id: ID!): Node
   slug(id: ID!): Slug
+}
+
+input removeSectionAssetsInput {
+  section_id: ID!
+  clientMutationId: String!
+}
+
+type removeSectionAssetsPayload {
+  section: section
+  clientMutationId: String!
 }
 
 scalar reusable_data_type

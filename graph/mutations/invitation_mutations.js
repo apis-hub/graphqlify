@@ -73,7 +73,7 @@ const deleteInvitation = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('invitations').read(invitationId).then(function (invitation) {
                 invitation.__api__.delete().then(function(){
-                    return invitationId;
+                    resolve({invitationId});
                 })
             }).catch(reject)
         })

@@ -98,7 +98,7 @@ const deleteSection = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
                section.__api__.delete().then(function(){
-                    return sectionId;
+                    resolve({sectionId});
                 })
             }).catch(reject)
         })

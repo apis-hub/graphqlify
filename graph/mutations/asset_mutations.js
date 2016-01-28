@@ -81,27 +81,36 @@ const updateAsset = mutationWithClientMutationId({
     }
 });
 
-const deleteAsset = mutationWithClientMutationId({
-    name: 'deleteAsset',
+const removeSectionAssets = mutationWithClientMutationId({
+    name: 'removeSectionAssets',
     inputFields: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
+        section_id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        deletedId: {
-            type: GraphQLID,
-            resolve: ({assetId}) => assetId
+        section: {
+            type: sectionType,
+            resolve: ({sectionId, rootContext}) => {
+                return new Promise(function (resolve, reject){
+                    rootContext.rootValue.client.resource('sections').read(sectionId).then(function(section){
+                        resolve(section)
+                    }).catch(reject);
+                })
+            }
         }
     },
-    mutateAndGetPayload: ({id}, context) => {
-        var assetId = id;
+    mutateAndGetPayload: ({section_id}, context) => {
+        var sectionId = section_id,
+            rootContext = context;
         return new Promise(function (resolve, reject) {
-            context.rootValue.client.resource('assets').read(assetId).then(function (asset) {
-                asset.__api__.delete().then(function(){
-                    return assetId;
+            context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
+                section.__api__.relationship('assets').then(function(assetRelationship){
+                    assetRelationship.__api__.delete().then(function(response){
+                        resolve({sectionId, rootContext});
+                    })
                 })
             }).catch(reject)
         })
     }
 });
 
-export { createAsset, updateAsset, deleteAsset };
+export { createAsset, updateAsset, removeSectionAssets };

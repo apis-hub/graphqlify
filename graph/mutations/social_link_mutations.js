@@ -70,7 +70,6 @@ const updateSocialLink = mutationWithClientMutationId({
                 if (socialLinkTagNames) { socialLink.tag_names = socialLinkTagNames }
 
                 socialLink.__api__.update(socialLink).then(function (socialLink) {
-                    debugger;
                     resolve({ socialLink });
                 }).catch(reject);
             }).catch(reject);
@@ -94,7 +93,7 @@ const deleteSocialLink = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('social_links').read(socialLinkId).then(function (social_link) {
                 social_link.__api__.delete().then(function(){
-                    return socialLinkId;
+                    resolve({socialLinkId});
                 })
             }).catch(reject)
         })

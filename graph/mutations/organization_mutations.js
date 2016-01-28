@@ -65,14 +65,20 @@ const deleteOrganization = mutationWithClientMutationId({
         id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
-        organizationEdge: {
-            type: GraphQLOrganizationEdge,
-            resolve: () => null
+        organization: {
+            type:    organizationType,
+            resolve: ({ organizationId }) => organizationId
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var organizationId = fromGlobalId(id).id;
-        api.getType('organization').remove(organizationId);
+        var organizationId = id;
+        return new Promise(function (resolve, reject) {
+            context.rootValue.client.resource('organizations').read(brandfolderId).then(function (organization) {
+                organization.__api__.delete().then(function(){
+                    resolve({organizationId});
+                })
+            }).catch(reject)
+        })
     }
 });
 

@@ -101,7 +101,7 @@ const deleteCollection = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('collections').read(collectionId).then(function (collection) {
                 collection.__api__.delete().then(function(){
-                    return collectionId;
+                    resolve({collectionId});
                 })
             }).catch(reject)
         })

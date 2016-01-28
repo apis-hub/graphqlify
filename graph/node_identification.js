@@ -6,12 +6,10 @@ _.mixin(_inflection);
 
 var {nodeInterface, nodeField} = nodeDefinitions(
     (globalId) => {
-        debugger;
         var {type, id} = fromGlobalId(globalId);
         return api.resource(_.pluralize(type)).read(id);
     },
     (obj) => {
-        debugger;
         var singular = _.singularize(obj.__api.data.type);
         var typeFile = `./types/${singular}_type.js`;
         var typeKey  = `${_.camelCase(singular)}Type`;

@@ -109,7 +109,7 @@ const deleteAttachment = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
                 attachment.__api__.delete().then(function(){
-                    return attachmentId;
+                    resolve({attachmentId});
                 })
             }).catch(reject)
         })

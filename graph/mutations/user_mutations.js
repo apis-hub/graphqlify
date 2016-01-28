@@ -20,17 +20,13 @@ const createUser = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({email, first_name, last_name, password}, context) => {
-        const rootContext = context;
         return new Promise(function (resolve, reject) {
-            context.rootValue.client.resource('users').index().then(function(users){
-                users.create(
-                    'users',
+            context.rootValue.client.resource('users').create(
                     {
                         email:email, first_name:first_name, last_name:last_name, password:password
                     }
-                ).then(function(user){
-                    resolve({user, rootContext})
-                }).catch(reject);
+            ).then(function(user){
+                resolve({user})
             }).catch(reject);
         })
     },
@@ -89,7 +85,7 @@ const deleteUser = mutationWithClientMutationId({
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('users').read(userId).then(function (user) {
                 user.__api__.delete().then(function(){
-                    return userId;
+                    resolve({userId});
                 })
             }).catch(reject)
         })
