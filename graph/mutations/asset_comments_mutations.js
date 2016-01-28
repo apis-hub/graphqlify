@@ -1,26 +1,38 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLAssetCommentEdge, assetCommentType } from '../types/asset_comment_type';
-import { assetType } from '../types/asset_type';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { assetCommentType } from "../types/asset_comment_type";
+import { assetType } from "../types/asset_type";
 
 const createAssetComment = mutationWithClientMutationId({
     name: 'createAssetComment',
     inputFields: {
         body: { type: GraphQLString },
-        asset_id: { type: new GraphQLNonNull(GraphQLID)}
+        asset_id: { type: new GraphQLNonNull(GraphQLID) }
     },
     outputFields: {
         assetComment: {
             type: assetCommentType,
-            resolve: ({assetComment}) => assetComment
+            resolve: ({ assetComment }) => assetComment
         },
         asset: {
             type: assetType,
-            resolve: ({assetId, rootContext}) => {
-                return new Promise(function (resolve, reject){
-                    rootContext.rootValue.client.resource('assets').read(assetId).then(function(asset){
+            resolve: ({ assetId, rootContext }) => {
+                return new Promise(function (resolve, reject) {
+                    rootContext.rootValue.client.resource('assets').read(assetId).then(function (asset) {
                         resolve(asset)
                     }).catch(reject);
                 })
@@ -28,14 +40,14 @@ const createAssetComment = mutationWithClientMutationId({
         }
 
     },
-    mutateAndGetPayload: ({body, asset_id}, context) => {
+    mutateAndGetPayload: ({ body, asset_id }, context) => {
         const assetId = asset_id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
-            context.rootValue.client.resource('assets').read(assetId).then(function(asset){
-                asset.__api__.related('assetComments').then(function(assetComments){
-                    assetComments.create('assetComments', {body: body}).then(function(assetComment){
-                        resolve( {assetComment, assetId, rootContext })
+            context.rootValue.client.resource('assets').read(assetId).then(function (asset) {
+                asset.__api__.related('assetComments').then(function (assetComments) {
+                    assetComments.create('assetComments', { body: body }).then(function (assetComment) {
+                        resolve({ assetComment, assetId, rootContext })
                     }).catch(reject);
                 }).catch(reject);
             }).catch(reject);
@@ -44,21 +56,21 @@ const createAssetComment = mutationWithClientMutationId({
 });
 
 const deleteAssetComment = mutationWithClientMutationId({
-        name: 'deleteAssetComment',
-        inputFields: {
-            id: { type: new GraphQLNonNull(GraphQLID) },
-        },
-        outputFields: {
-            deletedId: {
-                type: GraphQLID,
-                resolve: ({assetCommentId}) => assetCommentId
+    name: 'deleteAssetComment',
+    inputFields: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+    },
+    outputFields: {
+        deletedId: {
+            type: GraphQLID,
+            resolve: ({ assetCommentId }) => assetCommentId
         }
     },
-    mutateAndGetPayload: ({id}, context) => {
+    mutateAndGetPayload: ({ id }, context) => {
         var assetCommentId = id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('assetComments').read(assetCommentId).then(function (assetComment) {
-                assetComment.__api__.delete().then(function(){
+                assetComment.__api__.delete().then(function () {
                     return assetCommentId;
                 })
             }).catch(reject)

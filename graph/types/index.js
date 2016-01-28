@@ -1,14 +1,14 @@
-import { GraphQLObjectType } from 'graphql/type';
-import { nodeField }         from '../node_identification';
-import { slugField }         from '../slug_identification';
-import { rootType }          from './root_type';
+import { GraphQLObjectType } from "graphql/type";
+import { nodeField } from "../node_identification";
+import { slugField } from "../slug_identification";
+import { rootType } from "./root_type";
 
 var queryType = new GraphQLObjectType({
-    name:        'Query',
+    name: 'Query',
     description: 'The query root of the schema',
-    fields:      () => ({
+    fields: () => ({
         root: {
-            type:    rootType,
+            type: rootType,
             resolve: (context) => {
                 return context.client
             }

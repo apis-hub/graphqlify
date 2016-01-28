@@ -1,27 +1,39 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLSocialLinkEdge, socialLinkType } from '../types/social_link_type';
-import { brandfolderType }       from '../types/brandfolder_type';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { socialLinkType } from "../types/social_link_type";
+import { brandfolderType } from "../types/brandfolder_type";
 
 const createSocialLink = mutationWithClientMutationId({
     name: 'createSocialLink',
     inputFields: {
-        name:           { type: GraphQLString},
-        url:            { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString },
+        url: { type: new GraphQLNonNull(GraphQLString) },
         brandfolder_id: { type: new GraphQLNonNull(GraphQLID) },
     },
     outputFields: {
         socialLink: {
             type: socialLinkType,
-            resolve: ({socialLink}) => socialLink
+            resolve: ({ socialLink }) => socialLink
         },
         brandfolder: {
             type: brandfolderType,
-            resolve: ({brandfolderId, rootContext}) => {
-                return new Promise(function (resolve, reject){
-                    rootContext.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
+            resolve: ({ brandfolderId, rootContext }) => {
+                return new Promise(function (resolve, reject) {
+                    rootContext.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
                         resolve(brandfolder)
                     }).catch(reject);
                 })
@@ -32,10 +44,13 @@ const createSocialLink = mutationWithClientMutationId({
         const brandfolderId = brandfolder_id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
-            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function(brandfolder){
-                brandfolder.__api__.related('social_links').then(function(social_links){
-                    social_links.create('social_links', {name: name, url:url}).then(function(socialLink){
-                        resolve( {socialLink, brandfolderId, rootContext })
+            context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
+                brandfolder.__api__.related('social_links').then(function (social_links) {
+                    social_links.create('social_links', {
+                        name: name,
+                        url: url
+                    }).then(function (socialLink) {
+                        resolve({ socialLink, brandfolderId, rootContext })
                     }).catch(reject);
                 }).catch(reject);
             }).catch(reject);
@@ -46,28 +61,34 @@ const createSocialLink = mutationWithClientMutationId({
 const updateSocialLink = mutationWithClientMutationId({
     name: 'updateSocialLink',
     inputFields: {
-        id:         { type: new GraphQLNonNull(GraphQLID) },
-        name:       { type: GraphQLString },
-        url:        { type: GraphQLString },
-        position:   { type: GraphQLInt }
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        url: { type: GraphQLString },
+        position: { type: GraphQLInt }
     },
     outputFields: {
         socialLink: {
             type: socialLinkType,
-            resolve: ({socialLink}) => socialLink
+            resolve: ({ socialLink }) => socialLink
         }
     },
-    mutateAndGetPayload: ({ id, description, socialLink_data,  tag_names}, context) => {
+    mutateAndGetPayload: ({ id, description, socialLink_data, tag_names }, context) => {
         const socialLinkId = id;
         var socialLinkDescription = description,
-              socialLinkData        = socialLink_data,
-              socialLinkTagNames    = tag_names;
+            socialLinkData = socialLink_data,
+            socialLinkTagNames = tag_names;
 
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('social_links').read(socialLinkId).then(function (socialLink) {
-                if (socialLinkDescription) { socialLink.description = socialLinkDescription }
-                if (socialLinkData) { socialLink.socialLink_data = socialLinkData }
-                if (socialLinkTagNames) { socialLink.tag_names = socialLinkTagNames }
+                if (socialLinkDescription) {
+                    socialLink.description = socialLinkDescription
+                }
+                if (socialLinkData) {
+                    socialLink.socialLink_data = socialLinkData
+                }
+                if (socialLinkTagNames) {
+                    socialLink.tag_names = socialLinkTagNames
+                }
 
                 socialLink.__api__.update(socialLink).then(function (socialLink) {
                     debugger;
@@ -86,14 +107,14 @@ const deleteSocialLink = mutationWithClientMutationId({
     outputFields: {
         deletedId: {
             type: GraphQLID,
-            resolve: ({socialLinkId}) => socialLinkId
+            resolve: ({ socialLinkId }) => socialLinkId
         }
     },
-    mutateAndGetPayload: ({id}, context) => {
+    mutateAndGetPayload: ({ id }, context) => {
         var socialLinkId = id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('social_links').read(socialLinkId).then(function (social_link) {
-                social_link.__api__.delete().then(function(){
+                social_link.__api__.delete().then(function () {
                     return socialLinkId;
                 })
             }).catch(reject)

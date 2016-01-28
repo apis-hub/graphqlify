@@ -1,9 +1,21 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString,
-    GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
-
-import { GraphQLAssetGroupEdge } from '../types/asset_group_type';
-import api                       from '../../adapters/api_adapter';
+import {
+    GraphQLObjectType,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLID,
+    GraphQLList,
+    GraphQLScalarType
+} from "graphql/type";
+import {
+    mutationWithClientMutationId,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    connectionArgs
+} from "graphql-relay";
+import { GraphQLAssetGroupEdge } from "../types/asset_group_type";
+import api from "../../adapters/api_adapter";
 
 const createAssetGroup = mutationWithClientMutationId({
     name: 'CreateAssetGroup',
@@ -13,7 +25,7 @@ const createAssetGroup = mutationWithClientMutationId({
     outputFields: {
         assetGroupEdge: {
             type: GraphQLAssetGroupEdge,
-            resolve: ({assetGroupId}) => {
+            resolve: ({ assetGroupId }) => {
                 const assetGroup = api.getType('assetGroup').find(assetGroupId);
                 return {
                     cursor: cursorForObjectInConnection(api.getType('assetGroup').all(), assetGroup),
@@ -22,23 +34,25 @@ const createAssetGroup = mutationWithClientMutationId({
             }
         }
     },
-    mutateAndGetPayload: ({asset_keys}) => {
+    mutateAndGetPayload: ({ asset_keys }) => {
         api.getType('assetGroup')
-               .create({asset_keys: asset_keys})
-               .then(result => { return { assetGroupId: result.id }; });
+            .create({ asset_keys: asset_keys })
+            .then(result => {
+                return { assetGroupId: result.id };
+            });
     },
 });
 
 const updateAssetGroup = mutationWithClientMutationId({
     name: 'UpdateAssetGroup',
     inputFields: {
-        id:         { type: new GraphQLNonNull(GraphQLID) },
-        asset_keys: { type: new GraphQLList(GraphQLString)},
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        asset_keys: { type: new GraphQLList(GraphQLString) },
     },
     outputFields: {
         assetGroupEdge: {
             type: GraphQLAssetGroupEdge,
-            resolve: ({assetGroupId}) => {
+            resolve: ({ assetGroupId }) => {
                 const assetGroup = api.getType('assetGroup').find(assetGroupId);
                 return {
                     cursor: cursorForObjectInConnection(api.getType('assetGroup').all(), assetGroup),
@@ -51,8 +65,10 @@ const updateAssetGroup = mutationWithClientMutationId({
     mutateAndGetPayload: ({ id, asset_keys }) => {
         const assetGroupId = fromGlobalId(id).id;
         api.getType('assetGroup')
-               .update(assetGroupId, {asset_keys: asset_keys})
-               .then(result => { return { assetGroupId: result.id }});
+            .update(assetGroupId, { asset_keys: asset_keys })
+            .then(result => {
+                return { assetGroupId: result.id }
+            });
     },
 });
 
@@ -67,7 +83,7 @@ const deleteAssetGroup = mutationWithClientMutationId({
             resolve: () => null
         }
     },
-    mutateAndGetPayload: ({id}) => {
+    mutateAndGetPayload: ({ id }) => {
         var assetGroupId = fromGlobalId(id).id;
         api.getType('assetGroup').remove(assetGroupId);
     }

@@ -1,22 +1,22 @@
 "use strict";
-var pluralize              = require('pluralize');
-var decamelize             = require('decamelize');
-var _                      = require('lodash');
-var JSONAPIonify           = require('JSONAPIonify-client');
+var pluralize = require('pluralize');
+var decamelize = require('decamelize');
+var _ = require('lodash');
+var JSONAPIonify = require('JSONAPIonify-client');
 var JSONAPIonifyCollection = require('JSONAPIonify-client/classes/collection');
-var JSONAPIonifyInstance   = require('JSONAPIonify-client/classes/instance');
-var JSONAPIonifyResource   = require('JSONAPIonify-client/classes/resource');
-var crypto                 = require('crypto');
-var processResponse        = require('JSONAPIonify-client/helpers/process_response');
+var JSONAPIonifyInstance = require('JSONAPIonify-client/classes/instance');
+var JSONAPIonifyResource = require('JSONAPIonify-client/classes/resource');
+var crypto = require('crypto');
+var processResponse = require('JSONAPIonify-client/helpers/process_response');
 
 _.mixin({
     'sortKeysBy': function (obj, comparator) {
         var keys = _.sortBy(_.keys(obj), function (key) {
-            return comparator ? comparator(obj[key], key) : key;
+            return comparator ? comparator(obj[ key ], key) : key;
         });
 
         return _.object(keys, _.map(keys, function (key) {
-            return obj[key];
+            return obj[ key ];
         }));
     }
 });
@@ -98,7 +98,7 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
 
     updateData() {
         var instance = this;
-        var data     = _.extend({}, this.data);
+        var data = _.extend({}, this.data);
 
         return new Promise(function (resolve, reject) {
             instance.options().then(function (response) {
@@ -117,7 +117,7 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
         var instance = this;
         return new Promise(function (resolve, reject) {
             instance.updateData().then(function (data) {
-                var request = instance.client.patch(instance.data.links['self'], { data: data });
+                var request = instance.client.patch(instance.data.links[ 'self' ], { data: data });
                 processResponse(request, function (response) {
                     instance.data = response.json.data;
                     resolve(instance.graphQLObject());
