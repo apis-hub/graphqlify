@@ -40,7 +40,7 @@ const createBrandfolder = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ name, organization_id }, context) => {
-        const organizationId = organization_id;
+        const organizationId = fromGlobalId(organization_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('organizations').read(organizationId).then(function (organization) {
@@ -79,7 +79,7 @@ const updateBrandfolder = mutationWithClientMutationId({
         id, name, tagline, is_public, stealth, request_access_enabled, request_access_prompt,
         slug, google_analytics_id, whitelisted_domains, enable_simple_password
     }, context) => {
-        const brandfolderId = id;
+        const brandfolderId = fromGlobalId(id).id;
         var brandfolderName = name,
             brandfolderTagline = tagline,
             brandfolderIs_public = is_public,
@@ -144,7 +144,7 @@ const deleteBrandfolder = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var brandfolderId = id;
+        var brandfolderId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
                 brandfolder.__api__.delete().then(function(){

@@ -96,18 +96,6 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
         })
     }
 
-    relationship(name) {
-        var superPromise = super.relationship(name);
-        return new Promise(function(resolve, reject) {
-            superPromise.then(function(objOrAry){
-                if (objOrAry instanceof Array) {
-                    resolve(new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.client));
-                } else if (objOrAry instanceof Object) {
-                    resolve(new GraphQLifiedJsonAPIInstance(objOrAry.data, objOrAry.client).graphQLObject());
-                }
-            }).catch(rejectWithGraphQL(reject))
-        })
-    }
     updateData() {
         var instance = this;
         var data = _.extend({}, this.data);

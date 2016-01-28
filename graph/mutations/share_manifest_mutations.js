@@ -46,7 +46,7 @@ const deleteShareManifest = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var shareManifestId = id;
+        var shareManifestId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('share_manifests').read(shareManifestId).then(function (shareManifest) {
                 shareManifest.__api__.delete().then(function(){

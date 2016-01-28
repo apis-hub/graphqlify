@@ -43,7 +43,7 @@ const createCollection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ name, brandfolder_id, slug }, context) => {
-        const brandfolderId = brandfolder_id;
+        const brandfolderId = fromGlobalId(brandfolder_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -77,7 +77,7 @@ const updateCollection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, name, is_public, slug, stealth, options }, context) => {
-        const collectionId = id;
+        const collectionId = fromGlobalId(id).id;
         var collectionName = name,
             collectionIsPublic = is_public,
             collectionSlug = slug,
@@ -122,7 +122,7 @@ const deleteCollection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var collectionId = id;
+        var collectionId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('collections').read(collectionId).then(function (collection) {
                 collection.__api__.delete().then(function(){

@@ -41,7 +41,7 @@ const createAssetComment = mutationWithClientMutationId({
 
     },
     mutateAndGetPayload: ({ body, asset_id }, context) => {
-        const assetId = asset_id;
+        const assetId = fromGlobalId(asset_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('assets').read(assetId).then(function (asset) {
@@ -67,7 +67,7 @@ const deleteAssetComment = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var assetCommentId = id;
+        var assetCommentId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('assetComments').read(assetCommentId).then(function (assetComment) {
                 assetComment.__api__.delete().then(function(){

@@ -60,7 +60,7 @@ const updateOrganization = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, name, slug }) => {
-        const organizationId = id;
+        const organizationId = fromGlobalId(id).id;
         var organizationName = name,
             organizationSlug = slug;
 
@@ -93,7 +93,7 @@ const deleteOrganization = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var organizationId = id;
+        var organizationId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('organizations').read(brandfolderId).then(function (organization) {
                 organization.__api__.delete().then(function(){

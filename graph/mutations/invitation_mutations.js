@@ -54,8 +54,8 @@ const createInvitation = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ email, inviter_id, permission_level, personal_message, brandfolder_id }, context) => {
-        const userId = inviter_id;
-        const brandfolderId = brandfolder_id;
+        const userId = fromGlobalId(inviter_id).id;
+        const brandfolderId = fromGlobalId(brandfolder_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -90,7 +90,7 @@ const deleteInvitation = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var invitationId = id;
+        var invitationId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('invitations').read(invitationId).then(function (invitation) {
                 invitation.__api__.delete().then(function(){

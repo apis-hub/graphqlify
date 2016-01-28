@@ -41,7 +41,7 @@ const createSocialLink = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ name, url, brandfolder_id }, context) => {
-        const brandfolderId = brandfolder_id;
+        const brandfolderId = fromGlobalId(brandfolder_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -73,7 +73,7 @@ const updateSocialLink = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, description, socialLink_data, tag_names }, context) => {
-        const socialLinkId = id;
+        const socialLinkId = fromGlobalId(id).id;
         var socialLinkDescription = description,
             socialLinkData = socialLink_data,
             socialLinkTagNames = tag_names;
@@ -110,7 +110,7 @@ const deleteSocialLink = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var socialLinkId = id;
+        var socialLinkId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('social_links').read(socialLinkId).then(function (social_link) {
                 social_link.__api__.delete().then(function(){

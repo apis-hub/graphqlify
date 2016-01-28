@@ -22,12 +22,18 @@ var assetCommentType = new GraphQLObjectType({
         body: { type: GraphQLString },
         created_at: { type: GraphQLString },
         updated_at: { type: GraphQLString },
-        asset: { type: assetType },
+        asset: {
+            type: assetType,
+            args: connectionArgs,
+            resolve: (assetComment, args) => connectionFromPromisedArray(
+                assetComment.__api__.related('asset'), args
+            )
+        },
         replies: {
             type: assetCommentConnection,
             description: 'The asset comment replies',
             args: connectionArgs,
-            resolve: (asset, args) => connectionFromPromisedArray(
+            resolve: (assetComment, args) => connectionFromPromisedArray(
                 assetComment.__api__.related('replies'), args
             )
         }

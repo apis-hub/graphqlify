@@ -42,7 +42,7 @@ const createOrganizationUserPermission = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ permission_level, organization_id }, context) => {
-        const organizationId = organization_id;
+        const organizationId = fromGlobalId(organization_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('organizations').read(organizationId).then(function (organization) {
@@ -80,7 +80,7 @@ const createBrandfolderUserPermission = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ permission_level, brandfolder_id }, context) => {
-        const brandfolderId = brandfolder_id;
+        const brandfolderId = fromGlobalId(brandfolder_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -118,7 +118,7 @@ const createCollectionUserPermission = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ permission_level, collection_id }, context) => {
-        const collectionId = collection_id;
+        const collectionId = fromGlobalId(collection_id).id;
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('collections').read(collectionId).then(function (collection) {

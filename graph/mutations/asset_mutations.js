@@ -78,7 +78,7 @@ const updateAsset = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, description, asset_data, tag_names }, context) => {
-        const assetId = id;
+        const assetId = fromGlobalId(id).id;
         var assetDescription = description,
             assetData = asset_data,
             assetTagNames = tag_names;
@@ -121,14 +121,14 @@ const removeSectionAssets = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({section_id}, context) => {
-        var sectionId = section_id,
+        var sectionId = fromGlobalId(section_id).id,
             rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
-                section.__api__.relationship('assets').then(function(assetRelationship){
-                    assetRelationship.__api__.delete().then(function(response){
-                        resolve({sectionId, rootContext});
-                    })
+                section.__api__.relationship('assets').then(function(assetRelationships){
+                    debugger;
+                    assetRelationships.remove(assetRelationships);
+                    resolve({sectionId, rootContext});
                 })
             }).catch(reject)
         })

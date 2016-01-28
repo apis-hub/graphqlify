@@ -11,7 +11,7 @@ type Asset implements Node, Slug {
   updated_at: String
   attachments(after: String, first: Int, before: String, last: Int): attachmentConnection
   collections(after: String, first: Int, before: String, last: Int): collectionConnection
-  comments: assetCommentConnection
+  comments(after: String, first: Int, before: String, last: Int): assetCommentConnection
 }
 
 type AssetComment implements Node, Slug {
@@ -19,7 +19,7 @@ type AssetComment implements Node, Slug {
   body: String
   created_at: String
   updated_at: String
-  asset: Asset
+  asset(after: String, first: Int, before: String, last: Int): Asset
   replies(after: String, first: Int, before: String, last: Int): assetCommentConnection
 }
 
@@ -385,30 +385,6 @@ input deleteUserInput {
 type deleteUserPayload {
   deletedId: ID
   clientMutationId: String!
-}
-
-type Event implements Node, Slug {
-  id: ID!
-  user_id: ID
-  brandfolder_id: ID
-  collection_id: ID
-  asset_id: ID
-  attachment_id: ID
-  invitation_id: ID
-  action: String!
-  user_agent: String
-  ip: String
-  lat: Int
-  long: Int
-  city: String
-  state: String
-  country: String
-  social_link_id: ID
-  section_id: ID
-  organization_id: ID
-  share_manifest_id: ID
-  created_at: String
-  updated_at: String
 }
 
 type Invitation implements Node, Slug {

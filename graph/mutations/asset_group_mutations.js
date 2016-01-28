@@ -62,7 +62,7 @@ const deleteAssetGroup = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var deletedId = id;
+        var deletedId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('asset_groups').read(deletedId).then(function (assetGroup) {
                 assetGroup.__api__.delete().then(function(){

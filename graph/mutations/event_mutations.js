@@ -52,7 +52,7 @@ const deleteEvent = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({id}) => {
-        var eventId = id;
+        var eventId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('events').read(eventId).then(function (event) {
                 event.__api__.delete().then(function () {

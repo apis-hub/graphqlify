@@ -63,7 +63,7 @@ const updateUser = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, email, first_name, last_name, password }, context) => {
-        const userId = id;
+        const userId = fromGlobalId(id).id;
         var userEmail = email,
             userFirstName = first_name,
             userLastName = last_name,
@@ -104,7 +104,7 @@ const deleteUser = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var userId = id;
+        var userId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('users').read(userId).then(function (user) {
                 user.__api__.delete().then(function(){

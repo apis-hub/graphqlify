@@ -99,7 +99,7 @@ const updateAttachment = mutationWithClientMutationId({
         },
     },
     mutateAndGetPayload: ({ id, position, url }, context) => {
-        const attachmentId = id;
+        const attachmentId = fromGlobalId(id).id;
         var attachmentPosition = position,
             attachmentUrl = url;
         return new Promise(function (resolve, reject) {
@@ -132,7 +132,7 @@ const deleteAttachment = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var attachmentId = id;
+        var attachmentId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
                 attachment.__api__.delete().then(function(){

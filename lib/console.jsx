@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import GraphiQL from 'graphiql';
 import fetch from "isomorphic-fetch";
 import $ from "jquery";
 import Url from "url";

@@ -41,7 +41,7 @@ const createSection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ name, default_asset_type, brandfolder_id }, context) => {
-        const brandfolderId = brandfolder_id;
+        const brandfolderId = fromGlobalId(brandfolder_id);
         const rootContext = context;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('brandfolders').read(brandfolderId).then(function (brandfolder) {
@@ -75,7 +75,7 @@ const updateSection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id, name, default_asset_type, position }, context) => {
-        const sectionId = id;
+        const sectionId = fromGlobalId(id).id;
         var sectionName = name,
             sectionDefaultAssetType = default_asset_type,
             sectionPosition = position;
@@ -112,7 +112,7 @@ const deleteSection = mutationWithClientMutationId({
         }
     },
     mutateAndGetPayload: ({ id }, context) => {
-        var sectionId = id;
+        var sectionId = fromGlobalId(id).id;
         return new Promise(function (resolve, reject) {
             context.rootValue.client.resource('sections').read(sectionId).then(function (section) {
                section.__api__.delete().then(function(){
