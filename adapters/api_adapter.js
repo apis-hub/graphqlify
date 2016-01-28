@@ -2,12 +2,12 @@
 var pluralize              = require('pluralize');
 var decamelize             = require('decamelize');
 var _                      = require('lodash');
-var JSONAPIonify           = require('jsonapionify-client');
-var JSONAPIonifyCollection = require('jsonapionify-client/classes/collection');
-var JSONAPIonifyInstance   = require('jsonapionify-client/classes/instance');
-var JSONAPIonifyResource   = require('jsonapionify-client/classes/resource');
+var JSONAPIonify           = require('JSONAPIonify-client');
+var JSONAPIonifyCollection = require('JSONAPIonify-client/classes/collection');
+var JSONAPIonifyInstance   = require('JSONAPIonify-client/classes/instance');
+var JSONAPIonifyResource   = require('JSONAPIonify-client/classes/resource');
 var crypto                 = require('crypto');
-var processResponse        = require('jsonapionify-client/helpers/process_response');
+var processResponse        = require('JSONAPIonify-client/helpers/process_response');
 
 _.mixin({
     'sortKeysBy': function (obj, comparator) {
