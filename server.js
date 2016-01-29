@@ -10,7 +10,7 @@ import { GraphQLifiedJsonAPI, signRequest } from "./adapters/api_adapter";
 const webPackConfig = {
     entry: path.resolve(__dirname, 'lib', 'console.jsx'),
     resolve: {
-        extensions: [ '', '.js', '.jsx', '.es6' ]
+        extensions: [ '', '.js', '.jsx']
     },
     module: {
         loaders: [

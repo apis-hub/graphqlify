@@ -21,55 +21,27 @@ _.mixin({
     }
 });
 
-
-function rejectWithGraphQL(fn) {
-    return function (jsonapiError) {
-        if (!typeof error instanceof Array) {
-            return error
-        }
-        var reason = jsonapiError.map(function (error) {
-            var message = `${error.status} ${error.title}`;
-            if (error.detail) {
-                message += `: ${error.detail}`
-            }
-            return message
-        }).join(', ');
-        fn(reason)
-    }
-}
-
-
 class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
     constructor(name, client) {
         super(name, client);
     }
 
     index() {
-        var superPromise = super.index();
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (jsonAPICollection) {
-                resolve(new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client));
-            }).catch(rejectWithGraphQL(reject));
-        })
+        return super.index().then(function (jsonAPICollection) {
+            return new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client);
+        });
     }
 
     create(data) {
-        var superPromise = super.create(data);
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (jsonAPIInstance) {
-                resolve(new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
-            }).catch(rejectWithGraphQL(reject));
-        })
+        return super.create(data).then(function (jsonAPIInstance) {
+            return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject();
+        });
     }
 
     read(id) {
-        var superPromise = super.read(id);
-
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (jsonAPIInstance) {
-                resolve(new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject())
-            }).catch(rejectWithGraphQL(reject));
-        })
+        return super.read(id).then(function (jsonAPIInstance) {
+            return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject();
+        });
     }
 
 }
@@ -84,54 +56,36 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
     }
 
     related(name) {
-        var superPromise = super.related(name);
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (objOrAry) {
-                if (objOrAry instanceof Array) {
-                    resolve(new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.client));
-                } else if (objOrAry instanceof Object) {
-                    resolve(new GraphQLifiedJsonAPIInstance(objOrAry.data, objOrAry.client).graphQLObject());
-                }
-            }).catch(rejectWithGraphQL(reject));
+        return super.related(name).then(function (objOrAry) {
+            if (objOrAry instanceof Array) {
+                return new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.client);
+            } else if (objOrAry instanceof Object) {
+                return new GraphQLifiedJsonAPIInstance(objOrAry.data, objOrAry.client).graphQLObject();
+            }
         })
     }
 
-    updateData() {
+    prepareUpdateData() {
         var instance = this;
-        var data = _.extend({}, this.data);
-
-        return new Promise(function (resolve, reject) {
-            instance.options().then(function (response) {
-                data.attributes = _.pick(
-                    data.attributes,
-                    response.json.meta.requests.PATCH.attributes.map(function (attr) {
-                        return attr.name
-                    })
-                );
-                resolve(data)
-            }).catch(rejectWithGraphQL(reject));
+        return this.options().then(function (response) {
+            var data = _.extend({}, instance.data);
+            data.attributes = _.pick(
+                data.attributes,
+                response.json.meta.requests.PATCH.attributes.map(function (attr) {
+                    return attr.name
+                })
+            );
+            return data
         });
     }
 
     save() {
         var instance = this;
-        return new Promise(function (resolve, reject) {
-            instance.updateData().then(function (data) {
-                var request = instance.client.patch(instance.data.links[ 'self' ], { data: data });
-                processResponse(request, function (response) {
-                    instance.data = response.json.data;
-                    resolve(instance.graphQLObject());
-                });
-            }).catch(reject);
-        });
-    }
-
-    delete() {
-        var superPromise = super.delete();
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (response) {
-                resolve(response)
-            }).catch(rejectWithGraphQL(reject))
+        return instance.prepareUpdateData().then(function (data) {
+            return instance.client.patch(instance.data.links[ 'self' ], { data: data });
+        }).then(processResponse).then(function (response) {
+            instance.data = response.json.data;
+            return instance.graphQLObject();
         })
     }
 }
@@ -151,12 +105,9 @@ class GraphQLifiedJsonAPICollection extends JSONAPIonifyCollection {
     }
 
     create(type, data) {
-        var superPromise = super.create(type, data);
-        return new Promise(function (resolve, reject) {
-            superPromise.then(function (jsonApiInstance) {
-                resolve(new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.client).graphQLObject());
-            }).catch(rejectWithGraphQL(reject));
-        })
+        super.create(type, data).then(function (jsonApiInstance) {
+            return new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.client).graphQLObject();
+        });
     }
 }
 

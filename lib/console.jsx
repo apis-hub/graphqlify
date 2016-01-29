@@ -50,13 +50,6 @@ if (params.token) {
         });
         window.location = Url.format(url);
     });
-
-    // window.location('');
-    //var api_key = prompt('Enter your Brandfolder API Key, or leave blank to access as a public user.');
-    //if (api_key) {
-    //    params.token         = token;
-    //    window.location.search = `?${$.param(params)}`;
-    //}
 }
 
 ReactDOM.render(<GraphiQL
