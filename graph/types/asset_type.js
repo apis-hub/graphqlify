@@ -12,7 +12,6 @@ import {
     connectionFromPromisedArray
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { attachmentConnection } from "./attachment_type";
 import { collectionConnection } from "./collection_type";
 import { assetCommentConnection } from "./asset_comment_type";
@@ -59,7 +58,7 @@ var assetType = new GraphQLObjectType({
         }
 
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: assetConnection, edgeType: GraphQLAssetEdge } = connectionDefinitions({

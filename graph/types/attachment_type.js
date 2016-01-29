@@ -14,7 +14,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { reusableDataType } from "./reusable_data_type";
 import { assetType } from "./asset_type";
 
@@ -46,7 +45,7 @@ var attachmentType = new GraphQLObjectType({
         }
 
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: attachmentConnection, edgeType: GraphQLAttachmentEdge } =

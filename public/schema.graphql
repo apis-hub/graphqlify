@@ -1,4 +1,4 @@
-type Asset implements Node, Slug {
+type Asset implements Node {
   id: ID!
   name: String!
   asset_type: String
@@ -14,7 +14,7 @@ type Asset implements Node, Slug {
   comments(after: String, first: Int, before: String, last: Int): assetCommentConnection
 }
 
-type AssetComment implements Node, Slug {
+type AssetComment implements Node {
   id: ID!
   body: String
   created_at: String
@@ -43,7 +43,7 @@ type assetEdge {
   cursor: String!
 }
 
-type Attachment implements Node, Slug {
+type Attachment implements Node {
   id: ID!
   position: Int
   url: String
@@ -387,7 +387,7 @@ type deleteUserPayload {
   clientMutationId: String!
 }
 
-type Invitation implements Node, Slug {
+type Invitation implements Node {
   id: ID!
   email: String!
   permission_level: String!
@@ -481,7 +481,7 @@ type PageInfo {
 type Query {
   root: Root
   node(id: ID!): Node
-  slug(id: ID!): Slug
+  slug(uri: String!): Slug
 }
 
 input removeSectionAssetsInput {
@@ -502,7 +502,7 @@ type Root {
   organizations(after: String, first: Int, before: String, last: Int): organizationConnection
 }
 
-type section implements Node, Slug {
+type section implements Node {
   id: ID!
   name: String!
   default_asset_type: String!
@@ -524,10 +524,14 @@ type sectionEdge {
 }
 
 interface Slug {
-  id: ID!
+  id: ID
+  name: String
+  slug: String
+  created_at: String
+  updated_at: String
 }
 
-type SocialLink implements Node, Slug {
+type SocialLink implements Node {
   id: ID!
   name: String!
   url: String!
@@ -659,7 +663,7 @@ type updateUserPayload {
   clientMutationId: String!
 }
 
-type User implements Node, Slug {
+type User implements Node {
   id: ID!
   first_name: String
   last_name: String
@@ -682,7 +686,7 @@ type userEdge {
   cursor: String!
 }
 
-type UserPermission implements Node, Slug {
+type UserPermission implements Node {
   id: ID!
   permission_level: String!
   email: String!

@@ -8,7 +8,6 @@ import {
 } from "graphql/type";
 import { globalIdField, connectionDefinitions } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 
 var eventType = new GraphQLObjectType({
     name: 'Event',
@@ -36,7 +35,7 @@ var eventType = new GraphQLObjectType({
         created_at: { type: GraphQLString },
         updated_at: { type: GraphQLString }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: eventConnection, edgeType: GraphQLEventEdge } =

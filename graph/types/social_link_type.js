@@ -12,7 +12,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { brandfolderType } from "./brandfolder_type";
 
 var socialLinkType = new GraphQLObjectType({
@@ -32,7 +31,7 @@ var socialLinkType = new GraphQLObjectType({
             }
         }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: socialLinkConnection, edgeType: GraphQLSocialLinkEdge } =

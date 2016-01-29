@@ -13,7 +13,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { userType } from "./user_type";
 
 var invitationType = new GraphQLObjectType({
@@ -35,7 +34,7 @@ var invitationType = new GraphQLObjectType({
             }
         }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: invitationConnection, edgeType: GraphQLInvitationEdge } =

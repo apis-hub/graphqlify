@@ -13,7 +13,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { userType } from "./user_type";
 
 var userPermissionType = new GraphQLObjectType({
@@ -32,7 +31,7 @@ var userPermissionType = new GraphQLObjectType({
             }
         }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: userPermissionConnection, edgeType: GraphQLUserPermissionEdge } =

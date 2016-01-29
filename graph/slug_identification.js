@@ -1,21 +1,52 @@
+import {
+    GraphQLInterfaceType,
+    GraphQLString,
+    GraphQLID,
+    GraphQLNonNull
+} from "graphql";
 import { nodeDefinitions, fromGlobalId } from "graphql-relay";
-import _ from "lodash";
-import _inflection from "lodash-inflection";
-_.mixin(_inflection);
 
-var { nodeInterface: slugInterface, nodeField: slugField } = nodeDefinitions(
-    (slug, context) => {
-        return context.rootValue.client.resource('slug').read(slug);
+var slugInterface = new GraphQLInterfaceType({
+    name: 'Slug',
+    fields: {
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        slug: { type: GraphQLString },
+        created_at: { type: GraphQLString },
+        updated_at: { type: GraphQLString }
     },
-    (obj) => {
-        var singular = _.singularize(obj.__api.data.type);
-        var typeFile = `./types/${singular}_type.js`;
-        var typeKey = `${_.camelCase(singular)}Type`;
-        return require(typeFile)[ typeKey ];
-    }
-);
+    resolveType: (obj) => {
+        var { brandfolderType } = require("./types/brandfolder_type");
+        var { organizationType } = require("./types/organization_type");
+        var { collectionType } = require("./types/collection_type");
+        switch (obj.__api__.type()) {
+            case "brandfolders":
+                return brandfolderType;
+                break;
+            case "organizations":
+                return organizationType;
+                break;
+            case "collections":
+                return collectionType;
+                break;
+        }
 
-slugInterface.name = 'Slug';
-slugField.name = 'slug';
+    }
+});
+
+var slugField = {
+    name: 'slug',
+    description: 'Fetches an object by its slug uri.',
+    type: slugInterface,
+    args: {
+        uri: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The slug uri of the object'
+        }
+    },
+    resolve: (query, args, context) => {
+        return context.rootValue.client.resource('slug').read(args.uri);
+    }
+};
 
 export { slugInterface, slugField };

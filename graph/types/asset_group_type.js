@@ -17,7 +17,7 @@ var assetGroupType = new GraphQLObjectType({
         updated_at: { type: GraphQLString },
         asset_keys: { type: new GraphQLList(GraphQLString) }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: assetGroupConnection, edgeType: GraphQLAssetGroupEdge } =

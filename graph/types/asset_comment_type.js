@@ -11,7 +11,6 @@ import {
     connectionFromPromisedArray
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { assetType } from "./asset_type";
 
 var assetCommentType = new GraphQLObjectType({
@@ -39,7 +38,7 @@ var assetCommentType = new GraphQLObjectType({
         }
 
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: assetCommentConnection, edgeType: GraphQLAssetCommentEdge } =

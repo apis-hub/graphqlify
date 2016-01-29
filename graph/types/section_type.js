@@ -13,7 +13,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { assetConnection } from "./asset_type";
 import { brandfolderType } from "./brandfolder_type";
 
@@ -42,7 +41,7 @@ var sectionType = new GraphQLObjectType({
             )
         }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: sectionConnection, edgeType: GraphQLSectionEdge } =

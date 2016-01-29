@@ -11,7 +11,6 @@ import {
     connectionDefinitions
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 
 var shareManifestType = new GraphQLObjectType({
     name: 'ShareManifest',
@@ -28,7 +27,7 @@ var shareManifestType = new GraphQLObjectType({
         created_at: { type: new GraphQLNonNull(GraphQLString) },
         updated_at: { type: new GraphQLNonNull(GraphQLString) }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: shareManifestConnection, edgeType: GraphQLShareManifestEdge } =

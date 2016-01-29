@@ -13,7 +13,6 @@ import {
     globalIdField
 } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
-import { slugInterface } from "../slug_identification";
 import { brandfolderConnection } from "./brandfolder_type";
 import { organizationConnection } from "./organization_type";
 import { collectionConnection } from "./collection_type";
@@ -54,7 +53,7 @@ var userType = new GraphQLObjectType({
             )
         }
     }),
-    interfaces: [ nodeInterface, slugInterface ]
+    interfaces: [ nodeInterface ]
 });
 
 var { connectionType: userConnection, edgeType: GraphQLUserEdge } =
