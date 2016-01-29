@@ -4,10 +4,6 @@
     "react",
     "stage-0"
   ],
-  "plugins": [
-    "transform-react-jsx",
-    "./build/babelRelayPlugin"
-  ],
   "ignore": [
     "node_modules",
     "adapters"
