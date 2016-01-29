@@ -49,6 +49,12 @@ app.use('/graphql', graphqlHTTP((request) => {
         rootValue: { client: client }
     }
 }));
+
+// load console at root
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'views/console.html'))
+});
+
 var port = process.env.PORT || 8080;
 app.listen(port);
 console.log(`Started on http://localhost:${port}/`);
