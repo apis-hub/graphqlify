@@ -5,7 +5,7 @@ import path from "path";
 import webpack from "webpack";
 import webpackMiddleware from "webpack-dev-middleware";
 import { graphql } from "graphql";
-import { signRequest } from "./adapters/api_adapter";
+import { GraphQLifiedJsonAPI } from "./adapters/api_adapter";
 
 const webPackConfig = {
     entry: path.resolve(__dirname, 'lib', 'console.jsx'),

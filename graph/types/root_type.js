@@ -12,8 +12,18 @@ import {
     connectionFromPromisedArray,
     globalIdField
 } from "graphql-relay";
+import HTTPError from "JSONAPIonify-client/errors";
 import { brandfolderConnection } from "./brandfolder_type";
 import { organizationConnection } from "./organization_type";
+
+function catchUnauthorized(rootValue) {
+    return function (error) {
+        if (error instanceof HTTPError._401) {
+            rootValue.statusCode = 401
+        }
+        throw error
+    }
+}
 
 var rootType = new GraphQLObjectType({
     name: 'Root',
@@ -24,17 +34,15 @@ var rootType = new GraphQLObjectType({
         brandfolders: {
             type: brandfolderConnection,
             args: connectionArgs,
-            resolve: (root, args, context) => {
-                return connectionFromPromisedArray(
-                    context.rootValue.client.resource('brandfolders').index(), args
-                )
-            }
+            resolve: (root, args, context) => connectionFromPromisedArray(
+                context.rootValue.client.resource('brandfolders').index().catch(catchUnauthorized(context.rootValue)), args
+            )
         },
         organizations: {
             type: organizationConnection,
             args: connectionArgs,
             resolve: (root, args, context) => connectionFromPromisedArray(
-                context.rootValue.client.resource('organizations').index(), args
+                context.rootValue.client.resource('organizations').index().catch(catchUnauthorized(context.rootValue)), args
             )
         }
     })
