@@ -5,12 +5,12 @@ import path from "path";
 import webpack from "webpack";
 import webpackMiddleware from "webpack-dev-middleware";
 import { graphql } from "graphql";
-import { GraphQLifiedJsonAPI, signRequest } from "./adapters/api_adapter";
+import { signRequest } from "./adapters/api_adapter";
 
 const webPackConfig = {
     entry: path.resolve(__dirname, 'lib', 'console.jsx'),
     resolve: {
-        extensions: [ '', '.js', '.jsx']
+        extensions: [ '', '.js', '.jsx' ]
     },
     module: {
         loaders: [
@@ -33,8 +33,7 @@ app.use('/assets', webpackMiddleware(compiler));
 // Serve Static
 app.use('/', express.static(path.join(__dirname, 'public')));
 
-// Serve GraphQL
-app.use('/graphql', graphqlHTTP((request) => {
+const graphQLMiddleware = graphqlHTTP((request) => {
     var headers = {};
     var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
@@ -48,7 +47,10 @@ app.use('/graphql', graphqlHTTP((request) => {
         schema: schema,
         rootValue: { client: client }
     }
-}));
+});
+
+// Serve GraphQL
+app.use('/graphql', graphQLMiddleware);
 
 // load console at root
 app.get('/', (req, res) => {
