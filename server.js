@@ -6,6 +6,7 @@ import webpack from "webpack";
 import webpackMiddleware from "webpack-dev-middleware";
 import { graphql } from "graphql";
 import { GraphQLifiedJsonAPI } from "./adapters/api_adapter";
+import cors from "cors";
 
 const webPackConfig = {
     entry: path.resolve(__dirname, 'lib', 'console.jsx'),
@@ -26,6 +27,9 @@ const webPackConfig = {
 
 const compiler = webpack(webPackConfig);
 const app = express();
+
+// Enable Cors
+app.use('/graphql', cors());
 
 // Serve Webpack
 app.use('/assets', webpackMiddleware(compiler));

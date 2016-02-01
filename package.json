@@ -24,6 +24,7 @@
     "babel-relay-plugin": "^0.6.3",
     "babel-relay-plugin-loader": "^0.6.3",
     "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
     "decamelize": "^1.1.2",
     "es6-arrow-function": "^0.6.6",
     "exenv": "^1.2.0",
