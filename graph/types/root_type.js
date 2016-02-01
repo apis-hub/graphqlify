@@ -12,14 +12,14 @@ import {
     connectionFromPromisedArray,
     globalIdField
 } from "graphql-relay";
-import HTTPError from "JSONAPIonify-client/errors";
+import { HTTPError401 } from "JSONAPIonify-client/errors";
 import { brandfolderConnection } from "./brandfolder_type";
 import { organizationConnection } from "./organization_type";
 
 function catchUnauthorized(rootValue) {
     return function (error) {
-        if (error instanceof HTTPError._401) {
-            rootValue.statusCode = 401
+        if (error instanceof HTTPError401) {
+            rootValue.statusCode = error.statusCode;
         }
         throw error
     }
