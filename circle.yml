@@ -17,10 +17,10 @@ deployment:
     branch: develop
     commands:
       # Pull unshallow
-      - git pull --unshallow
+      - git fetch --unshallow
 
       # Deploy
-      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-staging.git'
+      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-staging.git $CIRCLE_BRANCH:master'
 
       # Upcheck
       - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-staging.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
@@ -30,10 +30,10 @@ deployment:
     branch: master
     commands:
       # Pull unshallow
-      - git pull --unshallow
+      - git fetch --unshallow
 
       # Deploy
-      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-production.git'
+      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-production.git $CIRCLE_BRANCH:master'
 
       # Upcheck
       - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-production.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
