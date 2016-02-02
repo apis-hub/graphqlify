@@ -4,20 +4,7 @@ var JSONAPIonify = require('JSONAPIonify-client');
 var JSONAPIonifyCollection = require('JSONAPIonify-client/classes/collection');
 var JSONAPIonifyInstance = require('JSONAPIonify-client/classes/instance');
 var JSONAPIonifyResource = require('JSONAPIonify-client/classes/resource');
-var crypto = require('crypto');
 var processResponse = require('JSONAPIonify-client/helpers/process_response');
-
-_.mixin({
-  'sortKeysBy': function(obj, comparator) {
-    var keys = _.sortBy(_.keys(obj), function(key) {
-      return comparator ? comparator(obj[key], key) : key;
-    });
-
-    return _.object(keys, _.map(keys, function(key) {
-      return obj[key];
-    }));
-  }
-});
 
 class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
   constructor(name, client) {

@@ -9,20 +9,23 @@ import { GraphQLifiedJsonAPI } from "./adapters/api_adapter";
 import cors from "cors";
 
 const webPackConfig = {
-    entry: path.resolve(__dirname, 'lib', 'console.jsx'),
-    resolve: {
-        extensions: [ '', '.js', '.jsx' ]
-    },
-    module: {
-        loaders: [
-            {
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                test: /\.(js|jsx|es6)$/
-            }
-        ]
-    },
-    output: { filename: 'console.js', path: '/assets' }
+  entry: path.resolve(__dirname, 'views', 'console.jsx'),
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
+  module: {
+    loaders: [
+      {
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        test: /\.(js|jsx|es6)$/
+      }
+    ]
+  },
+  output: {
+    filename: 'console.js',
+    path: '/assets'
+  }
 };
 
 const compiler = webpack(webPackConfig);
@@ -38,19 +41,23 @@ app.use('/assets', webpackMiddleware(compiler));
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 const graphQLMiddleware = graphqlHTTP((request) => {
-    var headers = {};
-    var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
+  var headers = {};
+  var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
-    if (request.headers.authorization) {
-        headers.authorization = request.headers.authorization
+  if (request.headers.authorization) {
+    headers.authorization = request.headers.authorization
+  }
+
+  var client = new GraphQLifiedJsonAPI(endpoint, {
+    headers: headers
+  });
+
+  return {
+    schema: schema,
+    rootValue: {
+      client: client
     }
-
-    var client = new GraphQLifiedJsonAPI(endpoint, { headers: headers });
-
-    return {
-        schema: schema,
-        rootValue: { client: client }
-    }
+  }
 });
 
 // Serve GraphQL
@@ -58,7 +65,7 @@ app.use('/graphql', graphQLMiddleware);
 
 // load console at root
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'views/console.html'))
+  res.sendFile(path.resolve(__dirname, 'views/console.html'))
 });
 
 var port = process.env.PORT || 8080;

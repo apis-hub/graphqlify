@@ -1,19 +1,5 @@
-import {
-    GraphQLObjectType,
-    GraphQLInt,
-    GraphQLNonNull,
-    GraphQLString,
-    GraphQLBoolean,
-    GraphQLID,
-    GraphQLList,
-    GraphQLScalarType
-} from "graphql/type";
-import {
-    mutationWithClientMutationId,
-    cursorForObjectInConnection,
-    fromGlobalId,
-    connectionArgs
-} from "graphql-relay";
+import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
+import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
 import { GraphQLEventEdge } from "../types/event_type";
 import { userType } from "../types/user_type";
 import { brandfolderType } from "../types/brandfolder_type";
@@ -27,40 +13,44 @@ import api from "../../adapters/api_adapter";
 
 
 const createEvent = mutationWithClientMutationId({
-    name: 'CreateEvent',
-    inputFields: {
-       // TBD
-    },
-    outputFields: {
-        // TBD
+  name: 'CreateEvent',
+  inputFields: {
+    // TBD
+  },
+  outputFields: {
+    // TBD
 
-    },
-    mutateAndGetPayload: ({},context) => {
-        //TBD
-    }
+  },
+  mutateAndGetPayload: ({}, context) => {
+    //TBD
+  }
 });
 
 const deleteEvent = mutationWithClientMutationId({
-    name: 'DeleteEvent',
-    inputFields: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
+  name: 'DeleteEvent',
+  inputFields: {
+    id: {
+      type: new GraphQLNonNull(GraphQLID)
     },
-    outputFields: {
-        deletedId: {
-            type: GraphQLID,
-            resolve: ({eventId}) => eventId
-        }
-    },
-    mutateAndGetPayload: ({id}) => {
-        var eventId = fromGlobalId(id).id;
-        return new Promise(function (resolve, reject) {
-            context.rootValue.client.resource('events').read(eventId).then(function (event) {
-                event.__api__.delete().then(function () {
-                    resolve({ eventId });
-                })
-            }).catch(reject)
-        })
+  },
+  outputFields: {
+    deletedId: {
+      type: GraphQLID,
+      resolve: ({eventId}) => eventId
     }
+  },
+  mutateAndGetPayload: ({id}) => {
+    var eventId = fromGlobalId(id).id;
+    return new Promise(function(resolve, reject) {
+      context.rootValue.client.resource('events').read(eventId).then(function(event) {
+        event.__api__.delete().then(function() {
+          resolve({
+            eventId
+          });
+        })
+      }).catch(reject)
+    })
+  }
 });
 
 export { createEvent, deleteEvent };
