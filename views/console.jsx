@@ -33,7 +33,7 @@ function graphQLFetcher(graphQLParams) {
 
 if (params.token) {
   $.cookie('token', params.token, {
-    expires: 7
+    expires: 1
   });
   window.location.search = '';
 } else if (params.reset) {
