@@ -8,7 +8,7 @@ import catchUnauthorized from "../../lib/catchUnauthorized";
 
 var rootType = new GraphQLObjectType({
   name: 'Root',
-  fields: () => ({
+  fields: {
     url: {
       type: GraphQLString
     },
@@ -22,11 +22,13 @@ var rootType = new GraphQLObjectType({
     organizations: {
       type: organizationConnection,
       args: connectionArgs,
-      resolve: (root, args, context) => connectionFromPromisedArray(
-        context.rootValue.client.resource('organizations').index().catch(catchUnauthorized(context.rootValue)), args
-      )
+      resolve: (root, args, context) => {
+        return connectionFromPromisedArray(
+          context.rootValue.client.resource('organizations').index().catch(catchUnauthorized(context.rootValue)), args
+        )
+      }
     }
-  })
+  }
 });
 
 export { rootType };
