@@ -3,7 +3,7 @@ import { connectionArgs, connectionDefinitions, connectionFromPromisedArray, glo
 import { HTTPError401 } from "JSONAPIonify-client/errors";
 import { brandfolderConnection } from "./brandfolder_type";
 import { organizationConnection } from "./organization_type";
-import { catchUnauthorized } from "../../lib/catchUnauthorized";
+import catchUnauthorized from "../../lib/catchUnauthorized";
 
 
 var rootType = new GraphQLObjectType({

@@ -50,3 +50,4 @@ bower.json
 .powenv
 public/schema.graphql
 public/schema.json
+npm-debug.log
