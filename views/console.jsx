@@ -84,14 +84,13 @@ if (params.token) {
   window.location = '/';
 }
 
-ReactDOM.render(<GraphiQL
-fetcher={graphQLFetcher}/>, document.getElementById('main'));
-
 if ($.cookie('token')) {
   $('#token').html(`Using token: <span style="color: #40d1f5">${$.cookie('token')}</span> <a style="color:#efe860" href="/?reset">(reset)</a>`)
-} else {
-  $('#token').hide()
+  $('#token').show()
 }
+
+ReactDOM.render(<GraphiQL
+fetcher={graphQLFetcher}/>, document.getElementById('main'));
 
 if (parseParams(Url.parse(document.referrer).search).token) {
   $('.execute-button').click()
