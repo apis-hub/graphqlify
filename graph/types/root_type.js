@@ -16,7 +16,7 @@ var rootType = new GraphQLObjectType({
       type: brandfolderConnection,
       args: connectionArgs,
       resolve: (root, args, context) => connectionFromPromisedArray(
-        context.rootValue.client.resource('brandfolders').index().catch(catchUnauthorized(context.rootValue)), args
+        context.rootValue.client.resource('brandfolders').list().catch(catchUnauthorized(context.rootValue)), args
       )
     },
     organizations: {
@@ -24,7 +24,7 @@ var rootType = new GraphQLObjectType({
       args: connectionArgs,
       resolve: (root, args, context) => {
         return connectionFromPromisedArray(
-          context.rootValue.client.resource('organizations').index().catch(catchUnauthorized(context.rootValue)), args
+          context.rootValue.client.resource('organizations').list().catch(catchUnauthorized(context.rootValue)), args
         )
       }
     }

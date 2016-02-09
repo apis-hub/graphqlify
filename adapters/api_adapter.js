@@ -7,33 +7,33 @@ var JSONAPIonifyResource = require('JSONAPIonify-client/classes/resource');
 var processResponse = require('JSONAPIonify-client/helpers/process_response');
 
 class GraphQLifiedJsonAPIResource extends JSONAPIonifyResource {
-  constructor(name, client) {
-    super(name, client);
+  constructor(name, api) {
+    super(name, api);
   }
 
-  index() {
-    return super.index().then(function(jsonAPICollection) {
-      return new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.client);
+  list() {
+    return super.list().then(function(jsonAPICollection) {
+      return new GraphQLifiedJsonAPICollection(jsonAPICollection.responseJson, jsonAPICollection.resource);
     });
   }
 
   create(data) {
     return super.create(data).then(function(jsonAPIInstance) {
-      return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject();
+      return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.resource).graphQLObject();
     });
   }
 
   read(id) {
     return super.read(id).then(function(jsonAPIInstance) {
-      return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.client).graphQLObject();
+      return new GraphQLifiedJsonAPIInstance(jsonAPIInstance.data, jsonAPIInstance.resource).graphQLObject();
     });
   }
 
 }
 
 class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
-  constructor(data, client) {
-    super(data, client);
+  constructor(data, resource) {
+    super(data, resource);
   }
 
   graphQLObject() {
@@ -46,7 +46,7 @@ class GraphQLifiedJsonAPIInstance extends JSONAPIonifyInstance {
   related(name) {
     return super.related(name).then(function(objOrAry) {
       if (objOrAry instanceof Array) {
-        return new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.client);
+        return new GraphQLifiedJsonAPICollection(objOrAry.responseJson, objOrAry.resource);
       } else if (objOrAry instanceof Object) {
         return new GraphQLifiedJsonAPIInstance(objOrAry.data, objOrAry.client).graphQLObject();
       }
@@ -96,7 +96,7 @@ class GraphQLifiedJsonAPICollection extends JSONAPIonifyCollection {
 
   create(type, data) {
     super.create(type, data).then(function(jsonApiInstance) {
-      return new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.client).graphQLObject();
+      return new GraphQLifiedJsonAPIInstance(jsonApiInstance.data, jsonApiInstance.resource).graphQLObject();
     });
   }
 }
@@ -108,7 +108,7 @@ class GraphQLifiedJsonAPI extends JSONAPIonify {
   }
 
   resource(name) {
-    return new GraphQLifiedJsonAPIResource(name, this.client);
+    return new GraphQLifiedJsonAPIResource(name, this);
   }
 }
 

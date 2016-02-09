@@ -21,7 +21,7 @@ const createOrganization = mutationWithClientMutationId({
   },
   mutateAndGetPayload: ({name, slug} , context) => {
     return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('organizations').index().then(function(organizations) {
+      context.rootValue.client.resource('organizations').list().then(function(organizations) {
         organizations.create('organizations', {
           name: name,
           slug: slug
