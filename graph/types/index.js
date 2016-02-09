@@ -12,7 +12,7 @@ var queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    rootType: {
+    root: {
       type: rootType,
       resolve: (context) => {
         return context.client
