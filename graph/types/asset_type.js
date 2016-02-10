@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLNonNull, GraphQLString, GraphQLList, GraphQLScalarType } from "graphql/type";
+import { GraphQLObjectType, GraphQLNonNull, GraphQLString, GraphQLList, GraphQLScalarType, GraphQLBoolean } from "graphql/type";
 import { connectionArgs, connectionDefinitions, globalIdField, connectionFromPromisedArray } from "graphql-relay";
 import { nodeInterface } from "../node_identification";
 import { attachmentConnection } from "./attachment_type";
@@ -29,6 +29,9 @@ var assetType = new GraphQLObjectType({
     },
     asset_data: {
       type: reusableDataType
+    },
+    approved: {
+      type: GraphQLBoolean
     },
     tag_names: {
       type: new GraphQLList(GraphQLString)

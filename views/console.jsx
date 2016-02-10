@@ -27,7 +27,7 @@ if (window.location.search) {
 
 function authorize() {
   graphQLFetcher({
-    query: "query {root{url}} "
+    query: "query {url}"
   }).then(function(json) {
     var url = Url.parse(json.data.root.url);
     url.hostname = url.hostname.split('.').slice(-2).join('.');

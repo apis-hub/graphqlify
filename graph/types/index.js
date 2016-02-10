@@ -12,12 +12,6 @@ var queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    root: {
-      type: rootType,
-      resolve: (context) => {
-        return context.client
-      }
-    },
     url: {
       type: GraphQLString,
       resolve: (context) => {
@@ -46,15 +40,6 @@ var queryType = new GraphQLObjectType({
           var limit = response.headers._headers['x-ratelimit-remaining'][0]
           return limit == 'Infinity' ? -1 : parseInt(limit)
         })
-      }
-    },
-    organizations: {
-      type: organizationConnection,
-      args: connectionArgs,
-      resolve: (context, args) => {
-        return connectionFromPromisedArray(
-          context.client.resource('organizations').list().catch(catchUnauthorized(context)), args
-        )
       }
     },
     node: nodeField,
