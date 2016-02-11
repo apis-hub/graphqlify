@@ -1,41 +1,22 @@
 import { nodeField } from "../interfaces/node";
 import { slugField } from "../interfaces/slug";
-import { type as userType } from "./User";
+import { type as viewerType } from "./Viewer";
+import { type as apiType } from "./Api";
 import types from "../GraphQLTypes";
-import catchUnauthorized from "../../lib/catchUnauthorized";
+import { catchUnauthorized } from "../../lib/catchUnauthorized";
 
 var queryType = new types.GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    url: {
-      type: types.GraphQLString,
-      resolve: (context) => {
-        return context.api.url
-      }
+    api: {
+      type: apiType,
+      resolve: (context) => context.api
     },
-    current_user: {
-      type: userType,
+    viewer: {
+      type: viewerType,
       resolve: (context) => {
-        return context.api.resource('users').read('_self').catch(catchUnauthorized(context))
-      }
-    },
-    ratelimit_limit: {
-      type: types.GraphQLInt,
-      resolve: (context) => {
-        return context.api.client.options('').then(function(response) {
-          var limit = response.headers._headers['x-ratelimit-limit'][0]
-          return limit == 'Infinity' ? -1 : parseInt(limit)
-        })
-      }
-    },
-    ratelimit_remaining: {
-      type: types.GraphQLInt,
-      resolve: (context) => {
-        return context.api.client.options('').then(function(response) {
-          var limit = response.headers._headers['x-ratelimit-remaining'][0]
-          return limit == 'Infinity' ? -1 : parseInt(limit)
-        })
+        return new Object
       }
     },
     node: nodeField,

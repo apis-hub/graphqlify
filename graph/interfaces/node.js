@@ -1,6 +1,6 @@
 import { nodeDefinitions, fromGlobalId } from "graphql-relay";
 import _ from "lodash";
-import catchUnauthorized from "../../lib/catchUnauthorized";
+import { catchUnauthorized } from "../../lib/catchUnauthorized";
 
 _.mixin(require("lodash-inflection"));
 

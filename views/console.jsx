@@ -25,21 +25,26 @@ if (window.location.search) {
   params = parseParams(window.location.search)
 }
 
-function authorize() {
+window.authorize = function(login) {
   graphQLFetcher({
-    query: "query {url}"
+    query: "query {api{url}}"
   }).then(function(json) {
-    var url = Url.parse(json.data.url);
+    var url = Url.parse(json.data.api.url);
     url.hostname = url.hostname.split('.').slice(-2).join('.');
     url.host = undefined;
     url.href = undefined;
     url.pathname = '/token';
     url.search = $.param({
       redirect_uri: window.location.href,
-      login: true
+      login: !!login
     });
     window.location = Url.format(url);
   });
+};
+
+window.reset = function() {
+  $.removeCookie('token');
+  window.location = '/';
 }
 
 function graphQLFetcher(graphQLParams) {
@@ -56,7 +61,9 @@ function graphQLFetcher(graphQLParams) {
     headers: headers,
     body: JSON.stringify(graphQLParams)
   }).then((response) => {
-    if ([401, 412, 419].indexOf(response.status) >= 0) {
+    if ([412, 419].indexOf(response.status) >= 0) {
+      reset()
+    } else if (response.status == 401) {
       swal({
         title: "Request requires token!",
         text: "This query requires a valid user token, should we fetch one now?",
@@ -67,7 +74,7 @@ function graphQLFetcher(graphQLParams) {
         confirmButtonText: "Fetch Token",
         closeOnConfirm: false
       }, function() {
-        authorize()
+        authorize(true)
       });
     }
     return response
@@ -79,14 +86,12 @@ if (params.token) {
     expires: 1
   });
   window.location = '/';
-} else if (params.reset) {
-  $.removeCookie('token');
-  window.location = '/';
 }
 
 if ($.cookie('token')) {
-  $('#token').html(`Using token: <span style="color: #40d1f5">${$.cookie('token')}</span> <a style="color:#efe860" href="/?reset">(reset)</a>`)
-  $('#token').show()
+  $('#token').html(`Using token: <span style="color: #40d1f5">${$.cookie('token')}</span> <a style="color:#efe860" href="#reset" onClick="reset()">(reset)</a>`)
+} else {
+  $('#token').html(`Not Authorized: <a style="color:#59e287" href="#authorizeUser" onClick="authorize(true)">Get User Token</a> or <a style="color:#59e287" href="#authorizePublic" onClick="authorize(false)">Get Public Token</a>`)
 }
 
 ReactDOM.render(<GraphiQL

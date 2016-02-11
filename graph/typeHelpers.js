@@ -2,7 +2,7 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 import _ from "lodash";
 import * as types from "./GraphQLTypes";
 import { nodeInterface } from "./interfaces/node";
-import catchUnauthorized from "../lib/catchUnauthorized";
+import { catchUnauthorized } from "../lib/catchUnauthorized";
 
 function buildResourceType(name, mapping, ...interfaces){
   var connectionName = `${name}Connection`
