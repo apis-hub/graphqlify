@@ -5,7 +5,7 @@ import path from "path";
 import webpack from "webpack";
 import webpackMiddleware from "webpack-dev-middleware";
 import { graphql } from "graphql";
-import { GraphQLifiedJsonAPI } from "./adapters/api_adapter";
+import JSONAPIonify from "JSONAPIonify-client";
 import cors from "cors";
 
 const webPackConfig = {
@@ -48,14 +48,14 @@ const graphQLMiddleware = graphqlHTTP((request) => {
     headers.authorization = request.headers.authorization
   }
 
-  var client = new GraphQLifiedJsonAPI(endpoint, {
+  var api = new JSONAPIonify(endpoint, {
     headers: headers
   });
 
   return {
     schema: schema,
     rootValue: {
-      client: client
+      api: api
     }
   }
 });

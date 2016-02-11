@@ -29,7 +29,7 @@ function authorize() {
   graphQLFetcher({
     query: "query {url}"
   }).then(function(json) {
-    var url = Url.parse(json.data.root.url);
+    var url = Url.parse(json.data.url);
     url.hostname = url.hostname.split('.').slice(-2).join('.');
     url.host = undefined;
     url.href = undefined;
