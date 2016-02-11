@@ -26,6 +26,7 @@ const {type, connectionType, edgeType} = buildResourceType('Brandfolder', () => 
   },
   relatesToMany: {
     assets: require('./Asset').connectionType,
+    sections: require('./Section').connectionType,
     collections: require('./Collection').connectionType,
     user_permissions: require('./UserPermission').connectionType,
     users: userConnectionType,
