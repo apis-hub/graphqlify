@@ -75,7 +75,7 @@ function buildRelatesToMany(mapping) {
     output[relationshipName] = {
       type: type,
       args: connectionArgs,
-      resolve: (obj, args, context) => connectionFromPromisedArray(obj.related(relationshipName).catch(catchUnauthorized(context.rootValue)), args)
+      resolve: (obj, args, context) => connectionFromPromisedArray(obj.related(relationshipName, { 'include-relationships': true }).catch(catchUnauthorized(context.rootValue)), args)
     }
   })
   return output
