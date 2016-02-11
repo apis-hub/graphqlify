@@ -18,6 +18,7 @@ const {type, connectionType, edgeType} = buildResourceType('Brandfolder', () => 
     card_image: types.GraphQLString,
     header_image: types.GraphQLString,
     google_analytics_id: types.GraphQLString,
+    asset_count: new types.GraphQLNonNull(types.GraphQLInteger),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
     updated_at: new types.GraphQLNonNull(types.GraphQLString)
   },
