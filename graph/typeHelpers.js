@@ -59,8 +59,8 @@ function buildRelatesToOne(mapping) {
     var type = mapping[relationshipName]
     output[relationshipName] = {
       type: type,
-      resolve: (obj) => {
-        return obj.related(relationshipName).catch(catchUnauthorized)
+      resolve: (obj, args, context) => {
+        return obj.related(relationshipName).catch(catchUnauthorized(context.rootValue))
       }
     }
   })
@@ -75,7 +75,7 @@ function buildRelatesToMany(mapping) {
     output[relationshipName] = {
       type: type,
       args: connectionArgs,
-      resolve: (obj, args) => connectionFromPromisedArray(obj.related(relationshipName).catch(catchUnauthorized), args)
+      resolve: (obj, args, context) => connectionFromPromisedArray(obj.related(relationshipName).catch(catchUnauthorized(context.rootValue)), args)
     }
   })
   return output

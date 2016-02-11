@@ -138,7 +138,6 @@ const removeSectionAssets = mutationWithClientMutationId({
     return new Promise(function(resolve, reject) {
       context.rootValue.client.resource('sections').read(sectionId).then(function(section) {
         section.__api__.relationship('assets').then(function(assetRelationships) {
-          debugger;
           assetRelationships.remove(assetRelationships);
           resolve({
             sectionId,
