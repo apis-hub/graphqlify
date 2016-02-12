@@ -2,6 +2,10 @@
 
 An GraphQL server that translates Brandfolder's JSONAPI into GraphQL for comsumption by the Brandfolder frontend written in React/Relay.
 
+## Playground
+
+You can play with the Brandfolder GraphQL api at https://graphql.brandfolder.com
+
 ## Usage
 
 This repo is internal to Brandfolder, it is publicized to provide the public with a GraphQL - JSONApi translation implementation.
