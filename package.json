@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "JSONAPIonify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#9d6b00b8df58ea55e6ac8622f7d9c764138914a9",
+    "JSONAPIonify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#c3130b0b453f2a9a1758f5faf76e6797d1bcc807",
     "babel-cli": "^6.4.0",
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
@@ -37,10 +37,11 @@
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^2.2.0",
     "jquery.cookie": "^1.4.1",
-    "lodash": "^3.10.1",
+    "lodash": "^4.3.0",
     "lodash-inflection": "^1.3.1",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "sweetalert": "^1.1.3",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1"
