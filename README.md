@@ -4,7 +4,7 @@ An GraphQL server that translates Brandfolder's JSONAPI into GraphQL for comsump
 
 ## Playground
 
-You can play with the Brandfolder GraphQL api at https://graphql.brandfolder.com
+You can play with the Brandfolder GraphQL API at https://graphql.brandfolder.com
 
 ## Usage
 
