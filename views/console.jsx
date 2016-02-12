@@ -6,7 +6,6 @@ import Url from "url";
 import "jquery.cookie";
 import swal from "sweetalert";
 
-window.$ = $;
 let graphqlEndpoint = window.location.origin + '/graphql';
 let params = {};
 
@@ -25,7 +24,7 @@ if (window.location.search) {
   params = parseParams(window.location.search)
 }
 
-window.authorize = function(login) {
+const authorize = function(login) {
   graphQLFetcher({
     query: "query {api{url}}"
   }).then(function(json) {
@@ -42,7 +41,7 @@ window.authorize = function(login) {
   });
 };
 
-window.reset = function() {
+const reset = function() {
   $.removeCookie('token');
   window.location = '/';
 }
@@ -88,14 +87,56 @@ if (params.token) {
   window.location = '/';
 }
 
-if ($.cookie('token')) {
-  $('#token').html(`Using token: <span style="color: #40d1f5">${$.cookie('token')}</span> <a style="color:#efe860" href="#reset" onClick="reset()">(reset)</a>`)
-} else {
-  $('#token').html(`Not Authorized: <a style="color:#59e287" href="#authorizeUser" onClick="authorize(true)">Get User Token</a> or <a style="color:#59e287" href="#authorizePublic" onClick="authorize(false)">Get Public Token</a>`)
+function renderTokenStatus() {
+  if ($.cookie('token')) {
+    return (
+      <span>
+        Using token: <span style={{
+        color: '#40d1f5'
+      }}>
+        {$.cookie('token')}</span> <a style={{
+        color: '#efe860',
+        cursor: 'pointer'
+      }} onClick={reset}>
+        (reset)
+      </a>
+      </span>
+    )
+  } else {
+    return (
+      <span>
+        Not Authorized: <a style={{
+        color: '#59e287',
+        cursor: 'pointer'
+      }} onClick={authorize.bind(this, true)}>
+        Get User Token
+      </a> or <a style={{
+        color: '#59e287',
+        cursor: 'pointer'
+      }} onClick={authorize.bind(this, false)}>Get Public Token</a>
+      </span>
+    )
+  }
 }
 
-ReactDOM.render(<GraphiQL
-fetcher={graphQLFetcher}/>, document.getElementById('main'));
+ReactDOM.render(
+  <div id='container'>
+    <header style={{
+    padding: '5px',
+    height: '20px',
+    backgroundColor: '#384650',
+    color: '#fff'
+  }}>
+    {renderTokenStatus()}
+    <div style={{
+    clear: 'both'
+  }} />
+    </header>
+    <GraphiQL
+  fetcher={graphQLFetcher}/>
+  </div>
+
+  , document.getElementById('main'));
 
 if (parseParams(Url.parse(document.referrer).search).token) {
   $('.execute-button').click()
