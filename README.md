@@ -1,4 +1,4 @@
-# Graphqlify
+# GraphQLify <sup>*by Brandfolder*</sup>
 
 An GraphQL server that translates Brandfolder's JSONAPI into GraphQL for comsumption by the Brandfolder frontend written in React/Relay.
 
