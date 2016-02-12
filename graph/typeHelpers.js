@@ -3,9 +3,10 @@ import _ from "lodash";
 import * as types from "./GraphQLTypes";
 import { nodeInterface } from "./interfaces/node";
 import { catchUnauthorized } from "../lib/catchUnauthorized";
+_.mixin(require("lodash-inflection"));
 
 function buildResourceType(name, mapping, ...interfaces){
-  var connectionName = `${name}Connection`
+  var connectionName = _.pluralize(name)
   var type = new types.GraphQLObjectType({
     name: name,
     fields: () => buildFields(name, mapping),
