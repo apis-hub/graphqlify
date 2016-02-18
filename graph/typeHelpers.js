@@ -6,6 +6,7 @@ import { catchUnauthorized } from "../lib/catchUnauthorized";
 _.mixin(require("lodash-inflection"));
 
 function buildResourceType(name, mapping, ...interfaces){
+  debugger;
   var connectionName = _.pluralize(name)
   var type = new types.GraphQLObjectType({
     name: name,

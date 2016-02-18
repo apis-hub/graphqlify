@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { assetType } from "../types/asset_type";
+import { assetType } from "../types/Asset";
 import { sectionType } from "../types/section_type";
 import { reusableDataType } from "../types/reusable_data_type";
 

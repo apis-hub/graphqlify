@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
 import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { assetCommentType } from "../types/asset_comment_type";
-import { assetType } from "../types/asset_type";
+import { assetCommentType } from "../types/AssetComment";
+import { assetType } from "../types/Asset";
 
 const createAssetComment = mutationWithClientMutationId({
   name: 'createAssetComment',

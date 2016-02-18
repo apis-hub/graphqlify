@@ -123,7 +123,7 @@ ReactDOM.render(
   <div id='container'>
     <header style={{
     padding: '5px',
-    height: '20px',
+    height: '5%',
     backgroundColor: '#384650',
     color: '#fff'
   }}>
