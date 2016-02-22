@@ -110,17 +110,19 @@ function connectionFromRelatesToMany(parentObj, relationshipName, { order, after
   }
 
   params['include-relationships'] = true
-  return parentObj.related(relationshipName, params).then((collection)=>{
-    return {
-      edges: collection.map((node) => { return { cursor: node.cursor(), node: node } }),
-      pageInfo: {
-        startCursor: collection.first() && collection.first().cursor(),
-        endCursor: collection.last() && collection.last().cursor(),
-        hasPreviousPage: !!collection.link('prev'),
-        hasNextPage: !!collection.link('next')
-      }
-    }
-  })
+  return parentObj.related(relationshipName, params).then(collectionToConnection)
 }
 
-export { buildResourceType, buildFields, buildId, buildAttributes, buildRelatesToOne, buildRelatesToMany, connectionFromRelatesToMany }
+function collectionToConnection(collection){
+  return {
+    edges: collection.map((node) => { return { cursor: node.cursor(), node: node } }),
+    pageInfo: {
+      startCursor: collection.first() && collection.first().cursor(),
+      endCursor: collection.last() && collection.last().cursor(),
+      hasPreviousPage: !!collection.link('prev'),
+      hasNextPage: !!collection.link('next')
+    }
+  }
+}
+
+export { buildResourceType, buildFields, buildId, buildAttributes, buildRelatesToOne, buildRelatesToMany, connectionFromRelatesToMany, collectionToConnection }
