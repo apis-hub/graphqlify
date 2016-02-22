@@ -1,5 +1,6 @@
 import { nodeField } from "../interfaces/node";
 import { slugField } from "../interfaces/slug";
+import { apiResourceField } from "../interfaces/apiResource";
 import { type as viewerType } from "./Viewer";
 import { type as apiType } from "./Api";
 import types from "../GraphQLTypes";
@@ -19,6 +20,7 @@ var queryType = new types.GraphQLObjectType({
         return new Object
       }
     },
+    apiResource: apiResourceField,
     node: nodeField,
     slug: slugField
   })

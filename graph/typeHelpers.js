@@ -2,6 +2,7 @@ import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionD
 import _ from "lodash";
 import * as types from "./GraphQLTypes";
 import { nodeInterface } from "./interfaces/node";
+import { apiResourceInterface } from "./interfaces/apiResource";
 import { catchUnauthorized } from "../lib/catchUnauthorized";
 _.mixin(require("lodash-inflection"));
 
@@ -10,7 +11,7 @@ function buildResourceType(name, mapping, ...interfaces){
   let type = new types.GraphQLObjectType({
     name: name,
     fields: () => buildFields(name, mapping),
-    interfaces: [nodeInterface].concat(...interfaces)
+    interfaces: [nodeInterface, apiResourceInterface].concat(...interfaces)
   });
 
   let {connectionType, edgeType} = connectionDefinitions({
@@ -21,12 +22,26 @@ function buildResourceType(name, mapping, ...interfaces){
   return {type, connectionType, edgeType}
 }
 
+function buildApiInfo(){
+  return {
+    apiId: {
+      type: new types.GraphQLNonNull(types.GraphQLString),
+      resolve: (obj) => obj.id()
+    },
+    apiType: {
+      type: new types.GraphQLNonNull(types.GraphQLString),
+      resolve: (obj) => obj.type()
+    }
+  }
+}
+
 function buildFields(name, mapping) {
   if (mapping instanceof Function){
     mapping = mapping()
   }
   return _.extend(
     buildId(name),
+    buildApiInfo(),
     buildAttributes(mapping.attributes),
     buildRelatesToOne(mapping.relatesToOne),
     buildRelatesToMany(mapping.relatesToMany)
@@ -91,22 +106,16 @@ function connectionFromRelatesToMany(parentObj, relationshipName, { order, after
   params.sort = order
 
   if (after || before || first || last){
-    params.page = {}
-
-    for (let [k, v] of { after, before, first, last }){
-      if (v){
-        params.page[k] = v
-      }
-    }
+    params.page = _.omitBy({ after, before, first, last }, _.isUndefined)
   }
 
   params['include-relationships'] = true
   return parentObj.related(relationshipName, params).then((collection)=>{
     return {
-      edges: collection.map((node) => { return { cursor: node.meta['cursor'], node: node } }),
+      edges: collection.map((node) => { return { cursor: node.cursor(), node: node } }),
       pageInfo: {
-        startCursor: '',
-        endCursor: '',
+        startCursor: collection.first() && collection.first().cursor(),
+        endCursor: collection.last() && collection.last().cursor(),
         hasPreviousPage: !!collection.link('prev'),
         hasNextPage: !!collection.link('next')
       }

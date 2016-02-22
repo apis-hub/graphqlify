@@ -1,15 +1,12 @@
 import { type as userType } from "./User";
 import { connectionType as organizationConnectionType } from "./Organization";
-import { connectionArgs, connectionFromPromisedArray } from "graphql-relay";
+import { connectionArgs } from "graphql-relay";
 import { catchExpired } from "../../lib/catchUnauthorized";
 import * as types from "../GraphQLTypes";
+import { connectionFromRelatesToMany } from "../typeHelpers"
 
 function fetchCurrentUser(context) {
   return context.rootValue.api.resource('users').read('_self').catch(catchExpired(context.rootValue))
-}
-
-function fetchCurrentOrganizations(context) {
-  return fetchCurrentUser(context).then((user) => user.related('organizations'))
 }
 
 var type = new types.GraphQLObjectType({
@@ -31,8 +28,15 @@ var type = new types.GraphQLObjectType({
     organizations: {
       type: organizationConnectionType,
       args: connectionArgs,
+
+      resolve: (obj, args, context) => connectionFromRelatesToMany(
+        obj, relationshipName, args
+      ).catch(catchUnauthorized(context.rootValue)),
+
       resolve: (root, args, context) => {
-        return fetchCurrentOrganizations(context).catch(() => [])
+        return fetchCurrentUser(context).then(
+          (user) => connectionFromRelatesToMany(user, 'organizations', args)
+        )
       }
     }
   })

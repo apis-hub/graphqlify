@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "JSONAPIonify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#c3130b0b453f2a9a1758f5faf76e6797d1bcc807",
+    "JSONAPIonify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#0e776e66e4414bb8cf5c919b457f5dcd1e78ec38",
     "babel-cli": "^6.4.0",
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
