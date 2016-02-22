@@ -8,7 +8,7 @@ var slugInterface = new GraphQLInterfaceType({
   name: 'Slug',
   fields: {
     id: {
-      type: GraphQLID
+      type: new GraphQLNonNull(GraphQLID)
     },
     slug: {
       type: GraphQLString

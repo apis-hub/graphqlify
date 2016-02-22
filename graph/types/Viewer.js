@@ -1,4 +1,3 @@
-import { buildResourceType } from "../typeHelpers"
 import { type as userType } from "./User";
 import { connectionType as organizationConnectionType } from "./Organization";
 import { connectionArgs, connectionFromPromisedArray } from "graphql-relay";
@@ -32,9 +31,9 @@ var type = new types.GraphQLObjectType({
     organizations: {
       type: organizationConnectionType,
       args: connectionArgs,
-      resolve: (root, args, context) => connectionFromPromisedArray(
-        fetchCurrentOrganizations(context).catch(() => []), args
-      )
+      resolve: (root, args, context) => {
+        return fetchCurrentOrganizations(context).catch(() => [])
+      }
     }
   })
 });

@@ -1,4 +1,4 @@
-import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionDefinitions } from "graphql-relay";
+import { connectionArgs, connectionFromPromisedArray, globalIdField, connectionDefinitions, cursorToOffset } from "graphql-relay";
 import _ from "lodash";
 import * as types from "./GraphQLTypes";
 import { nodeInterface } from "./interfaces/node";
@@ -6,15 +6,14 @@ import { catchUnauthorized } from "../lib/catchUnauthorized";
 _.mixin(require("lodash-inflection"));
 
 function buildResourceType(name, mapping, ...interfaces){
-  debugger;
-  var connectionName = _.pluralize(name)
-  var type = new types.GraphQLObjectType({
+  let connectionName = _.pluralize(name)
+  let type = new types.GraphQLObjectType({
     name: name,
     fields: () => buildFields(name, mapping),
     interfaces: [nodeInterface].concat(...interfaces)
   });
 
-  var {connectionType, edgeType} = connectionDefinitions({
+  let {connectionType, edgeType} = connectionDefinitions({
     name: connectionName,
     nodeType: type
   });
@@ -40,10 +39,10 @@ function buildId(name){
 
 function buildAttributes(mapping) {
   mapping = mapping || {};
-  var output = {};
+  let output = {};
   Object.keys(mapping).forEach((attr) => {
-    var name = attr
-    var type = mapping[attr]
+    let name = attr
+    let type = mapping[attr]
     output[attr] = {
       type: type,
       resolve: (obj) => {
@@ -56,9 +55,9 @@ function buildAttributes(mapping) {
 
 function buildRelatesToOne(mapping) {
   mapping = mapping || {};
-  var output = {};
+  let output = {};
   Object.keys(mapping).forEach((relationshipName) => {
-    var type = mapping[relationshipName]
+    let type = mapping[relationshipName]
     output[relationshipName] = {
       type: type,
       resolve: (obj, args, context) => {
@@ -71,16 +70,48 @@ function buildRelatesToOne(mapping) {
 
 function buildRelatesToMany(mapping) {
   mapping = mapping || {};
-  var output = {};
+  let output = {};
   Object.keys(mapping).forEach((relationshipName) => {
-    var type = mapping[relationshipName]
+    let type = mapping[relationshipName]
     output[relationshipName] = {
       type: type,
       args: connectionArgs,
-      resolve: (obj, args, context) => connectionFromPromisedArray(obj.related(relationshipName, { 'include-relationships': true }).catch(catchUnauthorized(context.rootValue)), args)
+      resolve: (obj, args, context) => connectionFromRelatesToMany(
+        obj, relationshipName, args
+      ).catch(catchUnauthorized(context.rootValue))
     }
   })
   return output
 }
 
-export { buildResourceType, buildFields, buildId, buildAttributes, buildRelatesToOne, buildRelatesToMany}
+function connectionFromRelatesToMany(parentObj, relationshipName, { order, after, before, first, last }){
+  order = order || 'id'
+  let params = {}
+
+  params.sort = order
+
+  if (after || before || first || last){
+    params.page = {}
+
+    for (let [k, v] of { after, before, first, last }){
+      if (v){
+        params.page[k] = v
+      }
+    }
+  }
+
+  params['include-relationships'] = true
+  return parentObj.related(relationshipName, params).then((collection)=>{
+    return {
+      edges: collection.map((node) => { return { cursor: node.meta['cursor'], node: node } }),
+      pageInfo: {
+        startCursor: '',
+        endCursor: '',
+        hasPreviousPage: !!collection.link('prev'),
+        hasNextPage: !!collection.link('next')
+      }
+    }
+  })
+}
+
+export { buildResourceType, buildFields, buildId, buildAttributes, buildRelatesToOne, buildRelatesToMany, connectionFromRelatesToMany }
