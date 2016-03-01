@@ -32,7 +32,10 @@ const webPackConfig = {
       {
         exclude: /node_modules/,
         loader: 'babel-loader',
-        test: /\.(js|jsx|es6)$/
+        test: /\.(js|jsx|es6)$/,
+        query: {
+          presets: [ 'stage-0', 'react' ]
+        }
       }
     ]
   },
