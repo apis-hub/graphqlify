@@ -1,8 +1,9 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from "graphql";
-import _ from "lodash";
-import { catchUnauthorized } from "../../lib/catchUnauthorized";
+import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import _ from 'lodash';
+import { catchUnauthorized } from '../../lib/catchUnauthorized';
+import { fetchTypeById } from '../typeHelpers';
 
-_.mixin(require("lodash-inflection"));
+_.mixin(require('lodash-inflection'));
 
 var slugInterface = new GraphQLInterfaceType({
   name: 'Slug',
@@ -14,8 +15,8 @@ var slugInterface = new GraphQLInterfaceType({
       type: GraphQLString
     }
   },
-  resolveType: (obj) => {
-    var singular = _.singularize(obj.type());
+  resolveType: ({ instance }) => {
+    var singular = _.singularize(instance.type);
     var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }
@@ -31,9 +32,11 @@ var slugField = {
       description: 'The slug uri of the object'
     }
   },
-  resolve: (query, args, context) => {
-    return context.rootValue.api.resource('slug').read(args.uri).catch(catchUnauthorized(context.rootValue));
-  }
+  resolve: (query, args, context) => fetchTypeById(
+    'slug', args.uri, context, 'slug'
+  ).catch(
+    catchUnauthorized(context.rootValue)
+  )
 };
 
 export { slugInterface, slugField };

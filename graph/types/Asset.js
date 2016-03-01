@@ -1,7 +1,7 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import { buildResourceType } from '../typeHelpers';
+import * as types from '../GraphQLTypes';
 
-const {type, connectionType, edgeType} = buildResourceType('Asset', () => ({
+const { type, connectionType, edgeType } = buildResourceType('Asset', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     asset_type: new types.GraphQLNonNull(types.GraphQLString),
@@ -22,6 +22,6 @@ const {type, connectionType, edgeType} = buildResourceType('Asset', () => ({
     collections: require('./Collection').connectionType,
     comments: require('./AssetComment').connectionType
   }
-}))
+}));
 
 export { type, connectionType, edgeType };

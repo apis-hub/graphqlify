@@ -1,7 +1,7 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import { buildResourceType } from '../typeHelpers';
+import * as types from '../GraphQLTypes';
 
-const {type, connectionType, edgeType} = buildResourceType('User', () => ({
+const { type, connectionType, edgeType } = buildResourceType('User', () => ({
   attributes: {
     first_name: types.GraphQLString,
     last_name: types.GraphQLString,
@@ -14,6 +14,6 @@ const {type, connectionType, edgeType} = buildResourceType('User', () => ({
     brandfolders: require('./Brandfolder').connectionType,
     collections: require('./Collection').connectionType
   }
-}))
+}));
 
 export { type, connectionType, edgeType };

@@ -1,7 +1,7 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { GraphQLShareManifestEdge } from "../types/share_manifest_type";
-import api from "../../adapters/api_adapter";
+import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
+import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
+import { GraphQLShareManifestEdge } from '../types/share_manifest_type';
+import api from '../../adapters/api_adapter';
 
 const createShareManifest = mutationWithClientMutationId({
   name: 'CreateShareManifest',
@@ -11,7 +11,7 @@ const createShareManifest = mutationWithClientMutationId({
   outputFields: {
     shareManifest: {
       type: shareManifestType,
-      resolve: ({shareManifest}) => shareManifest
+      resolve: ({ shareManifest }) => shareManifest
     }
   },
   mutateAndGetPayload: ({}, context) => {
@@ -30,20 +30,20 @@ const deleteShareManifest = mutationWithClientMutationId({
   outputFields: {
     deletedId: {
       type: GraphQLID,
-      resolve: ({shareManifestID}) => shareManifestID
+      resolve: ({ shareManifestID }) => shareManifestID
     }
   },
-  mutateAndGetPayload: ({id}) => {
+  mutateAndGetPayload: ({ id }) => {
     var shareManifestId = fromGlobalId(id).id;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('share_manifests').read(shareManifestId).then(function(shareManifest) {
-        shareManifest.__api__.delete().then(function() {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('share_manifests').read(shareManifestId).then(function (shareManifest) {
+        shareManifest.__api__.delete().then(function () {
           resolve({
             shareMaifestId
           });
-        })
-      }).catch(reject)
-    })
+        });
+      }).catch(reject);
+    });
   }
 });
 

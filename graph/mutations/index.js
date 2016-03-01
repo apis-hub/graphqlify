@@ -1,15 +1,15 @@
-import { GraphQLObjectType } from "graphql/type";
-import { createAssetComment, deleteAssetComment } from "./asset_comments_mutations";
-import { createAsset, updateAsset, removeSectionAssets } from "./asset_mutations";
-import { createAttachment, updateAttachment, deleteAttachment } from "./attachment_mutations";
-import { createBrandfolder, updateBrandfolder, deleteBrandfolder } from "./brandfolder_mutations";
-import { createCollection, updateCollection, deleteCollection } from "./collection_mutations";
-import { createInvitation, deleteInvitation } from "./invitation_mutations";
-import { createSocialLink, updateSocialLink, deleteSocialLink } from "./social_link_mutations";
-import { createOrganization, updateOrganization, deleteOrganization } from "./organization_mutations";
-import { createSection, updateSection, deleteSection } from "./section_mutations";
-import { createUser, updateUser, deleteUser } from "./user_mutations";
-import { createBrandfolderUserPermission, createCollectionUserPermission, createOrganizationUserPermission } from "./user_permission_mutations";
+import { GraphQLObjectType } from 'graphql/type';
+import { createAssetComment, deleteAssetComment } from './asset_comments_mutations';
+import { createAsset, updateAsset, removeSectionAssets } from './asset_mutations';
+import { createAttachment, updateAttachment, deleteAttachment } from './attachment_mutations';
+import { createBrandfolder, updateBrandfolder, deleteBrandfolder } from './brandfolder_mutations';
+import { createCollection, updateCollection, deleteCollection } from './collection_mutations';
+import { createInvitation, deleteInvitation } from './invitation_mutations';
+import { createSocialLink, updateSocialLink, deleteSocialLink } from './social_link_mutations';
+import { createOrganization, updateOrganization, deleteOrganization } from './organization_mutations';
+import { createSection, updateSection, deleteSection } from './section_mutations';
+import { createUser, updateUser, deleteUser } from './user_mutations';
+import { createBrandfolderUserPermission, createCollectionUserPermission, createOrganizationUserPermission } from './user_permission_mutations';
 
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',

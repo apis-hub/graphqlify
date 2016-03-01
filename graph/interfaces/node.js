@@ -1,16 +1,21 @@
-import { nodeDefinitions, fromGlobalId } from "graphql-relay";
-import _ from "lodash";
-import { catchUnauthorized } from "../../lib/catchUnauthorized";
+import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
+import _ from 'lodash';
+import { catchUnauthorized } from '../../lib/catchUnauthorized';
+import { fetchTypeById } from '../typeHelpers';
 
-_.mixin(require("lodash-inflection"));
+_.mixin(require('lodash-inflection'));
 
-var {nodeInterface, nodeField} = nodeDefinitions(
+var { nodeInterface, nodeField } = nodeDefinitions(
   (globalId, context) => {
-    var {type, id} = fromGlobalId(globalId);
-    return context.rootValue.api.resource(_.pluralize(_.snakeCase(type))).read(id).catch(catchUnauthorized(context.rootValue));
+    var { type, id } = fromGlobalId(globalId);
+    return fetchTypeById(
+      type, id, context, 'node'
+    ).catch(
+      catchUnauthorized(context.rootValue)
+    );
   },
-  (obj) => {
-    var singular = _.singularize(obj.type());
+  ({ instance }) => {
+    var singular = _.singularize(instance.type);
     var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }

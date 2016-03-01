@@ -1,15 +1,15 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { GraphQLEventEdge } from "../types/event_type";
-import { userType } from "../types/user_type";
-import { brandfolderType } from "../types/brandfolder_type";
-import { collectionType } from "../types/collection_type";
-import { assetType } from "../types/asset_type";
-import { socialLinkType } from "../types/social_link_type";
-import { sectionType } from "../types/section_type";
-import { organizationType } from "../types/organization_type";
-import { shareManifestType } from "../types/share_manifest_type";
-import api from "../../adapters/api_adapter";
+import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
+import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
+import { GraphQLEventEdge } from '../types/event_type';
+import { userType } from '../types/user_type';
+import { brandfolderType } from '../types/brandfolder_type';
+import { collectionType } from '../types/collection_type';
+import { assetType } from '../types/asset_type';
+import { socialLinkType } from '../types/social_link_type';
+import { sectionType } from '../types/section_type';
+import { organizationType } from '../types/organization_type';
+import { shareManifestType } from '../types/share_manifest_type';
+import api from '../../adapters/api_adapter';
 
 
 const createEvent = mutationWithClientMutationId({
@@ -36,20 +36,20 @@ const deleteEvent = mutationWithClientMutationId({
   outputFields: {
     deletedId: {
       type: GraphQLID,
-      resolve: ({eventId}) => eventId
+      resolve: ({ eventId }) => eventId
     }
   },
-  mutateAndGetPayload: ({id}) => {
+  mutateAndGetPayload: ({ id }) => {
     var eventId = fromGlobalId(id).id;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('events').read(eventId).then(function(event) {
-        event.__api__.delete().then(function() {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('events').read(eventId).then(function (event) {
+        event.__api__.delete().then(function () {
           resolve({
             eventId
           });
-        })
-      }).catch(reject)
-    })
+        });
+      }).catch(reject);
+    });
   }
 });
 

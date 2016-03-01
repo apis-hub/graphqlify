@@ -1,17 +1,31 @@
-import express from "express";
-import graphqlHTTP from "express-graphql";
-import schema from "./graph/schema";
-import path from "path";
-import webpack from "webpack";
-import webpackMiddleware from "webpack-dev-middleware";
-import { graphql } from "graphql";
-import JSONAPIonify from "JSONAPIonify-client";
-import cors from "cors";
+import express from 'express';
+import graphqlHTTP from 'express-graphql';
+import schema from './graph/schema';
+import path from 'path';
+import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+import { JSONAPIonify } from 'jsonapionify-client';
+import cors from 'cors';
+const stackTrace = require('stack-trace');
+
+function logError(error) {
+  console.error('');
+
+  error = error.error !== undefined ? error.error : error;
+  var stack = stackTrace.parse(error);
+  console.error(error.toString());
+  stack.forEach(function (trace, index) {
+    console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
+  });
+
+  console.error('');
+  return error;
+}
 
 const webPackConfig = {
   entry: path.resolve(__dirname, 'views', 'console.jsx'),
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: [ '', '.js', '.jsx' ]
   },
   module: {
     loaders: [
@@ -40,33 +54,34 @@ app.use('/assets', webpackMiddleware(compiler));
 // Serve Static
 app.use('/', express.static(path.join(__dirname, 'public')));
 
-const graphQLMiddleware = graphqlHTTP((request) => {
+const graphQLMiddleware = graphqlHTTP(request => {
   var headers = {};
   var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
   if (request.headers.authorization) {
-    headers.authorization = request.headers.authorization
+    headers.authorization = request.headers.authorization;
   }
 
   var api = new JSONAPIonify(endpoint, {
-    headers: headers
+    headers
   });
 
   return {
-    schema: schema,
+    formatError: logError,
+    schema,
     rootValue: {
-      api: api
+      api
     }
-  }
+  };
 });
 
 // Serve GraphQL
 app.use('/graphql', graphQLMiddleware);
 
 // load console at root
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'views/console.html'))
-});
+app.get('/', (req, res) => res.sendFile(
+  path.resolve(__dirname, 'views/console.html')
+));
 
 var port = process.env.PORT || 8080;
 app.listen(port);

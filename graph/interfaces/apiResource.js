@@ -1,8 +1,9 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from "graphql";
-import _ from "lodash";
-import { catchUnauthorized } from "../../lib/catchUnauthorized";
+import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import { catchUnauthorized } from '../../lib/catchUnauthorized';
+import { fetchTypeById } from '../typeHelpers';
+import _ from 'lodash';
 
-_.mixin(require("lodash-inflection"));
+_.mixin(require('lodash-inflection'));
 
 var apiResourceInterface = new GraphQLInterfaceType({
   name: 'ApiResource',
@@ -17,8 +18,8 @@ var apiResourceInterface = new GraphQLInterfaceType({
       type: new GraphQLNonNull(GraphQLString)
     }
   },
-  resolveType: (obj) => {
-    var singular = _.singularize(obj.type());
+  resolveType: ({ instance }) => {
+    var singular = _.singularize(instance.type);
     var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }
@@ -38,9 +39,11 @@ var apiResourceField = {
       description: 'The api resource id'
     }
   },
-  resolve: (query, args, context) => {
-    return context.rootValue.api.resource(args.apiType).read(args.apiId).catch(catchUnauthorized(context.rootValue));
-  }
+  resolve: (query, args, context) => fetchTypeById(
+    args.apiType, args.apiId, context, 'node'
+  ).catch(
+    catchUnauthorized(context.rootValue)
+  )
 };
 
 export { apiResourceInterface, apiResourceField };

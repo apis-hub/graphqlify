@@ -1,7 +1,7 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import { buildResourceType } from '../typeHelpers';
+import * as types from '../GraphQLTypes';
 
-const {type, connectionType, edgeType} = buildResourceType('AssetComment', () => ({
+const { type, connectionType, edgeType } = buildResourceType('AssetComment', () => ({
   attributes: {
     body: new types.GraphQLNonNull(types.GraphQLString),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
@@ -14,6 +14,6 @@ const {type, connectionType, edgeType} = buildResourceType('AssetComment', () =>
   relatesToMany: {
     replies: connectionType,
   }
-}))
+}));
 
 export { type, connectionType, edgeType };

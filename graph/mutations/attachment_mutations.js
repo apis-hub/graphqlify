@@ -1,8 +1,8 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { attachmentType } from "../types/attachment_type";
-import { assetType } from "../types/asset_type";
-import { reusableDataType } from "../types/reusable_data_type";
+import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
+import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
+import { attachmentType } from '../types/attachment_type';
+import { assetType } from '../types/asset_type';
+import { reusableDataType } from '../types/reusable_data_type';
 
 const createAttachment = mutationWithClientMutationId({
   name: 'createAttachment',
@@ -50,25 +50,25 @@ const createAttachment = mutationWithClientMutationId({
   outputFields: {
     attachment: {
       type: attachmentType,
-      resolve: ({attachment}) => attachment
+      resolve: ({ attachment }) => attachment
     },
     asset: {
       type: assetType,
-      resolve: ({assetId, rootContext}) => {
-        return new Promise(function(resolve, reject) {
-          rootContext.rootValue.client.resource('assets').read(assetId).then(function(asset) {
-            resolve(asset)
+      resolve: ({ assetId, rootContext }) => {
+        return new Promise(function (resolve, reject) {
+          rootContext.rootValue.client.resource('assets').read(assetId).then(function (asset) {
+            resolve(asset);
           }).catch(reject);
-        })
+        });
       }
     }
   },
-  mutateAndGetPayload: ({mimetype, extension, asset_id, filename, size, url, file_url, thumbnail_url, preview_url, thumbnailed, width, height, metadata} , context) => {
+  mutateAndGetPayload: ({ mimetype, extension, asset_id, filename, size, url, file_url, thumbnail_url, preview_url, thumbnailed, width, height, metadata } , context) => {
     const assetId = asset_id;
     const rootContext = context;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('assets').read(assetId).then(function(asset) {
-        asset.__api__.related('attachments').then(function(attachments) {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('assets').read(assetId).then(function (asset) {
+        asset.__api__.related('attachments').then(function (attachments) {
           attachments.create(
             'attachments',
             {
@@ -85,16 +85,16 @@ const createAttachment = mutationWithClientMutationId({
               height: height,
               metadata: metadata
             }
-          ).then(function(attachment) {
+          ).then(function (attachment) {
             resolve({
               attachment,
               assetId,
               rootContext
-            })
+            });
           }).catch(reject);
         }).catch(reject);
       }).catch(reject);
-    })
+    });
   },
 });
 
@@ -114,29 +114,29 @@ const updateAttachment = mutationWithClientMutationId({
   outputFields: {
     attachment: {
       type: attachmentType,
-      resolve: ({attachment}) => attachment
+      resolve: ({ attachment }) => attachment
     },
   },
-  mutateAndGetPayload: ({id, position, url} , context) => {
+  mutateAndGetPayload: ({ id, position, url } , context) => {
     const attachmentId = fromGlobalId(id).id;
     var attachmentPosition = position,
       attachmentUrl = url;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('attachments').read(attachmentId).then(function(attachment) {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
         if (attachmentPosition) {
-          attachment.position = attachmentPosition
+          attachment.position = attachmentPosition;
         }
         if (attachmentUrl) {
-          attachment.url = attachmentUrl
+          attachment.url = attachmentUrl;
         }
 
-        attachment.__api__.update(attachment).then(function(attachment) {
+        attachment.__api__.update(attachment).then(function (attachment) {
           resolve({
             attachment
           });
         }).catch(reject);
       }).catch(reject);
-    })
+    });
   }
 });
 
@@ -151,20 +151,20 @@ const deleteAttachment = mutationWithClientMutationId({
   outputFields: {
     deletedId: {
       type: GraphQLID,
-      resolve: ({attachmentId}) => attachmentId
+      resolve: ({ attachmentId }) => attachmentId
     }
   },
-  mutateAndGetPayload: ({id}, context) => {
+  mutateAndGetPayload: ({ id }, context) => {
     var attachmentId = fromGlobalId(id).id;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('attachments').read(attachmentId).then(function(attachment) {
-        attachment.__api__.delete().then(function() {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('attachments').read(attachmentId).then(function (attachment) {
+        attachment.__api__.delete().then(function () {
           resolve({
             attachmentId
           });
-        })
-      }).catch(reject)
-    })
+        });
+      }).catch(reject);
+    });
   }
 });
 

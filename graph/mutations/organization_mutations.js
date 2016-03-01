@@ -1,7 +1,7 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from "graphql/type";
-import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from "graphql-relay";
-import { GraphQLOrganizationEdge, organizationType } from "../types/organization_type";
-import api from "../../adapters/api_adapter";
+import { GraphQLObjectType, GraphQLInt, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLID, GraphQLList, GraphQLScalarType } from 'graphql/type';
+import { mutationWithClientMutationId, cursorForObjectInConnection, fromGlobalId, connectionArgs } from 'graphql-relay';
+import { GraphQLOrganizationEdge, organizationType } from '../types/organization_type';
+import api from '../../adapters/api_adapter';
 
 const createOrganization = mutationWithClientMutationId({
   name: 'createOrganization',
@@ -16,22 +16,22 @@ const createOrganization = mutationWithClientMutationId({
   outputFields: {
     organization: {
       type: organizationType,
-      resolve: ({organization}) => organization
+      resolve: ({ organization }) => organization
     }
   },
-  mutateAndGetPayload: ({name, slug} , context) => {
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('organizations').list().then(function(organizations) {
+  mutateAndGetPayload: ({ name, slug } , context) => {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('organizations').list().then(function (organizations) {
         organizations.create('organizations', {
           name: name,
           slug: slug
-        }).then(function(organization) {
+        }).then(function (organization) {
           resolve({
             organization
-          })
+          });
         }).catch(reject);
       }).catch(reject);
-    })
+    });
   }
 });
 
@@ -51,30 +51,30 @@ const updateOrganization = mutationWithClientMutationId({
   outputFields: {
     organization: {
       type: organizationType,
-      resolve: ({organization}) => organization
+      resolve: ({ organization }) => organization
     }
   },
-  mutateAndGetPayload: ({id, name, slug}) => {
+  mutateAndGetPayload: ({ id, name, slug }) => {
     const organizationId = fromGlobalId(id).id;
     var organizationName = name,
       organizationSlug = slug;
 
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('organizations').read(organizationId).then(function(organization) {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('organizations').read(organizationId).then(function (organization) {
         if (organizationName) {
-          organization.name = organizationName
+          organization.name = organizationName;
         }
         if (organizationSlug) {
-          organization.slug = organizationSlug
+          organization.slug = organizationSlug;
         }
 
-        organization.__api__.update(organization).then(function(organization) {
+        organization.__api__.update(organization).then(function (organization) {
           resolve({
             organization
           });
         }).catch(reject);
       }).catch(reject);
-    })
+    });
   }
 });
 
@@ -88,20 +88,20 @@ const deleteOrganization = mutationWithClientMutationId({
   outputFields: {
     organization: {
       type: organizationType,
-      resolve: ({organizationId}) => organizationId
+      resolve: ({ organizationId }) => organizationId
     }
   },
-  mutateAndGetPayload: ({id}) => {
+  mutateAndGetPayload: ({ id }) => {
     var organizationId = fromGlobalId(id).id;
-    return new Promise(function(resolve, reject) {
-      context.rootValue.client.resource('organizations').read(brandfolderId).then(function(organization) {
-        organization.__api__.delete().then(function() {
+    return new Promise(function (resolve, reject) {
+      context.rootValue.client.resource('organizations').read(brandfolderId).then(function (organization) {
+        organization.__api__.delete().then(function () {
           resolve({
             organizationId
           });
-        })
-      }).catch(reject)
-    })
+        });
+      }).catch(reject);
+    });
   }
 });
 

@@ -1,9 +1,9 @@
-import { slugInterface } from "../interfaces/slug";
-import { connectionType as userConnectionType } from "./User"
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import { slugInterface } from '../interfaces/slug';
+import { connectionType as userConnectionType } from './User';
+import { buildResourceType } from '../typeHelpers';
+import * as types from '../GraphQLTypes';
 
-const {type, connectionType, edgeType} = buildResourceType('Brandfolder', () => ({
+const { type, connectionType, edgeType } = buildResourceType('Brandfolder', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
@@ -18,7 +18,10 @@ const {type, connectionType, edgeType} = buildResourceType('Brandfolder', () => 
     card_image: types.GraphQLString,
     header_image: types.GraphQLString,
     google_analytics_id: types.GraphQLString,
-    asset_count: new types.GraphQLNonNull(types.GraphQLInt),
+    feature_names: new types.GraphQLList(types.GraphQLString),
+    number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
+    number_of_collections: new types.GraphQLNonNull(types.GraphQLInt),
+    number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
     updated_at: new types.GraphQLNonNull(types.GraphQLString)
   },
@@ -35,6 +38,6 @@ const {type, connectionType, edgeType} = buildResourceType('Brandfolder', () => 
     collaborators: userConnectionType,
     guests: userConnectionType
   }
-}), slugInterface)
+}), slugInterface);
 
 export { type, connectionType, edgeType };

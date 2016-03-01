@@ -1,7 +1,7 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import { buildResourceType } from '../typeHelpers';
+import * as types from '../GraphQLTypes';
 
-const {type, connectionType, edgeType} = buildResourceType('Section', () => ({
+const { type, connectionType, edgeType } = buildResourceType('Section', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     default_asset_type: new types.GraphQLNonNull(types.GraphQLString),

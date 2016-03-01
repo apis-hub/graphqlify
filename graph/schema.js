@@ -1,5 +1,5 @@
-import { GraphQLSchema } from "graphql/type";
-import queryType from "./types";
+import { GraphQLSchema } from 'graphql/type';
+import queryType from './types';
 // import mutationType from "./mutations";
 
 let schema = new GraphQLSchema({
