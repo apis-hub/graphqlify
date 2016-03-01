@@ -25,7 +25,7 @@
     "cors": "^2.7.1",
     "exenv": "^1.2.0",
     "express": "^4.13.4",
-    "express-graphql": "git+https://github.com/brandfolder/express-graphql.git#658d82f0304a9b516f8708b2db069408a1dacba4",
+    "brandfolder-express-graphql": "git+https://github.com/brandfolder/express-graphql.git#510ce6b2ff3bd41c02680650aa1648a89b5ea438",
     "file-loader": "^0.8.5",
     "glob": "^6.0.1",
     "graphiql": "^0.5.0",

@@ -1,5 +1,5 @@
 import express from 'express';
-import graphqlHTTP from 'express-graphql';
+import graphqlHTTP from 'brandfolder-express-graphql';
 import schema from './graph/schema';
 import path from 'path';
 import webpack from 'webpack';
