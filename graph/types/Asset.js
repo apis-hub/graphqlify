@@ -9,6 +9,7 @@ const { type, connectionType, edgeType } = buildResourceType('Asset', () => ({
     preview_url: types.GraphQLString,
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
+    custom_fields: types.GraphQLReusableObject,
     approved: types.GraphQLBoolean,
     tag_names: new types.GraphQLList(types.GraphQLString),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
