@@ -33,6 +33,7 @@ const { type, connectionType, edgeType } = buildResourceType('Brandfolder', () =
     sections: require('./Section').connectionType,
     collections: require('./Collection').connectionType,
     user_permissions: require('./UserPermission').connectionType,
+    social_links: require('./SocialLink').connectionType,
     users: userConnectionType,
     admins: userConnectionType,
     collaborators: userConnectionType,
