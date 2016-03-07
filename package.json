@@ -1,9 +1,9 @@
 {
-  "name": "RiNo",
+  "name": "graphqlify",
   "version": "1.0.0",
   "description": "A simple GraphQL server",
   "main": "index.js",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": "https://github.com/brandfolder/RiNo.git",
   "scripts": {
     "start": "babel-node index.js",
@@ -36,7 +36,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^2.2.0",
     "jquery.cookie": "^1.4.1",
-    "jsonapionify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#6f446463a1bc6034a783f7f501da6801a976f74a",
+    "jsonapionify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#a519f30c1bab9856cf17ae73b69fc24647ab959a",
     "lodash": "^4.3.0",
     "lodash-inflection": "^1.3.1",
     "react": "^0.14.6",
