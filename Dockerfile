@@ -8,11 +8,11 @@ ENV PORT 5000
 
 # Install Packages
 ADD package.json package.json
-RUN npm prune
-RUN npm install
+ADD Makefile Makefile
+RUN make deps
 
 # Install App
 ADD . /
 
 # Start the app
-CMD npm start
+CMD make server
