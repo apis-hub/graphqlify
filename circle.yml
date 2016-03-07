@@ -1,13 +1,14 @@
 dependencies:
   pre:
     - ./bin/prep-deployment
-
+  override:
+    - 'true'
   cache_directories:
     - 'node_modules'
 
 test:
   override:
-    - "true"
+    - 'true'
 
 # Deployment Scripts to Deploy the various environments to heroku
 deployment:
