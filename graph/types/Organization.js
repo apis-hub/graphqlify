@@ -8,6 +8,7 @@ const { type, connectionType, edgeType } = buildResourceType('Organization', () 
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
     branded_login_image: types.GraphQLString,
+    plan_name: types.GraphQLString,
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_brandfolders: new types.GraphQLNonNull(types.GraphQLInt),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
