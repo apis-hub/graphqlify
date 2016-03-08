@@ -25,6 +25,7 @@
     "body-parser": "^1.14.1",
     "brandfolder-express-graphql": "git+https://github.com/brandfolder/express-graphql.git#510ce6b2ff3bd41c02680650aa1648a89b5ea438",
     "cors": "^2.7.1",
+    "dotenv": "^2.0.0",
     "eslint": "^1.10.3",
     "eslint-plugin-babel": "2.1.1",
     "exenv": "^1.2.0",
