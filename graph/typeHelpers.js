@@ -19,6 +19,7 @@ function fetchTypeById(type, id, context, nodeName, params = {}) {
 
 function buildResourceType(name, mapping, ...interfaces) {
   let connectionName = _.pluralize(name);
+  let resource = _.pluralize(_.snakeCase(name));
   let type = new types.GraphQLObjectType({
     name,
     fields: () => buildFields(name, mapping),
@@ -35,7 +36,7 @@ function buildResourceType(name, mapping, ...interfaces) {
     nodeType: type
   });
 
-  return { type, connectionType, edgeType };
+  return { type, connectionType, edgeType, resource };
 }
 
 function buildApiInfo() {
