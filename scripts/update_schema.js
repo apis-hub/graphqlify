@@ -1,5 +1,5 @@
 'use strict';
-
+require('dotenv').config();
 import fs from 'fs';
 import path from 'path';
 import schema from '../graph/schema.js';

@@ -38,7 +38,7 @@ Run the Server
 ---------------
 Just type:
 ```sh
-$ babel-node index.js
+$ npm start
 ```
 
 Status
