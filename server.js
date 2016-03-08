@@ -34,7 +34,7 @@ const webPackConfig = {
         loader: 'babel-loader',
         test: /\.(js|jsx|es6)$/,
         query: {
-          presets: [ 'stage-0', 'react' ]
+          presets: [ 'es2015', 'stage-0', 'react' ]
         }
       }
     ]
