@@ -124,7 +124,7 @@ function buildRelatedResourceMutations(options) {
 
   // Create outputFields with a resultResponse
   var createOutputFields = {};
-  createOutputFields[_.snakeCase(name)] = {
+  createOutputFields[_.snakeCase(type.type.name)] = {
     type: type.type,
     resolve: ({ resultResponse }) => resultResponse
   };
