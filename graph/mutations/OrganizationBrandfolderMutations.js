@@ -5,6 +5,7 @@ const { createOrganizationBrandfolder } =
   buildRelatedResourceMutations(() => ({
     type: require('../types/Brandfolder'),
     parentType: require('../types/Organization'),
+    relationship: 'brandfolders',
     inputFields: {
       name: new types.GraphQLNonNull(types.GraphQLString)
     }

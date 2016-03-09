@@ -64,7 +64,7 @@ function buildAttributesType(name, fields) {
 // Related Resource Mutation
 function buildRelatedResourceMutations(options) {
   options = options instanceof Function ? options() : options;
-  var { inputFields: attributesFields = {}, outputFields = {}, type, parentType } = options;
+  var { inputFields: attributesFields = {}, outputFields = {}, type, relationship: relationshipName, parentType } = options;
   var name = `${parentType.type.name}${type.type.name}`;
   var { createAttributesType } = buildAttributesType(name, attributesFields);
 
@@ -78,7 +78,13 @@ function buildRelatedResourceMutations(options) {
   // Always return a parent in the output
   outputFields.parent = {
     type: new types.GraphQLNonNull(parentType.type),
-    resolve: ({ parentResponse }) => parentResponse
+    resolve: ({ parentInstance }) => parentInstance.reload()
+  };
+
+  // Always return a parent in the output
+  outputFields[`${relationshipName}Edge`] = {
+    type: new types.GraphQLNonNull(type.connectionType),
+    resolve: ({ parentInstance }) => parentInstance.related(relationshipName)
   };
 
   // Mutate a relationship given a method
@@ -111,11 +117,7 @@ function buildRelatedResourceMutations(options) {
           var ids = globalIdsToRelationshipIds(globalIds);
           // Commit the relationship change
           return rel[method](ids).then(({ relationship }) => {
-            // Reload the parent object
-            return parentInstance.reload().then(parentResponse => {
-              // Return the outputFields
-              return { parentResponse, relationship };
-            });
+            return { relationship, parentInstance };
           });
         });
       }
@@ -152,11 +154,8 @@ function buildRelatedResourceMutations(options) {
       return getRelatedFromContext(
         options, parent_id, context
       ).then(({ collection: col, parentInstance }) => {
-        return col.create({ attributes }).then(({ instance, response }) => {
-          var resultResponse = { instance, response };
-          return parentInstance.reload().then(parentResponse => {
-            return { parentResponse, resultResponse };
-          });
+        return col.create({ attributes }).then(resultResponse => {
+          return { resultResponse, parentInstance };
         });
       });
     }
