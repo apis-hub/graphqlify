@@ -1,13 +1,14 @@
 import { type as userType } from './User';
 import { connectionType as organizationConnectionType } from './Organization';
 import { connectionArgs } from 'graphql-relay';
-import { catchExpired } from '../../lib/catchUnauthorized';
-import * as types from '../GraphQLTypes';
-import { collectionToConnection, connectionFromRelatesToMany, fetchTypeById } from '../typeHelpers';
+import { catchExpired } from '../helpers/catchErrors';
+import * as types from './standard';
+import { collectionToConnection, connectionFromRelatesToMany } from '../helpers/connectionHelpers';
+import fetchTypeById from '../helpers/fetchTypeById';
 
 function fetchCurrentUser(context) {
   return fetchTypeById(
-    'users', '_self', context, 'user'
+    'users', '_self', context, {}, 'user'
   ).catch(
     catchExpired(context.rootValue)
   );

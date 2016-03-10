@@ -1,7 +1,7 @@
-import { buildResourceType } from '../typeHelpers';
-import * as types from '../GraphQLTypes';
+import buildResourceType from '../helpers/buildResourceType';
+import * as types from './standard';
 
-const { type, connectionType, edgeType } = buildResourceType('Plan', () => ({
+const planType = buildResourceType('Plan', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     brandfolder_limit: new types.GraphQLNonNull(types.GraphQLInt),
@@ -23,4 +23,4 @@ const { type, connectionType, edgeType } = buildResourceType('Plan', () => ({
   }
 }));
 
-export { type, connectionType, edgeType };
+module.exports = planType;

@@ -1,6 +1,6 @@
 import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
-import { catchUnauthorized } from '../../lib/catchUnauthorized';
-import { fetchTypeById } from '../typeHelpers';
+import { catchUnauthorized } from '../helpers/catchErrors';
+import fetchTypeById from '../helpers/fetchTypeById';
 import _ from 'lodash';
 
 _.mixin(require('lodash-inflection'));
@@ -40,7 +40,7 @@ var apiResourceField = {
     }
   },
   resolve: (query, args, context) => fetchTypeById(
-    args.apiType, args.apiId, context, 'node'
+    args.apiType, args.apiId, context, {}, 'node'
   ).catch(
     catchUnauthorized(context.rootValue)
   )

@@ -1,7 +1,7 @@
 import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
 import _ from 'lodash';
-import { catchUnauthorized } from '../../lib/catchUnauthorized';
-import { fetchTypeById } from '../typeHelpers';
+import { catchUnauthorized } from '../helpers/catchErrors';
+import fetchTypeById from '../helpers/fetchTypeById';
 
 _.mixin(require('lodash-inflection'));
 
@@ -33,7 +33,7 @@ var slugField = {
     }
   },
   resolve: (query, args, context) => fetchTypeById(
-    'slug', args.uri, context, 'slug'
+    'slug', args.uri, context, {}, 'slug'
   ).catch(
     catchUnauthorized(context.rootValue)
   )

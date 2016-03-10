@@ -1,5 +1,5 @@
-import { buildRootResourceMutations } from '../mutationHelpers';
-import * as types from '../GraphQLTypes';
+import buildRootResourceMutations from '../helpers/buildRootResourceMutations';
+import * as types from '../types/standard';
 
 const { createUser, updateUser, deleteUser } =
   buildRootResourceMutations(() => ({

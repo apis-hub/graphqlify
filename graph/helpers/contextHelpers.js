@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 function getFieldNamesFromContext(context, ...names) {
   // Dive down into the AST until the final name is reached
   var dive = (asts, depth, fieldNames = []) => {
@@ -40,4 +42,16 @@ function getFieldNamesFromContext(context, ...names) {
   return dive(context.fieldASTs, 0);
 }
 
-export default getFieldNamesFromContext;
+function paramsFromContext(existingParams, context, ...path) {
+  return ({ type, validFields, validRelationships }) => {
+    var params = _.extend({}, existingParams);
+    var contextFieldNames = getFieldNamesFromContext(context, ...path);
+    var relationships = contextFieldNames.filter(name => validRelationships.indexOf(name) > -1);
+    params['include-relationships'] = Boolean(relationships.length);
+    params.fields = {};
+    params.fields[type] = contextFieldNames.filter(name => validFields.indexOf(name) > -1).join(',');
+    return params;
+  };
+}
+
+export { paramsFromContext, getFieldNamesFromContext };

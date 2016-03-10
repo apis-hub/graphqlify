@@ -1,4 +1,4 @@
-import * as types from '../GraphQLTypes';
+import * as types from './standard';
 
 var type = new types.GraphQLObjectType({
   name: 'Api',

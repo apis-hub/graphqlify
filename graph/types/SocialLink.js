@@ -1,7 +1,7 @@
-import { buildResourceType } from '../typeHelpers';
-import * as types from '../GraphQLTypes';
+import buildResourceType from '../helpers/buildResourceType';
+import * as types from './standard';
 
-const { type, connectionType, edgeType } = buildResourceType('SocialLink', () => ({
+const socialLinkType = buildResourceType('SocialLink', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     url: new types.GraphQLNonNull(types.GraphQLString),
@@ -14,4 +14,4 @@ const { type, connectionType, edgeType } = buildResourceType('SocialLink', () =>
   }
 }));
 
-export { type, connectionType, edgeType };
+module.exports = socialLinkType;

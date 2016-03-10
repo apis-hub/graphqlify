@@ -1,7 +1,7 @@
-import { buildResourceType } from '../typeHelpers';
-import * as types from '../GraphQLTypes';
+import buildResourceType from '../helpers/buildResourceType';
+import * as types from './standard';
 
-const { type, connectionType, edgeType } = buildResourceType('Invitation', () => ({
+const invitationType = buildResourceType('Invitation', () => ({
   attributes: {
     first_name: types.GraphQLString,
     last_name: types.GraphQLString,
@@ -18,4 +18,4 @@ const { type, connectionType, edgeType } = buildResourceType('Invitation', () =>
   }
 }));
 
-export { type, connectionType, edgeType };
+module.exports = invitationType;

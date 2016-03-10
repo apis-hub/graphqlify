@@ -1,9 +1,9 @@
 import { slugInterface } from '../interfaces/slug';
 import { connectionType as userConnectionType } from './User';
-import { buildResourceType } from '../typeHelpers';
-import * as types from '../GraphQLTypes';
+import buildResourceType from '../helpers/buildResourceType';
+import * as types from './standard';
 
-const { type, connectionType, edgeType } = buildResourceType('Collection', () => ({
+const collectionType = buildResourceType('Collection', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
@@ -32,4 +32,4 @@ const { type, connectionType, edgeType } = buildResourceType('Collection', () =>
   }
 }), slugInterface);
 
-export { type, connectionType, edgeType };
+module.exports = collectionType;

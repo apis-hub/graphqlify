@@ -1,7 +1,7 @@
-import { buildResourceType } from '../typeHelpers';
-import * as types from '../GraphQLTypes';
+import buildResourceType from '../helpers/buildResourceType';
+import * as types from './standard';
 
-const { type, connectionType, edgeType } = buildResourceType('UserPermission', () => ({
+const userPermissionType = buildResourceType('UserPermission', () => ({
   attributes: {
     permission_level: new types.GraphQLNonNull(types.GraphQLString),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
@@ -12,4 +12,4 @@ const { type, connectionType, edgeType } = buildResourceType('UserPermission', (
   }
 }));
 
-export { type, connectionType, edgeType };
+module.exports = userPermissionType;

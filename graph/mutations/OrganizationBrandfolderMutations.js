@@ -1,5 +1,5 @@
-import { buildRelatedResourceMutations } from '../mutationHelpers';
-import * as types from '../GraphQLTypes';
+import buildRelatedResourceMutations from '../helpers/buildRelatedResourceMutations';
+import * as types from '../types/standard';
 
 const { createOrganizationBrandfolder } =
   buildRelatedResourceMutations(() => ({

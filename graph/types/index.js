@@ -3,9 +3,9 @@ import { slugField } from '../interfaces/slug';
 import { apiResourceField } from '../interfaces/apiResource';
 import { type as viewerType } from './Viewer';
 import { type as apiType } from './Api';
-import types from '../GraphQLTypes';
+import { GraphQLObjectType } from 'graphql';
 
-var queryType = new types.GraphQLObjectType({
+var queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
