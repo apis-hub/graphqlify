@@ -1,10 +1,13 @@
 'use strict';
-require('dotenv').config();
 import fs from 'fs';
 import path from 'path';
 import schema from '../graph/schema.js';
 import { graphql } from 'graphql';
 import { introspectionQuery, printSchema } from 'graphql/utilities';
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // Save JSON of full schema introspection for Babel Relay Plugin to use
 (async() => {
