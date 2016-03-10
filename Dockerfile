@@ -18,4 +18,4 @@ RUN make deps
 ADD . /
 
 # Start the app
-CMD make server
+CMD npm start

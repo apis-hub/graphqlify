@@ -89,7 +89,12 @@ function buildRelatesToMany(mapping) {
     let type = mapping[relationshipName];
     output[relationshipName] = {
       type,
-      args: connectionArgs,
+      args: {
+        ...connectionArgs,
+        order: {
+          type: types.GraphQLString
+        }
+      },
       resolve: ({ instance }, args, context) => {
         return connectionFromRelatesToMany(
           instance, relationshipName, args, context

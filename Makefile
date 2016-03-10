@@ -2,7 +2,7 @@ docker-deps:
 	docker-compose build
 
 docker-server: docker-deps
-	docker-compose start
+	docker-compose up
 
 docker-test: docker-build
 	docker-comose run app npm test

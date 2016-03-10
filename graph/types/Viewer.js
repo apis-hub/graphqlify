@@ -34,7 +34,12 @@ var type = new types.GraphQLObjectType({
     },
     organizations: {
       type: organizationConnectionType,
-      args: connectionArgs,
+      args: {
+        ...connectionArgs,
+        order: {
+          type: types.GraphQLString
+        }
+      },
       resolve: (root, args, context) => {
         return fetchCurrentUser(context).then(
           ({ instance }) => connectionFromRelatesToMany(instance, 'organizations', args, context)
