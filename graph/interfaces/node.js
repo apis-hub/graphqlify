@@ -8,6 +8,7 @@ _.mixin(require('lodash-inflection'));
 var { nodeInterface, nodeField } = nodeDefinitions(
   (globalId, context) => {
     var { type, id } = fromGlobalId(globalId);
+    type = _.pluralize(type.toLowerCase());
     return fetchTypeById(
       type, id, context, {}, 'node'
     ).catch(
