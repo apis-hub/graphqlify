@@ -11,7 +11,8 @@ const sectionType = buildResourceType('Section', () => ({
     updated_at: new types.GraphQLNonNull(types.GraphQLString)
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder').type
+    brandfolder: require('./Brandfolder').type,
+    collection: require('./Collection').type
   },
   relatesToMany: {
     assets: require('./Asset').connectionType,

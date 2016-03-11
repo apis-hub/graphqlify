@@ -22,6 +22,7 @@ const collectionType = buildResourceType('Collection', () => ({
     brandfolder: require('./Brandfolder').type
   },
   relatesToMany: {
+    sections: require('./Section').connectionType,
     assets: require('./Asset').connectionType,
     collections: require('./Collection').connectionType,
     user_permissions: require('./UserPermission').connectionType,
