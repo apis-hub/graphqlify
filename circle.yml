@@ -13,7 +13,7 @@ dependencies:
 
 test:
   override:
-    - docker-compose run app npm lint
+    - docker-compose run app npm run lint
 
 # Deployment Scripts to Deploy the various environments to heroku
 deployment:
