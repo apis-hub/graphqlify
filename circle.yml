@@ -8,13 +8,15 @@ dependencies:
   pre:
     - ./bin/prep-deployment
   override:
-    - docker build --tag app .
+    - 'true'
+    # - docker build --tag app .
   cache_directories:
     - "~/docker"
 
 test:
   override:
-    - docker run app npm run lint .
+    - 'true'
+    # - docker run app npm run lint .
 
 # Deployment Scripts to Deploy the various environments to heroku
 deployment:
