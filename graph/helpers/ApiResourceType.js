@@ -6,6 +6,7 @@ import { apiResourceInterface } from '../interfaces/apiResource';
 import { catchUnauthorized } from './catchErrors';
 import { getRelatedWithFields, connectionFromRelatesToMany } from './connectionHelpers';
 import expandInputTypes from './expandInputTypes';
+import resolveMaybeThunk from './resolveMaybeThunk';
 import urlJoin from 'url-join';
 
 const baseUrl = (
@@ -110,13 +111,11 @@ function buildRelatesToMany({ relatesToMany }) {
     let typeArgs;
     if (value instanceof ApiResourceType) {
       type = value.connectionType;
-      argsMap = { ...argsMap, ...value.connectionArgs };
-      // argsMap = value.connectionArgs(argsMap);
+      argsMap = { ...argsMap, ...value.buildConnectionArgs() };
     } else if (value.type instanceof ApiResourceType) {
       typeArgs = value.args || {};
       type = value.type.connectionType;
       argsMap = { ...argsMap, ...value.buildConnectionArgs(typeArgs) };
-      // argsMap = value.type.connectionArgs(argsMap);
     } else {
       typeArgs = value.args || {};
       type = value.type;
@@ -205,17 +204,17 @@ class ApiResourceType {
     return new MappingObject(this.config.mapping);
   }
 
-  connectionArgs(args) {
-    return this.mapping.connectionArgs(args);
+  get connectionArgs() {
+    return this.mapping.connectionArgs;
+  }
+
+  buildConnectionArgs(...args) {
+    return this.mapping.buildConnectionArgs(...args);
   }
 }
 
 class MappingObject {
   constructor(config) {
-    if (config instanceof Function) {
-      config = config();
-    }
-
     // Set Defaults
     config = {
       connectionArgs: {},
@@ -224,7 +223,7 @@ class MappingObject {
       connectionFields: {},
       relatesToMany: {},
       relatesToOne: {},
-      ...config
+      ...resolveMaybeThunk(config)
     };
 
     // Set the variables
