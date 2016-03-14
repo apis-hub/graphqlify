@@ -1,8 +1,8 @@
 import RelatedResourceMutator from '../../helpers/RelatedResourceMutator';
 
 const { removeBrandfoldersAssets } = new RelatedResourceMutator(() => ({
-  type: require('../../types/Asset'),
-  parentType: require('../../types/Brandfolder'),
+  type: () => require('../../types/Asset'),
+  parentType: () => require('../../types/Brandfolder'),
   relationship: 'assets'
 }));
 
