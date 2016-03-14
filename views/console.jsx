@@ -78,7 +78,7 @@ function graphQLFetcher(graphQLParams) {
       });
     }
     return response;
-  }).then(response => response.json());
+  }).then(response => response.json);
 }
 
 if (params.token) {

@@ -53,7 +53,7 @@ function collectionToConnection({ collection, response }) {
       hasPreviousPage: Boolean(collection.links.prev),
       hasNextPage: Boolean(collection.links.next)
     },
-    rights: (response && response.json().meta.rights) || {}
+    rights: (response && response.json.meta.rights) || {}
   };
 }
 
