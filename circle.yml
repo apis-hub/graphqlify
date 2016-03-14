@@ -1,14 +1,19 @@
+---
+
+machine:
+  services:
+    - docker
+
 dependencies:
   pre:
     - ./bin/prep-deployment
+    - sudo pip install --upgrade docker-compose
   override:
-    - 'true'
-  cache_directories:
-    - 'node_modules'
+    - docker-compose build
 
 test:
   override:
-    - 'true'
+    - docker-compose run app npm lint
 
 # Deployment Scripts to Deploy the various environments to heroku
 deployment:

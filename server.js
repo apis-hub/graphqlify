@@ -75,7 +75,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
     headers
   });
 
-  api.addMiddleware(jsonApionifyLogger)
+  api.addMiddleware(jsonApionifyLogger);
 
   return {
     formatError: logError,
