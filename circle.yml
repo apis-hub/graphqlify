@@ -9,6 +9,8 @@ dependencies:
     - ./bin/prep-deployment
   override:
     - docker build --tag app .
+  cache_directories:
+    - "~/docker"
 
 test:
   override:
