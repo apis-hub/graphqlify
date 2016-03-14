@@ -3,19 +3,20 @@ MAINTAINER Brandfolder, Inc. <developers@brandfolder.com>
 
 # Set up ENV
 ENV BRANDFOLDER_API_ENDPOINT https://api.brandfolder.com/v2
-ENV NODE_ENV production
 ENV PORT 5000
+
+# Set the working directory
+WORKDIR /app
 
 # Expose the PORT
 EXPOSE $PORT
 
 # Install Packages
-ADD package.json package.json
-ADD Makefile Makefile
-RUN make deps
+ADD package.json /app/package.json
+RUN npm install
 
 # Install App
-ADD . /
+ADD . /app
 
 # Start the app
 CMD npm start

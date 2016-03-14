@@ -14,7 +14,7 @@ dependencies:
 
 test:
   override:
-    - docker run app eslint .
+    - docker run app npm run lint .
 
 # Deployment Scripts to Deploy the various environments to heroku
 deployment:
