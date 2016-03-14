@@ -1,16 +1,15 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const socialLinkType = buildResourceType('SocialLink', () => ({
+const socialLinkType = new ApiResourceType('SocialLink', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     url: new types.GraphQLNonNull(types.GraphQLString),
     position: new types.GraphQLNonNull(types.GraphQLInt),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder').type
+    brandfolder: require('./Brandfolder')
   }
 }));
 

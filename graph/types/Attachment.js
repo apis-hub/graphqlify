@@ -1,7 +1,7 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const attachmentType = buildResourceType('Attachment', () => ({
+const attachmentType = new ApiResourceType('Attachment', () => ({
   attributes: {
     file_url: new types.GraphQLNonNull(types.GraphQLString),
     mimetype: types.GraphQLString,
@@ -14,12 +14,10 @@ const attachmentType = buildResourceType('Attachment', () => ({
     width: types.GraphQLInt,
     height: types.GraphQLInt,
     metadata: types.GraphQLReusableObject,
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
   },
   relatesToOne: {
-    asset: require('./Asset').type,
-    creator: require('./User').type
+    asset: require('./Asset'),
+    creator: require('./User')
   }
 }));
 

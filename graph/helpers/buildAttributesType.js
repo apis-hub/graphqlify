@@ -1,31 +1,32 @@
 import _ from 'lodash';
 import * as types from '../types/standard';
+import expandInputTypes from './expandInputTypes';
 
-// Build the input type for attributes
-function buildAttributesType(name, fields) {
-  // Force shorthand into longhand
-  _.reduce(fields, (result, value, key) => {
-    if (result[key].type === undefined) {
-      result[key] = { type: value };
+function denullify(fields) {
+  return _.reduce(fields, (result, field) => {
+    if (field.type instanceof types.GraphQLNonNull) {
+      field.type = field.type.ofType;
     }
     return result;
   }, fields);
-
-  return {
-    createAttributesType: new types.GraphQLInputObjectType({
-      name: `${name}CreateAttributes`,
-      fields
-    }),
-    updateAttributesType: new types.GraphQLInputObjectType({
-      name: `${name}UpdateAttributes`,
-      fields: _.reduce(fields, (result, field) => {
-        if (field.type instanceof types.GraphQLNonNull) {
-          field.type = field.type.ofType;
-        }
-        return result;
-      }, fields)
-    })
-  };
 }
 
-export default buildAttributesType;
+class CreateAttributesType extends types.GraphQLInputObjectType {
+  constructor(name, fields) {
+    super({
+      name: `${name}CreateAttributes`,
+      fields: expandInputTypes(fields)
+    });
+  }
+}
+
+class UpdateAttributesType extends types.GraphQLInputObjectType {
+  constructor(name, fields) {
+    super({
+      name: `${name}UpdateAttributes`,
+      fields: denullify(expandInputTypes(fields))
+    });
+  }
+}
+
+export { CreateAttributesType, UpdateAttributesType };

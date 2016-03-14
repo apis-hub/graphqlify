@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Save JSON of full schema introspection for Babel Relay Plugin to use
 (async() => {
-  var result = await (graphql(schema, introspectionQuery));
+  let result = await (graphql(schema, introspectionQuery));
   if (result.errors) {
     console.error(
       'ERROR introspecting schema: ', JSON.stringify(result.errors, null, 2)

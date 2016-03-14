@@ -1,19 +1,21 @@
 import { GraphQLObjectType } from 'graphql/type';
-import { updateOrganization } from './OrganizationMutations';
-import { createOrganizationBrandfolder } from './OrganizationBrandfolderMutations';
-import { updateBrandfolder, deleteBrandfolder } from './BrandfolderMutations';
-import { createUser, updateUser, deleteUser } from './UserMutations';
+import requireMutations from '../helpers/requireMutations';
 
-var mutationType = new GraphQLObjectType({
+let mutationType = new GraphQLObjectType({
   name: 'Mutation',
-  fields: ({
-    createUser,
-    updateUser,
-    deleteUser,
-    updateOrganization,
-    createOrganizationBrandfolder,
-    updateBrandfolder,
-    deleteBrandfolder
+  fields: () => ({
+    ...requireMutations('AssetApprovalMutations'),
+    ...requireMutations('AssetCommentMutations'),
+    ...requireMutations('AssetMutations'),
+    ...requireMutations('AttachmentMutations'),
+    ...requireMutations('BrandfolderMutations'),
+    ...requireMutations('CollectionMutations'),
+    ...requireMutations('InvitationMutations'),
+    ...requireMutations('OrganizationMutations'),
+    ...requireMutations('SectionMutations'),
+    ...requireMutations('SocialLinkMutations'),
+    ...requireMutations('UserMutations'),
+    ...requireMutations('UserPermissionMutations')
   })
 });
 

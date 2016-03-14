@@ -4,15 +4,16 @@ import schema from './graph/schema';
 import path from 'path';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
-import { JSONAPIonify } from 'jsonapionify-client';
+import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
 import cors from 'cors';
-const stackTrace = require('stack-trace');
+import morgan from 'morgan';
+import stackTrace from 'stack-trace';
 
 function logError(error) {
   console.error('');
 
   error = error.error !== undefined ? error.error : error;
-  var stack = stackTrace.parse(error);
+  let stack = stackTrace.parse(error);
   console.error(error.toString());
   stack.forEach(function (trace, index) {
     console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
@@ -21,6 +22,8 @@ function logError(error) {
   console.error('');
   return error;
 }
+
+const logger = morgan('tiny');
 
 const webPackConfig = {
   entry: path.resolve(__dirname, 'views', 'console.jsx'),
@@ -48,6 +51,9 @@ const webPackConfig = {
 const compiler = webpack(webPackConfig);
 const app = express();
 
+// Enable Logger
+app.use(logger);
+
 // Enable Cors
 app.use('/graphql', cors());
 
@@ -58,16 +64,18 @@ app.use('/assets', webpackMiddleware(compiler));
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 const graphQLMiddleware = graphqlHTTP(request => {
-  var headers = {};
-  var endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
+  let headers = {};
+  let endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
   }
 
-  var api = new JSONAPIonify(endpoint, {
+  let api = new JSONAPIonify(endpoint, {
     headers
   });
+
+  api.addMiddleware(jsonApionifyLogger)
 
   return {
     formatError: logError,
@@ -86,6 +94,6 @@ app.get('/', (req, res) => res.sendFile(
   path.resolve(__dirname, 'views/console.html')
 ));
 
-var port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 app.listen(port);
 console.log(`Started on http://localhost:${port}/`);

@@ -1,9 +1,8 @@
 import { slugInterface } from '../interfaces/slug';
-import { connectionType as userConnectionType } from './User';
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const brandfolderType = buildResourceType('Brandfolder', () => ({
+const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
@@ -22,23 +21,19 @@ const brandfolderType = buildResourceType('Brandfolder', () => ({
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_collections: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    organization: require('./Organization').type
+    organization: require('./Organization')
   },
   relatesToMany: {
-    assets: require('./Asset').connectionType,
-    sections: require('./Section').connectionType,
-    collections: require('./Collection').connectionType,
-    user_permissions: require('./UserPermission').connectionType,
-    social_links: require('./SocialLink').connectionType,
-    users: userConnectionType,
-    admins: userConnectionType,
-    collaborators: userConnectionType,
-    guests: userConnectionType
-  }
+    assets: require('./Asset'),
+    sections: require('./Section'),
+    collections: require('./Collection'),
+    social_links: require('./SocialLink'),
+    users: require('./User')
+    // ...require('./concerns/permissibleRelationships')
+  },
 }), slugInterface);
 
 module.exports = brandfolderType;

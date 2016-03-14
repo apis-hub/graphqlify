@@ -16,8 +16,8 @@ var { nodeInterface, nodeField } = nodeDefinitions(
     );
   },
   ({ instance }) => {
-    var singular = _.singularize(instance.type);
-    var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
+    let singular = _.singularize(instance.type);
+    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }
 );

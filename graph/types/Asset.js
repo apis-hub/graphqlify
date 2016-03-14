@@ -1,7 +1,7 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const assetType = buildResourceType('Asset', () => ({
+const assetType = new ApiResourceType('Asset', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     asset_type: new types.GraphQLNonNull(types.GraphQLString),
@@ -12,16 +12,16 @@ const assetType = buildResourceType('Asset', () => ({
     custom_fields: types.GraphQLReusableObject,
     approved: types.GraphQLBoolean,
     tag_names: new types.GraphQLList(types.GraphQLString),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder').type,
+    brandfolder: require('./Brandfolder'),
   },
   relatesToMany: {
-    attachments: require('./Attachment').connectionType,
-    collections: require('./Collection').connectionType,
-    comments: require('./AssetComment').connectionType
+    attachments: require('./Attachment'),
+    collections: require('./Collection'),
+    comments: require('./AssetComment'),
+    appovals: require('./AssetApproval')
   }
 }));
 

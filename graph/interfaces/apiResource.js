@@ -5,8 +5,9 @@ import _ from 'lodash';
 
 _.mixin(require('lodash-inflection'));
 
-var apiResourceInterface = new GraphQLInterfaceType({
+let apiResourceInterface = new GraphQLInterfaceType({
   name: 'ApiResource',
+  description: 'Api objects that can be fetched given a type and ID.',
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLID)
@@ -19,13 +20,13 @@ var apiResourceInterface = new GraphQLInterfaceType({
     }
   },
   resolveType: ({ instance }) => {
-    var singular = _.singularize(instance.type);
-    var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
+    let singular = _.singularize(instance.type);
+    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }
 });
 
-var apiResourceField = {
+let apiResourceField = {
   name: 'apiResource',
   description: 'Fetches an object by its resource type and Api ID.',
   type: apiResourceInterface,

@@ -1,9 +1,7 @@
-import _ from 'lodash';
-
 function getFieldNamesFromContext(context, ...names) {
   // Dive down into the AST until the final name is reached
-  var dive = (asts, depth, fieldNames = []) => {
-    var name = names[depth];
+  let dive = (asts, depth, fieldNames = []) => {
+    let name = names[depth];
     if (name) {
       // Dive level deeper, if a next name is specified
       expand(asts).filter(o => o.name.value === name).forEach(
@@ -21,7 +19,7 @@ function getFieldNamesFromContext(context, ...names) {
   };
 
   // Expand fragments from fields
-  var expand = (asts, fields = []) => {
+  let expand = (asts, fields = []) => {
     asts.forEach(f => {
       switch (f.kind) {
         case 'Field': // If the name is a field, just return the field
@@ -44,9 +42,9 @@ function getFieldNamesFromContext(context, ...names) {
 
 function paramsFromContext(existingParams, context, ...path) {
   return ({ type, validFields, validRelationships }) => {
-    var params = _.extend({}, existingParams);
-    var contextFieldNames = getFieldNamesFromContext(context, ...path);
-    var relationships = contextFieldNames.filter(name => validRelationships.indexOf(name) > -1);
+    let params = { ...existingParams };
+    let contextFieldNames = getFieldNamesFromContext(context, ...path);
+    let relationships = contextFieldNames.filter(name => validRelationships.indexOf(name) > -1);
     params['include-relationships'] = Boolean(relationships.length);
     params.fields = {};
     params.fields[type] = contextFieldNames.filter(name => validFields.indexOf(name) > -1).join(',');

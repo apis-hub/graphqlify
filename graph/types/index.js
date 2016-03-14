@@ -5,7 +5,7 @@ import { type as viewerType } from './Viewer';
 import { type as apiType } from './Api';
 import { GraphQLObjectType } from 'graphql';
 
-var queryType = new GraphQLObjectType({
+let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({

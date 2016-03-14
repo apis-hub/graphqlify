@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import * as GraphQLTypes from 'graphql/type';
 import { GraphQLScalarType } from 'graphql';
 
-const types = _.extend({}, GraphQLTypes);
+const types = { ...GraphQLTypes };
 
 types.GraphQLReusableObject = new GraphQLScalarType({
   name: 'ReusableObject',

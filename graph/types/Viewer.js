@@ -14,7 +14,7 @@ function fetchCurrentUser(context) {
   );
 }
 
-var type = new types.GraphQLObjectType({
+let type = new types.GraphQLObjectType({
   name: 'Viewer',
   description: 'The query root of the schema',
   fields: () => ({

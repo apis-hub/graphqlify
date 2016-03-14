@@ -13,7 +13,7 @@ function parseParams(search) {
   let p = {};
   if (search) {
     $.extend(p, search.replace(/(^\?)/, '').split('&').map(function (n) {
-      var kv = n.split('=');
+      let kv = n.split('=');
       p[kv[0]] = kv[1] === undefined ? true : kv[1];
     }));
   }
@@ -28,7 +28,7 @@ const authorize = function (login) {
   graphQLFetcher({
     query: 'query {api{url}}'
   }).then(function (json) {
-    var url = Url.parse(json.data.api.url);
+    let url = Url.parse(json.data.api.url);
     url.hostname = url.hostname.split('.').slice(-2).join('.');
     url.host = undefined;
     url.href = undefined;

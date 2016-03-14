@@ -1,21 +1,23 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const sectionType = buildResourceType('Section', () => ({
+const sectionType = new ApiResourceType('Section', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     default_asset_type: new types.GraphQLNonNull(types.GraphQLString),
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     position: new types.GraphQLNonNull(types.GraphQLInt),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder').type,
-    collection: require('./Collection').type
+    brandfolder: require('./Brandfolder'),
+    collection: require('./Collection')
   },
   relatesToMany: {
-    assets: require('./Asset').connectionType,
+    assets: require('./Asset'),
+  },
+  connectionArgs: {
+    has_assets: types.GraphQLBoolean
   }
 }));
 

@@ -1,7 +1,7 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const invitationType = buildResourceType('Invitation', () => ({
+const invitationType = new ApiResourceType('Invitation', () => ({
   attributes: {
     first_name: types.GraphQLString,
     last_name: types.GraphQLString,
@@ -10,11 +10,10 @@ const invitationType = buildResourceType('Invitation', () => ({
     personal_message: types.GraphQLString,
     active: types.GraphQLBoolean,
     token: new types.GraphQLNonNull(types.GraphQLString),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    inviter: require('./User').type
+    inviter: require('./User')
   }
 }));
 

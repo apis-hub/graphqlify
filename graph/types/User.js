@@ -1,19 +1,20 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const userType = buildResourceType('User', () => ({
-  attributes: {
-    first_name: types.GraphQLString,
-    last_name: types.GraphQLString,
-    email: types.GraphQLString,
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
-  },
-  relatesToMany: {
-    organizations: require('./Organization').connectionType,
-    brandfolders: require('./Brandfolder').connectionType,
-    collections: require('./Collection').connectionType
-  }
-}));
+const userType = new ApiResourceType('User', () => {
+  return {
+    attributes: {
+      first_name: types.GraphQLString,
+      last_name: types.GraphQLString,
+      email: types.GraphQLString,
+      ...require('./concerns/timestamps')
+    },
+    relatesToMany: {
+      organizations: require('./Organization'),
+      brandfolders: require('./Brandfolder'),
+      collections: require('./Collection')
+    }
+  };
+});
 
 module.exports = userType;

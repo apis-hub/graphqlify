@@ -1,7 +1,7 @@
-import buildResourceType from '../helpers/buildResourceType';
+import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
-const planType = buildResourceType('Plan', () => ({
+const planType = new ApiResourceType('Plan', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     brandfolder_limit: new types.GraphQLNonNull(types.GraphQLInt),
@@ -15,11 +15,10 @@ const planType = buildResourceType('Plan', () => ({
     api_call_limit: new types.GraphQLNonNull(types.GraphQLInt),
     api_call_count: new types.GraphQLNonNull(types.GraphQLInt),
     available_features: new types.GraphQLList(types.GraphQLString),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    organization: require('./Organization').type,
+    organization: require('./Organization'),
   }
 }));
 

@@ -5,8 +5,9 @@ import fetchTypeById from '../helpers/fetchTypeById';
 
 _.mixin(require('lodash-inflection'));
 
-var slugInterface = new GraphQLInterfaceType({
+let slugInterface = new GraphQLInterfaceType({
   name: 'Slug',
+  description: 'For objects that have a slug and that are routable on brandfolder.com',
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLID)
@@ -16,15 +17,15 @@ var slugInterface = new GraphQLInterfaceType({
     }
   },
   resolveType: ({ instance }) => {
-    var singular = _.singularize(instance.type);
-    var typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
+    let singular = _.singularize(instance.type);
+    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
     return require(typeFile).type;
   }
 });
 
-var slugField = {
+let slugField = {
   name: 'slug',
-  description: 'Fetches an object by its slug uri.',
+  description: 'Fetches an object using the slug API.',
   type: slugInterface,
   args: {
     uri: {
