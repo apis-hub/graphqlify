@@ -10,8 +10,7 @@ const sectionType = new ApiResourceType('Section', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder'),
-    collection: require('./Collection')
+    brandfolder: require('./Brandfolder')
   },
   relatesToMany: {
     assets: require('./Asset'),
