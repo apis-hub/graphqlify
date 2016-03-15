@@ -2,6 +2,7 @@ import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
 import _ from 'lodash';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
+import resolveType from '../helpers/resolveType';
 
 _.mixin(require('lodash-inflection'));
 
@@ -15,11 +16,7 @@ var { nodeInterface, nodeField } = nodeDefinitions(
       catchUnauthorized(context.rootValue)
     );
   },
-  ({ instance }) => {
-    let singular = _.singularize(instance.type);
-    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
-    return require(typeFile).type;
-  }
+  resolveType
 );
 
 export { nodeInterface, nodeField };

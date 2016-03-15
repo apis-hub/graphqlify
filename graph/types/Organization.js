@@ -1,4 +1,5 @@
 import { slugInterface } from '../interfaces/slug';
+import { permissibleInterface } from '../interfaces/permissible';
 import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
 
@@ -20,9 +21,8 @@ const organizationType = new ApiResourceType('Organization', () => ({
     collections: require('./Collection'),
     assets: require('./Asset'),
     owners: require('./User'),
-    user_permissions: require('./UserPermission'),
-    // ...require('./concerns/permissibleRelationships')
+    ...require('./concerns/permissibleRelationships')()
   }
-}), slugInterface);
+}), slugInterface, permissibleInterface);
 
 module.exports = organizationType;

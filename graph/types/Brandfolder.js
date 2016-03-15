@@ -1,5 +1,6 @@
 import { slugInterface } from '../interfaces/slug';
 import ApiResourceType from '../helpers/ApiResourceType';
+import { permissibleInterface } from '../interfaces/permissible';
 import * as types from './standard';
 
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
@@ -31,9 +32,9 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     sections: require('./Section'),
     collections: require('./Collection'),
     social_links: require('./SocialLink'),
-    users: require('./User')
-    // ...require('./concerns/permissibleRelationships')
+    users: require('./User'),
+    ...require('./concerns/permissibleRelationships')()
   },
-}), slugInterface);
+}), slugInterface, permissibleInterface);
 
 module.exports = brandfolderType;

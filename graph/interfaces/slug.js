@@ -2,6 +2,7 @@ import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from '
 import _ from 'lodash';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
+import resolveType from '../helpers/resolveType';
 
 _.mixin(require('lodash-inflection'));
 
@@ -16,11 +17,7 @@ let slugInterface = new GraphQLInterfaceType({
       type: GraphQLString
     }
   },
-  resolveType: ({ instance }) => {
-    let singular = _.singularize(instance.type);
-    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
-    return require(typeFile).type;
-  }
+  resolveType
 });
 
 let slugField = {

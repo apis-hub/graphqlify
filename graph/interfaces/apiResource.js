@@ -1,6 +1,7 @@
 import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
+import resolveType from '../helpers/resolveType';
 import _ from 'lodash';
 
 _.mixin(require('lodash-inflection'));
@@ -19,11 +20,7 @@ let apiResourceInterface = new GraphQLInterfaceType({
       type: new GraphQLNonNull(GraphQLString)
     }
   },
-  resolveType: ({ instance }) => {
-    let singular = _.singularize(instance.type);
-    let typeFile = `../types/${_.upperFirst(_.camelCase(singular))}.js`;
-    return require(typeFile).type;
-  }
+  resolveType
 });
 
 let apiResourceField = {
@@ -41,7 +38,7 @@ let apiResourceField = {
     }
   },
   resolve: (query, args, context) => fetchTypeById(
-    args.apiType, args.apiId, context, {}, 'node'
+    args.apiType, args.apiId, context, {}, 'apiResource'
   ).catch(
     catchUnauthorized(context.rootValue)
   )
