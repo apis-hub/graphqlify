@@ -20,6 +20,7 @@ const organizationType = new ApiResourceType('Organization', () => ({
     collections: require('./Collection'),
     assets: require('./Asset'),
     owners: require('./User'),
+    user_permissions: require('./UserPermission'),
     // ...require('./concerns/permissibleRelationships')
   }
 }), slugInterface);
