@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app:
+    build: .
+    environment:
+      BRANDFOLDER_API_ENDPOINT: https://api.brandfolder.com/v2
+      PORT: 5000
+    ports:
+      - "5000:5000"

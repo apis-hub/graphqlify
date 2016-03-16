@@ -47,6 +47,7 @@ pickle-email-*.html
 bower.json
 
 # Ignore pow environment settings
+.env
 .powenv
 public/schema.graphql
 public/schema.json

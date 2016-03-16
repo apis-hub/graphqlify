@@ -1,7 +1,7 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import ApiResourceType from '../helpers/ApiResourceType';
+import * as types from './standard';
 
-const {type, connectionType, edgeType} = buildResourceType('Attachment', () => ({
+const attachmentType = new ApiResourceType('Attachment', () => ({
   attributes: {
     file_url: new types.GraphQLNonNull(types.GraphQLString),
     mimetype: types.GraphQLString,
@@ -14,13 +14,11 @@ const {type, connectionType, edgeType} = buildResourceType('Attachment', () => (
     width: types.GraphQLInt,
     height: types.GraphQLInt,
     metadata: types.GraphQLReusableObject,
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
   },
   relatesToOne: {
-    asset: require('./Asset').type,
-    creator: require('./User').type
+    asset: require('./Asset'),
+    creator: require('./User')
   }
-}))
+}));
 
-export { type, connectionType, edgeType };
+module.exports = attachmentType;

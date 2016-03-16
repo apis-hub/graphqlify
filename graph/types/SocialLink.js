@@ -1,17 +1,16 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import ApiResourceType from '../helpers/ApiResourceType';
+import * as types from './standard';
 
-const {type, connectionType, edgeType} = buildResourceType('SocialLink', () => ({
+const socialLinkType = new ApiResourceType('SocialLink', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     url: new types.GraphQLNonNull(types.GraphQLString),
     position: new types.GraphQLNonNull(types.GraphQLInt),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder').type
+    brandfolder: require('./Brandfolder')
   }
 }));
 
-export { type, connectionType, edgeType };
+module.exports = socialLinkType;

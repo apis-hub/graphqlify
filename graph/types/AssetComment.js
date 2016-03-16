@@ -1,19 +1,18 @@
-import { buildResourceType } from "../typeHelpers"
-import * as types from "../GraphQLTypes";
+import ApiResourceType from '../helpers/ApiResourceType';
+import * as types from './standard';
 
-const {type, connectionType, edgeType} = buildResourceType('AssetComment', () => ({
+const assetCommentType = new ApiResourceType('AssetComment', () => ({
   attributes: {
     body: new types.GraphQLNonNull(types.GraphQLString),
-    created_at: new types.GraphQLNonNull(types.GraphQLString),
-    updated_at: new types.GraphQLNonNull(types.GraphQLString)
+    ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    asset: require('./Asset').type,
-    author: require('./User').type
+    asset: require('./Asset'),
+    author: require('./User')
   },
   relatesToMany: {
-    replies: connectionType,
+    replies: assetCommentType,
   }
-}))
+}));
 
-export { type, connectionType, edgeType };
+module.exports = assetCommentType;

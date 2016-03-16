@@ -1,49 +1,19 @@
-import { GraphQLObjectType } from "graphql/type";
-import { createAssetComment, deleteAssetComment } from "./asset_comments_mutations";
-import { createAsset, updateAsset, removeSectionAssets } from "./asset_mutations";
-import { createAttachment, updateAttachment, deleteAttachment } from "./attachment_mutations";
-import { createBrandfolder, updateBrandfolder, deleteBrandfolder } from "./brandfolder_mutations";
-import { createCollection, updateCollection, deleteCollection } from "./collection_mutations";
-import { createInvitation, deleteInvitation } from "./invitation_mutations";
-import { createSocialLink, updateSocialLink, deleteSocialLink } from "./social_link_mutations";
-import { createOrganization, updateOrganization, deleteOrganization } from "./organization_mutations";
-import { createSection, updateSection, deleteSection } from "./section_mutations";
-import { createUser, updateUser, deleteUser } from "./user_mutations";
-import { createBrandfolderUserPermission, createCollectionUserPermission, createOrganizationUserPermission } from "./user_permission_mutations";
+import { GraphQLObjectType } from 'graphql/type';
+import requireMutations from '../helpers/requireMutations';
 
-var mutationType = new GraphQLObjectType({
+let mutationType = new GraphQLObjectType({
   name: 'Mutation',
-  fields: ({
-    createBrandfolder: createBrandfolder,
-    updateBrandfolder: updateBrandfolder,
-    deleteBrandfolder: deleteBrandfolder,
-    createAssetComment: createAssetComment,
-    deleteAssetComment: deleteAssetComment,
-    createAsset: createAsset,
-    updateAsset: updateAsset,
-    removeSectionAsset: removeSectionAssets,
-    createAttachment: createAttachment,
-    updateAttachment: updateAttachment,
-    deleteAttachment: deleteAttachment,
-    createCollection: createCollection,
-    updateCollection: updateCollection,
-    deleteCollection: deleteCollection,
-    createInvitation: createInvitation,
-    deleteInvitation: deleteInvitation,
-    createSocialLink: createSocialLink,
-    updateSocialLink: updateSocialLink,
-    deleteSocialLink: deleteSocialLink,
-    updateOrganization: updateOrganization,
-    createSection: createSection,
-    updateSection: updateSection,
-    deleteSection: deleteSection,
-    createUser: createUser,
-    updateUser: updateUser,
-    deleteUser: deleteUser,
-    createBrandfolderUserPermission: createBrandfolderUserPermission,
-    createCollectionUserPermission: createCollectionUserPermission,
-    createOrganizationUserPermission: createOrganizationUserPermission
-
+  fields: () => ({
+    ...requireMutations('AssetCommentMutations'),
+    ...requireMutations('AssetMutations'),
+    ...requireMutations('BrandfolderMutations'),
+    ...requireMutations('CollectionMutations'),
+    ...requireMutations('InvitationMutations'),
+    ...requireMutations('OrganizationMutations'),
+    ...requireMutations('SectionMutations'),
+    ...requireMutations('SocialLinkMutations'),
+    ...requireMutations('UserMutations'),
+    ...requireMutations('UserPermissionMutations')
   })
 });
 

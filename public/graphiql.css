@@ -1,18 +1,27 @@
-html, body, #main, #container {
-    height: 100%;
-    margin: 0;
+html, body {
+  margin: 0;
+}
+
+#container {
     overflow: hidden;
-    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 #graphiql-container {
     color: #141823;
-    width: 100%;
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: row;
     flex-direction: row;
-    height: 100%;
     font-family: system, -apple-system, 'San Francisco', '.SFNSDisplay-Regular', 'Segoe UI', Segoe, 'Segoe WP', 'Helvetica Neue', helvetica, 'Lucida Grande', arial, sans-serif;
     font-size: 14px;
 }

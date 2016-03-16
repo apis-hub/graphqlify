@@ -1,24 +1,23 @@
-import { nodeField } from "../interfaces/node";
-import { slugField } from "../interfaces/slug";
-import { type as viewerType } from "./Viewer";
-import { type as apiType } from "./Api";
-import types from "../GraphQLTypes";
-import { catchUnauthorized } from "../../lib/catchUnauthorized";
+import { nodeField } from '../interfaces/node';
+import { slugField } from '../interfaces/slug';
+import { apiResourceField } from '../interfaces/apiResource';
+import { type as viewerType } from './Viewer';
+import { type as apiType } from './Api';
+import { GraphQLObjectType } from 'graphql';
 
-var queryType = new types.GraphQLObjectType({
+let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
     api: {
       type: apiType,
-      resolve: (context) => context.api
+      resolve: context => context.api
     },
     viewer: {
       type: viewerType,
-      resolve: (context) => {
-        return new Object
-      }
+      resolve: () => ({})
     },
+    apiResource: apiResourceField,
     node: nodeField,
     slug: slugField
   })
