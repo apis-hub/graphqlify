@@ -77,12 +77,10 @@ function buildDeleteMutation(mutator) {
     }),
 
     // Extend the outputFields to include the resultResponse
-    outputFields: () => {
-      return {
-        ...mutator.outputFields,
-        ...buildDeleteResourceOutputFields(mutator)
-      };
-    },
+    outputFields: () => ({
+      ...mutator.outputFields,
+      ...buildDeleteResourceOutputFields(mutator)
+    }),
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
@@ -112,6 +110,7 @@ function buildDeleteResourceOutputFields({ type }) {
     type: new types.GraphQLNonNull(types.GraphQLID),
     resolve: ({ deletedId }) => deletedId
   };
+  return outputFields;
 }
 
 // Mutate a relationship given a method
