@@ -1,6 +1,7 @@
 import { slugInterface } from '../interfaces/slug';
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
 import { permissibleInterface } from '../interfaces/permissible';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const collectionType = new ApiResourceType('Collection', () => ({
@@ -17,13 +18,13 @@ const collectionType = new ApiResourceType('Collection', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    organization: require('./Organization'),
-    brandfolder: require('./Brandfolder')
+    organization: requireType('Organization'),
+    brandfolder: requireType('Brandfolder')
   },
   relatesToMany: {
-    sections: require('./Section'),
-    assets: require('./Asset'),
-    collections: require('./Collection'),
+    sections: requireType('Section'),
+    assets: requireType('Asset'),
+    collections: requireType('Collection'),
     ...require('./concerns/permissibleRelationships')()
   },
 }), slugInterface, permissibleInterface);

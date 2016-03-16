@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as types from '../types/standard';
-import expandInputTypes from './expandInputTypes';
+import expandInputTypes from './concerns/expandInputTypes';
 
 function denullify(fields) {
   return _.reduce(fields, (result, field) => {

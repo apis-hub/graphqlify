@@ -1,4 +1,4 @@
-import RelatedResourceMutator from '../../helpers/RelatedResourceMutator';
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 import * as types from '../../types/standard';
 
 const { createAssetsComment, deleteAssetsComment } =

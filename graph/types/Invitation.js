@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const invitationType = new ApiResourceType('Invitation', () => ({
@@ -13,7 +14,7 @@ const invitationType = new ApiResourceType('Invitation', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    inviter: require('./User')
+    inviter: requireType('User')
   }
 }));
 

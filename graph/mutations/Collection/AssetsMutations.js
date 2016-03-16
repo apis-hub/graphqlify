@@ -1,4 +1,4 @@
-import RelatedResourceMutator from '../../helpers/RelatedResourceMutator';
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 
 const { addCollectionsAssets, removeCollectionsAssets } = new RelatedResourceMutator(() => ({
   type: () => require('../../types/Asset'),

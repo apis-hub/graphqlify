@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const socialLinkType = new ApiResourceType('SocialLink', () => ({
@@ -9,7 +10,7 @@ const socialLinkType = new ApiResourceType('SocialLink', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder')
+    brandfolder: requireType('Brandfolder')
   }
 }));
 

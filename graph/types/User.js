@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const userType = new ApiResourceType('User', () => {
@@ -10,9 +11,9 @@ const userType = new ApiResourceType('User', () => {
       ...require('./concerns/timestamps')
     },
     relatesToMany: {
-      organizations: require('./Organization'),
-      brandfolders: require('./Brandfolder'),
-      collections: require('./Collection')
+      organizations: requireType('Organization'),
+      brandfolders: requireType('Brandfolder'),
+      collections: requireType('Collection')
     }
   };
 });

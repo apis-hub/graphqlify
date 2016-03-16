@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const attachmentType = new ApiResourceType('Attachment', () => ({
@@ -16,8 +17,8 @@ const attachmentType = new ApiResourceType('Attachment', () => ({
     metadata: types.GraphQLReusableObject,
   },
   relatesToOne: {
-    asset: require('./Asset'),
-    creator: require('./User')
+    asset: requireType('Asset'),
+    creator: requireType('User')
   }
 }));
 

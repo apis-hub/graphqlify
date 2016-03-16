@@ -1,5 +1,5 @@
 import * as types from '../types/standard';
-import RelatedResourceMutator from './RelatedResourceMutator';
+import RelatedResourceMutator from '../builders/RelatedResourceMutator';
 
 function buildInvitationMutations(parentType) {
   let mutations = {};

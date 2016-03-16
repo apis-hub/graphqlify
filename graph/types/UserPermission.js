@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const userPermissionType = new ApiResourceType('UserPermission', () => ({
@@ -7,7 +8,7 @@ const userPermissionType = new ApiResourceType('UserPermission', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    user: require('./User')
+    user: requireType('User')
   }
 }));
 

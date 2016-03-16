@@ -1,8 +1,7 @@
 import { nodeField } from '../interfaces/node';
 import { slugField } from '../interfaces/slug';
 import { apiResourceField } from '../interfaces/apiResource';
-import { type as viewerType } from './Viewer';
-import { type as apiType } from './Api';
+import requireType from '../helpers/requireType';
 import { GraphQLObjectType } from 'graphql';
 
 let queryType = new GraphQLObjectType({
@@ -10,11 +9,11 @@ let queryType = new GraphQLObjectType({
   description: 'The query root of the schema',
   fields: () => ({
     api: {
-      type: apiType,
+      type: requireType('Api').type,
       resolve: context => context.api
     },
     viewer: {
-      type: viewerType,
+      type: requireType('Viewer').type,
       resolve: () => ({})
     },
     apiResource: apiResourceField,

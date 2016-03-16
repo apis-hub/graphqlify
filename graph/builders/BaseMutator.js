@@ -1,4 +1,4 @@
-import resolveMaybeThunk from './resolveMaybeThunk';
+import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 
 class BaseMutator {
   constructor(options) {

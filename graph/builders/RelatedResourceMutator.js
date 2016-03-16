@@ -1,13 +1,13 @@
-import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 import _ from 'lodash';
+import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 import * as types from '../types/standard';
-import { catchUnauthorized } from './catchErrors';
-import { collectionToEdges } from './connectionHelpers';
+import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
-import { CreateAttributesType } from './buildAttributesType';
-import buildAttributesField from './buildAttributesField';
+import { collectionToEdges } from '../helpers/connectionHelpers';
+import { CreateAttributesType } from './AttributeTypes';
+import buildAttributesField from './concerns/buildAttributesField';
 import BaseMutator from './BaseMutator';
-import resolveMaybeThunk from './resolveMaybeThunk';
+import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 
 _.mixin(require('lodash-inflection'));
 

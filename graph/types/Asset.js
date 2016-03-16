@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const assetType = new ApiResourceType('Asset', () => ({
@@ -15,13 +16,13 @@ const assetType = new ApiResourceType('Asset', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder'),
+    brandfolder: requireType('Brandfolder'),
   },
   relatesToMany: {
-    attachments: require('./Attachment'),
-    collections: require('./Collection'),
-    comments: require('./AssetComment'),
-    appovals: require('./AssetApproval')
+    attachments: requireType('Attachment'),
+    collections: requireType('Collection'),
+    comments: requireType('AssetComment'),
+    appovals: requireType('AssetApproval')
   }
 }));
 

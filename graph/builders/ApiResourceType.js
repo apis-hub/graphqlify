@@ -1,13 +1,12 @@
 import _ from 'lodash';
-import * as types from '../types/standard';
-import { connectionArgs as GraphQLConnectionArgs, globalIdField, connectionDefinitions } from 'graphql-relay';
-import { nodeInterface } from '../interfaces/node';
-import { apiResourceInterface } from '../interfaces/apiResource';
-import { catchUnauthorized } from './catchErrors';
-import { getRelatedWithFields, connectionFromRelatesToMany } from './connectionHelpers';
-import expandInputTypes from './expandInputTypes';
-import resolveMaybeThunk from './resolveMaybeThunk';
 import urlJoin from 'url-join';
+import { connectionArgs as GraphQLConnectionArgs, globalIdField, connectionDefinitions } from 'graphql-relay';
+import * as types from '../types/standard';
+import { apiResourceInterface } from '../interfaces/apiResource';
+import { nodeInterface } from '../interfaces/node';
+import { catchUnauthorized } from '../helpers/catchErrors';
+import { getRelatedWithFields, connectionFromRelatesToMany } from '../helpers/connectionHelpers';
+import ResourceMappingObject from './concerns/ResourceMappingObject';
 
 const baseUrl = (
   process.env.BRANDFOLDER_API_ENDPOINT || 'https://api.brandfolder.com/v2'
@@ -201,7 +200,7 @@ class ApiResourceType {
   }
 
   get mapping() {
-    return new MappingObject(this.config.mapping);
+    return new ResourceMappingObject(this.config.mapping);
   }
 
   get connectionArgs() {
@@ -210,43 +209,6 @@ class ApiResourceType {
 
   buildConnectionArgs(...args) {
     return this.mapping.buildConnectionArgs(...args);
-  }
-}
-
-class MappingObject {
-  constructor(config) {
-    // Set Defaults
-    config = {
-      connectionArgs: {},
-      fields: {},
-      edgeFields: {},
-      connectionFields: {},
-      relatesToMany: {},
-      relatesToOne: {},
-      ...resolveMaybeThunk(config)
-    };
-
-    // Set the variables
-    Object.keys(config).forEach(key => {
-      let value = config[key];
-      this[key] = value;
-    });
-
-    // Include the default connection args
-    this.connectionArgs = {
-      ...GraphQLConnectionArgs,
-      ...this.connectionArgs,
-    };
-
-    // Freeze
-    Object.freeze(this);
-  }
-
-  buildConnectionArgs(args = {}) {
-    return expandInputTypes({
-      ...this.connectionArgs,
-      ...args
-    });
   }
 }
 

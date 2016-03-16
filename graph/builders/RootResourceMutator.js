@@ -1,9 +1,9 @@
-import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 import _ from 'lodash';
+import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 import * as types from '../types/standard';
-import { catchUnauthorized } from './catchErrors';
-import { CreateAttributesType, UpdateAttributesType } from './buildAttributesType';
-import buildAttributesField from './buildAttributesField';
+import { catchUnauthorized } from '../helpers/catchErrors';
+import { CreateAttributesType, UpdateAttributesType } from './AttributeTypes';
+import buildAttributesField from './concerns/buildAttributesField';
 import BaseMutator from './BaseMutator';
 
 // Output Field for resource
