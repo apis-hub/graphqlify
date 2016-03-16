@@ -15,7 +15,7 @@ _.mixin(require('lodash-inflection'));
 function buildCreateMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
-    name: `create${mutator.name}`,
+    name: `create${mutator.singularName}`,
 
     // Extend the inputFields to include the attributesType
     inputFields: () => ({
@@ -61,6 +61,57 @@ function buildCreateResourceOutputField({ relationship: relationshipName, edgeTy
     }
   };
   return fields;
+}
+
+function buildDeleteMutation(mutator) {
+  return mutationWithClientMutationId({
+    // Give the mutation a name
+    name: `delete${mutator.singularName}`,
+
+    // Extend the inputFields to include the attributesType
+    inputFields: () => ({
+      ...mutator.inputFields,
+      id: {
+        type: new types.GraphQLNonNull(types.GraphQLID)
+      }
+    }),
+
+    // Extend the outputFields to include the resultResponse
+    outputFields: () => {
+      return {
+        ...mutator.outputFields,
+        ...buildDeleteResourceOutputFields(mutator)
+      };
+    },
+
+    // Mutate
+    mutateAndGetPayload: (args, context) => {
+      let { resource: parentResource } = parentType;
+      let { parentType } = mutator;
+      let { id: globalId } = args;
+      let { rootValue } = context;
+      let { api } = rootValue;
+      let { resource } = mutator;
+      let parentInstance = resource(parentResource).new({ id: args.parent_id });
+      return getMinimalInstance(api, resource, globalId).then(({ instance }) => {
+        return instance.delete().then(({ response }) => {
+          let { id: deletedId } = instance;
+          if (!response.ok) {
+            throw new Error('could not delete');
+          }
+          return { deletedId, resultResponse: response, parentInstance };
+        });
+      });
+    }
+  });
+}
+
+function buildDeleteResourceOutputFields({ type }) {
+  let outputFields = {};
+  outputFields[`deleted${type.name}Id`] = {
+    type: new types.GraphQLNonNull(types.GraphQLID),
+    resolve: ({ deletedId }) => deletedId
+  };
 }
 
 // Mutate a relationship given a method
@@ -155,7 +206,7 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
 }
 
 // Get the parent
-function getMinimalParent(api, resource, globalId) {
+function getMinimalInstance(api, resource, globalId) {
   var { id } = fromGlobalId(globalId);
   let parentParams = { fields: {} };
   parentParams.fields[resource] = null;
@@ -164,7 +215,7 @@ function getMinimalParent(api, resource, globalId) {
 
 // Fetches a related collection, given the context and a parentResource
 function getRelatedFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalParent(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
+  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
     return parentInstance.related(relationshipName, { page: { first: 0 } }).then(({ collection }) => {
       return { collection, parentInstance };
     });
@@ -173,7 +224,7 @@ function getRelatedFromContext({ parentType, relationship: relationshipName }, p
 
 // Fetches a relationship, given the context and a parentResource
 function getRelationshipFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalParent(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
+  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
     return parentInstance.relationship(relationshipName).then(({ relationship }) => {
       return { relationship, parentInstance };
     });
@@ -197,6 +248,7 @@ class RelatedResourceMutator extends BaseMutator {
     this.defProperty(`add${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'add') });
     this.defProperty(`remove${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'remove') });
     this.defProperty(`replace${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'replace') });
+    this.defProperty(`delete${this.singularName}`, { get: () => buildDeleteMutation(this) });
   }
 
   get name() {

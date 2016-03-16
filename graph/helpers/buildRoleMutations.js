@@ -30,9 +30,10 @@ function buildUserPermissionMutations(parentType) {
     parentType,
     relationship
   }));
-  let { pluralName } = mutator;
+  let { pluralName, singularName } = mutator;
   mutations[`Add${pluralName}`] = mutator[`Add${pluralName}`];
   mutations[`Remove${pluralName}`] = mutator[`Remove${pluralName}`];
+  mutations[`Delete${singularName}`] = mutator[`Delete${singularName}`];
   return mutations;
 }
 

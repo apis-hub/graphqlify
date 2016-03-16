@@ -1,7 +1,7 @@
 import RootResourceMutator from '../helpers/RootResourceMutator';
 import * as types from '../types/standard';
 
-const { updateSocialLink, deleteSocialLink } = new RootResourceMutator(() => ({
+const { updateSocialLink } = new RootResourceMutator(() => ({
   name: 'SocialLink',
   type: () => require('../types/SocialLink'),
   attributes: () => ({
@@ -11,4 +11,4 @@ const { updateSocialLink, deleteSocialLink } = new RootResourceMutator(() => ({
   })
 }));
 
-export { updateSocialLink, deleteSocialLink };
+export { updateSocialLink };

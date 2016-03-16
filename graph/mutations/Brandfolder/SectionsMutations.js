@@ -1,16 +1,15 @@
 import RelatedResourceMutator from '../../helpers/RelatedResourceMutator';
 import * as types from '../../types/standard';
 
-const { createBrandfoldersSocialLink, deleteBrandfoldersSocialLink } =
+const { createBrandfoldersSection, deleteBrandfoldersSection } =
   new RelatedResourceMutator(() => ({
-    type: () => require('../../types/SocialLink'),
+    type: () => require('../../types/Section'),
     parentType: () => require('../../types/Brandfolder'),
-    relationship: 'social_links',
+    relationship: 'sections',
     attributes: () => ({
       name: new types.GraphQLNonNull(types.GraphQLString),
-      url: new types.GraphQLNonNull(types.GraphQLString),
-      position: types.GraphQLInt
+      position: new types.GraphQLNonNull(types.GraphQLInt)
     })
   }));
 
-export { createBrandfoldersSocialLink, deleteBrandfoldersSocialLink };
+export { createBrandfoldersSection, deleteBrandfoldersSection };
