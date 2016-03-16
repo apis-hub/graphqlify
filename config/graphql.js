@@ -10,7 +10,10 @@ function logError(error) {
   let stack = stackTrace.parse(error);
   console.error(error.toString());
   stack.forEach(function (trace, index) {
-    console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
+    let file = trace.getFileName();
+    let ln = trace.getLineNumber();
+    let fn = trace.getFunctionName();
+    console.error(`${index}: ${file}:${ln}:in ${fn}`);
   });
 
   console.error('');

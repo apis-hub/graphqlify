@@ -31,11 +31,15 @@ function buildCreateMutation(mutator) {
     name: `create${mutator.name}`,
     inputFields: () => ({
       ...mutator.inputFields,
-      ...buildAttributesField(mutator.name, mutator.attributes, CreateAttributesType)
+      ...buildAttributesField(
+        mutator.name, mutator.attributes, CreateAttributesType
+      )
     }),
     outputFields: () => mutator.outputFields,
     mutateAndGetPayload: ({ attributes }, { rootValue }) => {
-      return rootValue.api.resource(mutator.resource).create({ attributes }).then(
+      return rootValue.api.resource(
+        mutator.resource
+      ).create({ attributes }).then(
         resultResponse => ({ resultResponse })
       ).catch(
         catchUnauthorized(rootValue)
@@ -51,12 +55,16 @@ function buildUpdateMutation(mutator) {
     inputFields: () => ({
       ...mutator.inputFields,
       ...buildIdInputField(),
-      ...buildAttributesField(mutator.name, mutator.attributes, UpdateAttributesType)
+      ...buildAttributesField(
+        mutator.name, mutator.attributes, UpdateAttributesType
+      )
     }),
     outputFields: () => mutator.outputFields,
     mutateAndGetPayload: ({ id: globalId, attributes }, { rootValue }) => {
       var { id } = fromGlobalId(globalId);
-      return rootValue.api.resource(mutator.resource).read(id).then(({ instance }) => {
+      return rootValue.api.resource(
+        mutator.resource
+      ).read(id).then(({ instance }) => {
         return instance.updateAttributes(attributes);
       }).then(
         resultResponse => ({ resultResponse })
@@ -78,7 +86,9 @@ function buildDeleteMutation(mutator) {
     outputFields: () => mutator.outputFields,
     mutateAndGetPayload: ({ id: globalId }, { rootValue }) => {
       var { id } = fromGlobalId(globalId);
-      return rootValue.api.resource(mutator.resource).read(id).then(({ instance }) => {
+      return rootValue.api.resource(
+        mutator.resource
+      ).read(id).then(({ instance }) => {
         return instance.delete();
       }).then(
         resultResponse => ({ resultResponse })
@@ -94,9 +104,15 @@ class RootResourceMutator extends BaseMutator {
 
   constructor(options) {
     super(options);
-    this.defProperty(`create${this.name}`, { get: () => buildCreateMutation(this) });
-    this.defProperty(`update${this.name}`, { get: () => buildUpdateMutation(this) });
-    this.defProperty(`delete${this.name}`, { get: () => buildDeleteMutation(this) });
+    this.defProperty(
+      `create${this.name}`, { get: () => buildCreateMutation(this) }
+    );
+    this.defProperty(
+      `update${this.name}`, { get: () => buildUpdateMutation(this) }
+    );
+    this.defProperty(
+      `delete${this.name}`, { get: () => buildDeleteMutation(this) }
+    );
   }
 
   get outputFields() {

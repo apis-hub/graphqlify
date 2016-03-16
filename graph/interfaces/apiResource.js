@@ -1,4 +1,6 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveType from '../helpers/resolveType';

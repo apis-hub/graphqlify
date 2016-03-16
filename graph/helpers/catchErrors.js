@@ -5,10 +5,10 @@ function catchUnauthorized(rootValue) {
     if (error.error) {
       error = error.error;
     }
-    if (error instanceof HTTPError401 || error instanceof HTTPError419 || error instanceof HTTPError412) {
+    if (error instanceof HTTPError401) {
       rootValue.statusCode = error.statusCode;
     }
-    throw error;
+    catchExpired(rootValue)(error);
   };
 }
 

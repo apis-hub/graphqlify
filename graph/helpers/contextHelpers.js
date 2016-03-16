@@ -22,14 +22,19 @@ function getFieldNamesFromContext(context, ...names) {
   let expand = (asts, fields = []) => {
     asts.forEach(f => {
       switch (f.kind) {
-        case 'Field': // If the name is a field, just return the field
+        // If the name is a field, just return the field
+        case 'Field':
           fields.push(f);
           break;
-        case 'InlineFragment': // If th ename is an InlineFragment, then expand the fragment
+        // If the name is an InlineFragment, then expand the fragment
+        case 'InlineFragment':
           expand(f.selectionSet.selections, fields);
           break;
-        case 'FragmentSpread': // If the name is a fragment, then expand the fragment
-          expand(context.fragments[f.name.value].selectionSet.selections, fields);
+        // If the name is a fragment, then expand the fragment
+        case 'FragmentSpread':
+          expand(
+            context.fragments[f.name.value].selectionSet.selections, fields
+          );
           break;
       }
     });
@@ -44,10 +49,14 @@ function paramsFromContext(existingParams, context, ...path) {
   return ({ type, validFields, validRelationships }) => {
     let params = { ...existingParams };
     let contextFieldNames = getFieldNamesFromContext(context, ...path);
-    let relationships = contextFieldNames.filter(name => validRelationships.indexOf(name) > -1);
+    let relationships = contextFieldNames.filter(
+      name => validRelationships.indexOf(name) > -1
+    );
     params['include-relationships'] = Boolean(relationships.length);
     params.fields = {};
-    params.fields[type] = contextFieldNames.filter(name => validFields.indexOf(name) > -1).join(',');
+    params.fields[type] = contextFieldNames.filter(
+      name => validFields.indexOf(name) > -1
+    ).join(',');
     return params;
   };
 }

@@ -1,4 +1,6 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
 import resolveType from '../helpers/resolveType';
 import _ from 'lodash';
 

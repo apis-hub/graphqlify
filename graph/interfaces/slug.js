@@ -1,4 +1,6 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
 import _ from 'lodash';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import fetchTypeById from '../helpers/fetchTypeById';
@@ -8,7 +10,8 @@ _.mixin(require('lodash-inflection'));
 
 let slugInterface = new GraphQLInterfaceType({
   name: 'Slug',
-  description: 'For objects that have a slug and that are routable on brandfolder.com',
+  description: `For objects that have a slug and that are routable on
+                brandfolder.com`,
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLID)

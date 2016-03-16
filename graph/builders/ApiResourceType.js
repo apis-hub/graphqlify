@@ -1,11 +1,18 @@
 import _ from 'lodash';
 import urlJoin from 'url-join';
-import { connectionArgs as GraphQLConnectionArgs, globalIdField, connectionDefinitions } from 'graphql-relay';
+import {
+  connectionArgs as GraphQLConnectionArgs,
+  globalIdField,
+  connectionDefinitions
+} from 'graphql-relay';
 import * as types from '../types/standard';
 import { apiResourceInterface } from '../interfaces/apiResource';
 import { nodeInterface } from '../interfaces/node';
 import { catchUnauthorized } from '../helpers/catchErrors';
-import { getRelatedWithFields, connectionFromRelatesToMany } from '../helpers/connectionHelpers';
+import {
+  getRelatedWithFields,
+  connectionFromRelatesToMany
+} from '../helpers/connectionHelpers';
 import ResourceMappingObject from './concerns/ResourceMappingObject';
 
 const baseUrl = (
@@ -162,8 +169,8 @@ function buildConnectionDefinitions(resource) {
 function buildType(resource) {
   return new types.GraphQLObjectType({
     name: resource.name,
-    description: `Fetches ${resource.name} resources from the API. For more information
-    see ${urlJoin(baseUrl, `docs#${resource.resource}`)}.`,
+    description: `Fetches ${resource.name} resources from the API. For more
+    information see ${urlJoin(baseUrl, `docs#${resource.resource}`)}.`,
     fields: () => buildFields(resource),
     interfaces: resource.interfaces
   });

@@ -20,7 +20,9 @@ function buildCreateMutation(mutator) {
     // Extend the inputFields to include the attributesType
     inputFields: () => ({
       ...mutator.inputFields,
-      ...buildAttributesField(mutator.name, mutator.attributes, CreateAttributesType)
+      ...buildAttributesField(
+        mutator.name, mutator.attributes, CreateAttributesType
+      )
     }),
 
     // Extend the outputFields to include the resultResponse
@@ -37,7 +39,9 @@ function buildCreateMutation(mutator) {
       return getRelatedFromContext(
         mutator, parent_id, context
       ).then(({ collection, parentInstance }) => {
-        return collection.create({ attributes: args.attributes }).then(resultResponse => {
+        return collection.create(
+          { attributes: args.attributes }
+        ).then(resultResponse => {
           return { resultResponse, parentInstance };
         });
       }).catch(catchUnauthorized(
@@ -48,9 +52,9 @@ function buildCreateMutation(mutator) {
 }
 
 // Build the create resource field
-function buildCreateResourceOutputField({ relationship: relationshipName, edgeType }) {
+function buildCreateResourceOutputField({ relationship: relName, edgeType }) {
   let fields = {};
-  fields[`${relationshipName}Edge`] = {
+  fields[`${relName}Edge`] = {
     type: edgeType,
     resolve: ({ resultResponse }) => {
       return resultResponse.collection.reload(
@@ -91,7 +95,9 @@ function buildDeleteMutation(mutator) {
       let { api } = rootValue;
       let { resource } = mutator;
       let parentInstance = resource(parentResource).new({ id: args.parent_id });
-      return getMinimalInstance(api, resource, globalId).then(({ instance }) => {
+      return getMinimalInstance(
+        api, resource, globalId
+      ).then(({ instance }) => {
         return instance.delete().then(({ response }) => {
           let { id: deletedId } = instance;
           if (!response.ok) {
@@ -195,7 +201,9 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
     type: edgeType,
     resolve: ({ ids }, args, context) => {
       return Promise.all(
-        ids.map(id => fetchTypeById(resource, id, context, {}, nodeName, 'node'))
+        ids.map(id => fetchTypeById(
+          resource, id, context, {}, nodeName, 'node')
+        )
       ).then(
         responses => collectionToEdges(responses.map(({ instance: i }) => i))
       );
@@ -213,18 +221,28 @@ function getMinimalInstance(api, resource, globalId) {
 }
 
 // Fetches a related collection, given the context and a parentResource
-function getRelatedFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
-    return parentInstance.related(relationshipName, { page: { first: 0 } }).then(({ collection }) => {
+function getRelatedFromContext(
+  { parentType, relationship: relName }, parentId, { rootValue }
+) {
+  return getMinimalInstance(
+    rootValue.api, parentType.resource, parentId
+  ).then(({ instance: parentInstance }) => {
+    return parentInstance.related(
+      relName, { page: { first: 0 } }
+    ).then(({ collection }) => {
       return { collection, parentInstance };
     });
   });
 }
 
 // Fetches a relationship, given the context and a parentResource
-function getRelationshipFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
-    return parentInstance.relationship(relationshipName).then(({ relationship }) => {
+function getRelationshipFromContext(
+  { parentType, relationship: relName }, parentId, { rootValue }
+) {
+  return getMinimalInstance(
+    rootValue.api, parentType.resource, parentId
+  ).then(({ instance: parentInstance }) => {
+    return parentInstance.relationship(relName).then(({ relationship }) => {
       return { relationship, parentInstance };
     });
   });
@@ -243,15 +261,32 @@ function globalIdsToRelationshipIds(ids) {
 class RelatedResourceMutator extends BaseMutator {
   constructor(options) {
     super(options);
-    this.defProperty(`create${this.singularName}`, { get: () => buildCreateMutation(this) });
-    this.defProperty(`add${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'add') });
-    this.defProperty(`remove${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'remove') });
-    this.defProperty(`replace${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'replace') });
-    this.defProperty(`delete${this.singularName}`, { get: () => buildDeleteMutation(this) });
+    this.defProperty(
+      `create${this.singularName}`,
+      { get: () => buildCreateMutation(this) }
+    );
+    this.defProperty(
+      `add${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'add') }
+    );
+    this.defProperty(
+      `remove${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'remove') }
+    );
+    this.defProperty(
+      `replace${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'replace') }
+    );
+    this.defProperty(
+      `delete${this.singularName}`,
+      { get: () => buildDeleteMutation(this) }
+    );
   }
 
   get name() {
-    return `${_.pluralize(this.parentType.type.name)}${_.upperFirst(_.camelCase(this.relationship))}`;
+    let pluralParentName = _.pluralize(this.parentType.type.name);
+    let camelizedRel = _.upperFirst(_.camelCase(this.relationship));
+    return `${pluralParentName}${camelizedRel}`;
   }
 
   get singularName() {

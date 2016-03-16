@@ -1,7 +1,9 @@
 import { catchExpired } from '../helpers/catchErrors';
 import requireType from '../helpers/requireType';
 import * as types from './standard';
-import { collectionToConnection, connectionFromRelatesToMany } from '../helpers/connectionHelpers';
+import {
+  collectionToConnection, connectionFromRelatesToMany
+} from '../helpers/connectionHelpers';
 import fetchTypeById from '../helpers/fetchTypeById';
 
 // Fetch a current user, catch expired tokens and return the error to the user.
