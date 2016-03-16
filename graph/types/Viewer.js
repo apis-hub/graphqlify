@@ -15,7 +15,7 @@ function fetchCurrentUser(context) {
 
 // Resolve the current user field
 function resolveCurrentUser(root, args, context) {
-  fetchCurrentUser(context).catch(
+  return fetchCurrentUser(context).catch(
     () => ({ instance: context.rootValue.api.resource('users').new({}) })
   );
 }
