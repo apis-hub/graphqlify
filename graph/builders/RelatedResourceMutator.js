@@ -94,7 +94,8 @@ function buildDeleteMutation(mutator) {
       let { rootValue } = context;
       let { api } = rootValue;
       let { resource } = mutator;
-      let parentInstance = api.resource(parentResource).new({ id: args.parent_id });
+      let parentInstance =
+        api.resource(parentResource).new({ id: args.parent_id });
       return getMinimalInstance(
         api, resource, globalId
       ).then(({ instance }) => {
