@@ -11,7 +11,8 @@ import { nodeInterface } from '../interfaces/node';
 import { catchUnauthorized } from '../helpers/catchErrors';
 import {
   getRelatedWithFields,
-  connectionFromRelatesToMany
+  connectionFromRelatesToMany,
+  collectionToConnection
 } from '../helpers/connectionHelpers';
 import ResourceMappingObject from './concerns/ResourceMappingObject';
 
@@ -43,8 +44,9 @@ function buildRights() {
   };
 }
 
-function buildFields({ name, mapping }) {
+function buildFields({ name, mapping, fields }) {
   return {
+    ...fields,
     ...buildId(name),
     ...buildApiInfo(),
     ...buildRights(),
@@ -198,12 +200,26 @@ class ApiResourceType {
     return this.connectionDefinitions.connectionType;
   }
 
+  get fields() {
+    return this.mapping.fields;
+  }
+
   get edgeType() {
     return this.connectionDefinitions.edgeType;
   }
 
   get attributes() {
     return buildFields(this);
+  }
+
+  get connectionStub() {
+    return {
+      args: this.connectionArgs,
+      type: this.connectionType,
+      resolve: (obj, args, { rootValue }) => collectionToConnection({
+        collection: rootValue.api.resource(this.resource).emptyCollection()
+      })
+    };
   }
 
   get mapping() {

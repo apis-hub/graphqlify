@@ -23,6 +23,9 @@ const organizationType = new ApiResourceType('Organization', () => ({
     assets: requireType('Asset'),
     owners: requireType('User'),
     ...require('./concerns/permissibleRelationships')()
+  },
+  fields: {
+    access_requests: requireType('AccessRequest').connectionStub
   }
 }), slugInterface, permissibleInterface);
 
