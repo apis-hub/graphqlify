@@ -29,13 +29,12 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     organization: requireType('Organization')
   },
   relatesToMany: {
-    assets: require('./Asset'),
-    sections: require('./Section'),
-    collections: require('./Collection'),
-    social_links: require('./SocialLink'),
-    users: require('./User'),
-    access_requests: require('./AccessRequest'),
-    invitations: require('./Invitation'),
+    assets: requireType('Asset'),
+    sections: requireType('Section'),
+    collections: requireType('Collection'),
+    social_links: requireType('SocialLink'),
+    users: requireType('User'),
+    access_requests: requireType('AccessRequest'),
     ...require('./concerns/permissibleRelationships')()
   },
 }), slugInterface, permissibleInterface);

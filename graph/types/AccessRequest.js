@@ -1,4 +1,4 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
 import * as types from './standard';
 
 const accessRequestType = new ApiResourceType('AccessRequest', () => ({
