@@ -10,8 +10,8 @@ dependencies:
   override:
     - 'true'
     # - docker build --tag app .
-  cache_directories:
-    - "~/docker"
+  # cache_directories:
+  #   - "~/docker"
 
 test:
   override:
