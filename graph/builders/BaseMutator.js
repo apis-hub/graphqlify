@@ -35,7 +35,7 @@ class BaseMutator {
   }
 
   get resource() {
-    return this.options.type.resource;
+    return resolveMaybeThunk(this.options.type).resource;
   }
 
   get type() {

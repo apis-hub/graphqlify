@@ -88,6 +88,8 @@ function buildDeleteMutation(mutator) {
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
+      let parentGId = args[`${_.singularize(mutator.parentType.resource)}_id`];
+      let { id: parentId } = fromGlobalId(parentGId);
       let { parentType } = mutator;
       let { resource: parentResource } = parentType;
       let { id: globalId } = args;
@@ -95,7 +97,7 @@ function buildDeleteMutation(mutator) {
       let { api } = rootValue;
       let { resource } = mutator;
       let parentInstance =
-        api.resource(parentResource).new({ id: args.parent_id });
+        api.resource(parentResource).new({ id: parentId });
       return getMinimalInstance(
         api, resource, globalId
       ).then(({ instance }) => {
