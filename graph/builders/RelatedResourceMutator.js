@@ -35,9 +35,9 @@ function buildCreateMutation(mutator) {
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
-      let parent_id = args[`${_.singularize(mutator.parentType.resource)}_id`];
+      let parentId = args[`${_.singularize(mutator.parentType.resource)}_id`];
       return getRelatedFromContext(
-        mutator, parent_id, context
+        mutator, parentId, context
       ).then(({ collection, parentInstance }) => {
         return collection.create(
           { attributes: args.attributes }
@@ -140,9 +140,9 @@ function buildRelationshipMutation(mutator, method) {
 
     // Specify how the mutation gets invoked
     mutateAndGetPayload: (args, context) => {
-      let parent_id = args[`${_.singularize(parentType.resource)}_id`];
+      let parentId = args[`${_.singularize(parentType.resource)}_id`];
       return getRelationshipFromContext(
-        mutator, parent_id, context
+        mutator, parentId, context
       ).then(({ parentInstance, relationship: rel }) => {
         // Convert Ids
         let ids = globalIdsToRelationshipIds(args.ids);
