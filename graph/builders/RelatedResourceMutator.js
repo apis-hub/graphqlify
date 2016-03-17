@@ -214,7 +214,7 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
 
 // Get the parent
 function getMinimalInstance(api, resource, globalId) {
-  var { id } = fromGlobalId(globalId);
+  let { id } = fromGlobalId(globalId);
   let parentParams = { fields: {} };
   parentParams.fields[resource] = null;
   return api.resource(resource).read(id, parentParams);
@@ -251,7 +251,7 @@ function getRelationshipFromContext(
 // Convert globalIds to resource names
 function globalIdsToRelationshipIds(ids) {
   return ids.map(gid => {
-    var { type, id } = fromGlobalId(gid);
+    let { type, id } = fromGlobalId(gid);
     type = _.pluralize(_.snakeCase(type));
     return { type, id };
   });

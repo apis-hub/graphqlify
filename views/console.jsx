@@ -66,7 +66,7 @@ function graphQLFetcher(graphQLParams) {
     } else if (response.status === 401) {
       swal({
         title: 'Request requires token!',
-        text: 'This query requires a valid user token, should we fetch one now?',
+        text: 'This query requires a valid user token, fetch one now?',
         type: 'warning',
         showCancelButton: true,
         cancelButtonText: 'Continue Unauthorized',

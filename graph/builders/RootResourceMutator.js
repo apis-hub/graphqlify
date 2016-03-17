@@ -61,7 +61,7 @@ function buildUpdateMutation(mutator) {
     }),
     outputFields: () => mutator.outputFields,
     mutateAndGetPayload: ({ id: globalId, attributes }, { rootValue }) => {
-      var { id } = fromGlobalId(globalId);
+      let { id } = fromGlobalId(globalId);
       return rootValue.api.resource(
         mutator.resource
       ).read(id).then(({ instance }) => {
@@ -85,7 +85,7 @@ function buildDeleteMutation(mutator) {
     }),
     outputFields: () => mutator.outputFields,
     mutateAndGetPayload: ({ id: globalId }, { rootValue }) => {
-      var { id } = fromGlobalId(globalId);
+      let { id } = fromGlobalId(globalId);
       return rootValue.api.resource(
         mutator.resource
       ).read(id).then(({ instance }) => {

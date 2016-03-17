@@ -10,8 +10,8 @@
     "update-schema": "babel-node ./scripts/update_schema.js",
     "prestart": "npm run update-schema",
     "build": ". build.sh",
-    "lint-fix": "eslint --fix .",
-    "lint": "eslint .",
+    "lint-fix": "eslint --fix --ext js --ext jsx .",
+    "lint": "eslint  --fix --ext js --ext jsx  .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
