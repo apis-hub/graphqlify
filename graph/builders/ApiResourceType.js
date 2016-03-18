@@ -230,8 +230,11 @@ class ApiResourceType {
     return this.mapping.connectionArgs;
   }
 
-  buildConnectionArgs(...args) {
-    return this.mapping.buildConnectionArgs(...args);
+  buildConnectionArgs(args = {}) {
+    return expandInputTypes({
+      ...this.connectionArgs,
+      ...args
+    });
   }
 }
 

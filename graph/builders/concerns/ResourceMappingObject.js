@@ -1,6 +1,5 @@
 import { connectionArgs as GraphQLConnectionArgs } from 'graphql-relay';
 import resolveMaybeThunk from '../../helpers/resolveMaybeThunk';
-import expandInputTypes from './expandInputTypes';
 
 class ResourceMappingObject {
   constructor(config) {
@@ -29,13 +28,6 @@ class ResourceMappingObject {
 
     // Freeze
     Object.freeze(this);
-  }
-
-  buildConnectionArgs(args = {}) {
-    return expandInputTypes({
-      ...this.connectionArgs,
-      ...args
-    });
   }
 }
 
