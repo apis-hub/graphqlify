@@ -5,7 +5,6 @@ import logger from './config/logger';
 import webpack from './config/webpack';
 import graphql from './config/graphql';
 
-
 const app = express();
 
 // Enable Logger
