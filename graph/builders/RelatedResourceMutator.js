@@ -108,7 +108,9 @@ function buildDeleteMutation(mutator) {
           }
           return { deletedId, resultResponse: response, parentInstance };
         });
-      });
+      }).catch(
+        catchUnauthorized(rootValue)
+      );
     }
   });
 }

@@ -83,7 +83,10 @@ function buildDeleteMutation(mutator) {
       ...mutator.inputFields,
       ...buildIdInputField(),
     }),
-    outputFields: () => mutator.outputFields,
+    outputFields: () => ({
+      ...mutator.outputFields,
+      ...buildDeleteResourceOutputFields(mutator)
+    }),
     mutateAndGetPayload: ({ id: globalId }, { rootValue }) => {
       let { id } = fromGlobalId(globalId);
       return rootValue.api.resource(
@@ -91,12 +94,28 @@ function buildDeleteMutation(mutator) {
       ).read(id).then(({ instance }) => {
         return instance.delete();
       }).then(
-        resultResponse => ({ resultResponse })
+        resultResponse => ({ resultResponse, deletedId: globalId })
       ).catch(
         catchUnauthorized(rootValue)
       );
     }
   });
+}
+
+function buildDeleteResourceOutputFields({ type }) {
+  let outputFields = {};
+  outputFields[`deleted${type.name}Id`] = {
+    type: new types.GraphQLNonNull(types.GraphQLID),
+    resolve: ({ deletedId }) => deletedId
+  };
+  outputFields[`deleted${type.name}`] = {
+    type,
+    resolve: ({ resultResponse }) => {
+      let { instance, response } = resultResponse;
+      return { instance, response };
+    }
+  };
+  return outputFields;
 }
 
 // Root Resource Mutator
