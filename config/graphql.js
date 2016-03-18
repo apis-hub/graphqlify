@@ -21,6 +21,7 @@ function logError(error) {
 }
 
 const graphQLMiddleware = graphqlHTTP(request => {
+  let timestamp = Math.floor(Date.now() / 1000);
   let headers = {};
   let endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
@@ -38,7 +39,8 @@ const graphQLMiddleware = graphqlHTTP(request => {
     formatError: logError,
     schema,
     rootValue: {
-      api
+      api,
+      timestamp
     }
   };
 });

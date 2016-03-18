@@ -9,6 +9,7 @@ import * as types from '../types/standard';
 import { apiResourceInterface } from '../interfaces/apiResource';
 import { nodeInterface } from '../interfaces/node';
 import { catchUnauthorized } from '../helpers/catchErrors';
+import expandInputTypes from './concerns/expandInputTypes';
 import {
   getRelatedWithFields,
   connectionFromRelatesToMany,
@@ -33,15 +34,17 @@ function buildApiInfo() {
   };
 }
 
-function buildRights() {
-  return {
-    rights: {
-      type: types.GraphQLReusableObject,
+function buildAttributes({ attributes }) {
+  return Object.keys(attributes).reduce((output, attr) => {
+    let type = attributes[attr];
+    output[attr] = {
+      type,
       resolve: ({ instance }) => {
-        return instance.meta.rights;
+        return instance.attributes[attr];
       }
-    }
-  };
+    };
+    return output;
+  }, {});
 }
 
 function buildFields({ name, mapping, fields }) {
@@ -49,7 +52,7 @@ function buildFields({ name, mapping, fields }) {
     ...fields,
     ...buildId(name),
     ...buildApiInfo(),
-    ...buildRights(),
+    ...buildFetchTimestamp(),
     ...buildAttributes(mapping),
     ...buildRelatesToOne(mapping),
     ...buildRelatesToMany(mapping)
@@ -62,17 +65,13 @@ function buildId(name) {
   };
 }
 
-function buildAttributes({ attributes }) {
-  return Object.keys(attributes).reduce((output, attr) => {
-    let type = attributes[attr];
-    output[attr] = {
-      type,
-      resolve: ({ instance }) => {
-        return instance.attributes[attr];
-      }
-    };
-    return output;
-  }, {});
+function buildFetchTimestamp() {
+  return {
+    fetchTimestamp: {
+      type: new types.GraphQLNonNull(types.GraphQLInt),
+      resolve: (obj, args, { rootValue }) => rootValue.timestamp
+    }
+  };
 }
 
 function buildRelatesToOne({ relatesToOne }) {
@@ -146,10 +145,8 @@ function buildRelatesToMany({ relatesToMany }) {
 
 function buildConnectionFields({ mapping }) {
   return {
-    rights: {
-      type: types.GraphQLReusableObject
-    },
-    ...(mapping.connectionFields || {})
+    ...mapping.connectionFields,
+    ...buildFetchTimestamp()
   };
 }
 
