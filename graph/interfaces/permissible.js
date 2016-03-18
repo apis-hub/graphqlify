@@ -24,6 +24,12 @@ let permissibleInterface = new GraphQLInterfaceType({
     },
     users: {
       type: require('../types/User').connectionType
+    },
+    invitations: {
+      type: require('../types/Invitation').connectionType
+    },
+    access_requests: {
+      type: require('../types/AccessRequest').connectionType
     }
   }),
   resolveType

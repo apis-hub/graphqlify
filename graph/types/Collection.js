@@ -27,6 +27,9 @@ const collectionType = new ApiResourceType('Collection', () => ({
     collections: requireType('Collection'),
     ...require('./concerns/permissibleRelationships')()
   },
+  fields: {
+    access_requests: requireType('AccessRequest').connectionStub
+  }
 }), slugInterface, permissibleInterface);
 
 module.exports = collectionType;
