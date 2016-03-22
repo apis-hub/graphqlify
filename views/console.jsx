@@ -1,10 +1,11 @@
-import ReactDOM from 'react-dom';
-import GraphiQL from 'graphiql';
-import fetch from 'isomorphic-fetch';
-import $ from 'jquery';
-import Url from 'url';
 import 'jquery.cookie';
+
+import $ from 'jquery';
+import fetch from 'isomorphic-fetch';
 import swal from 'sweetalert';
+import GraphiQL from 'graphiql';
+import ReactDOM from 'react-dom';
+import Url from 'url';
 
 let graphqlEndpoint = window.location.origin + '/graphql';
 let params = {};
@@ -52,6 +53,10 @@ function graphQLFetcher(graphQLParams) {
 
   headers['Content-Type'] = 'application/json';
 
+  if ($.cookie('private-api')) {
+    headers['x-api-private'] = true;
+  }
+
   if ($.cookie('token')) {
     headers['Authorization'] = `JWT ${$.cookie('token')}`;
   }
@@ -88,8 +93,14 @@ if (params.token) {
   window.location = '/';
 }
 
+function renderPrivateStatus() {
+  if ($.cookie('private-api')) {
+    return <span color="red">PRIVATE API</span>;
+  }
+}
+
 function renderTokenStatus() {
-  if ($.cookie('token')) {
+  if (true || $.cookie('token')) {
     return (
       <span>
         Using token: <span style={{
@@ -127,6 +138,7 @@ ReactDOM.render(
       color: '#fff'
     }}>
     {renderTokenStatus()}
+    {renderPrivateStatus()}
     <div style={{
       clear: 'both'
     }} />

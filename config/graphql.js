@@ -28,7 +28,11 @@ const graphQLMiddleware = graphqlHTTP(request => {
 
   headers.forwarded = `for=${request.ip}`;
   headers['x-forwarded-for'] = request.ip;
-  headers['x-api-private'] = true;
+
+  if (request.headers['x-api-private']) {
+    headers['x-api-private'] = request.headers['x-api-private'];
+  };
+
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
