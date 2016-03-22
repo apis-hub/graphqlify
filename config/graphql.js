@@ -1,7 +1,8 @@
-import schema from '../graph/schema';
 import graphqlHTTP from 'brandfolder-express-graphql';
-import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
 import stackTrace from 'stack-trace';
+import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
+
+import schema from '../graph/schema';
 
 function logError(error) {
   console.error('');
@@ -24,6 +25,10 @@ const graphQLMiddleware = graphqlHTTP(request => {
   let timestamp = Math.floor(Date.now() / 1000);
   let headers = {};
   let endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
+
+  headers.forwarded = `for=${request.ip}`;
+  headers['x-forwarded-for'] = request.ip;
+  headers['x-api-private'] = true;
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
