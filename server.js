@@ -1,9 +1,10 @@
+import cors from 'cors';
 import express from 'express';
 import path from 'path';
-import cors from 'cors';
+
+import graphql from './config/graphql';
 import logger from './config/logger';
 import webpack from './config/webpack';
-import graphql from './config/graphql';
 
 const app = express();
 
@@ -16,15 +17,12 @@ app.use('/graphql', cors());
 // Serve Webpack
 app.use('/assets', webpack);
 
-// Serve Static
-app.use('/', express.static(path.join(__dirname, 'public')));
-
 // Serve GraphQL
 app.use('/graphql', graphql);
 
 // load console at root
 app.get('/', (req, res) => res.sendFile(
-  path.resolve(__dirname, 'views/console.html')
+  path.resolve(__dirname, 'views/index.html')
 ));
 
 // Start the server
