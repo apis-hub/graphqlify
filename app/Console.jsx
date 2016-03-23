@@ -169,7 +169,7 @@ export default class Console extends React.Component {
     headers['Content-Type'] = 'application/json';
 
     if (this.state.privateApi) {
-      headers['x-api-private'] = true;
+      headers['x-brandfolder-client-id'] = process.env('BRANDFOLDER_CLIENT_ID');
     }
 
     if (this.state.token) {
