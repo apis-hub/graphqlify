@@ -16,7 +16,7 @@ export default class Console extends React.Component {
   };
 
   getChildContext() {
-    return { fetcher: this.fetcher.bind(this) }
+    return { fetcher: this.fetcher.bind(this) };
   }
 
   constructor(...args) {
