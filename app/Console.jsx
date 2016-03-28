@@ -2,7 +2,6 @@ import 'jquery.cookie';
 
 import $ from 'jquery';
 import fetch from 'isomorphic-fetch';
-import swal from 'sweetalert';
 import GraphiQL from 'graphiql';
 import React from 'react';
 import Url from 'url';
@@ -12,18 +11,23 @@ import LoginModal from './LoginModal';
 export default class Console extends React.Component {
 
   static childContextTypes = {
-    fetcher: React.PropTypes.func.isRequired
+    fetcher: React.PropTypes.func.isRequired,
+    closeModal: React.PropTypes.func.isRequired,
+    setToken: React.PropTypes.func.isRequired
   };
 
   getChildContext() {
-    return { fetcher: this.fetcher.bind(this) };
+    return {
+      fetcher: this.fetcher.bind(this),
+      closeModal: this.closeModal.bind(this),
+      setToken: this.setToken.bind(this)
+    };
   }
 
   constructor(...args) {
     super(...args);
     this.state = {
       token: $.cookie('token'),
-      privateApi: $.cookie('private-api'),
       activeModal: undefined
     };
   }
@@ -34,7 +38,7 @@ export default class Console extends React.Component {
       once: false,
       useCapture: true,
       callback: () => {
-        component.setState({ privateApi: true, token: undefined });
+        component.setState({ token: undefined });
       }
     });
   }
@@ -42,7 +46,6 @@ export default class Console extends React.Component {
   componentDidUpdate() {
     let newCookies = {};
     newCookies['token'] = this.state.token;
-    newCookies['private-api'] = this.state.privateApi;
     Object.keys(newCookies).forEach(key => {
       let val = newCookies[key];
       if (val !== undefined) {
@@ -64,8 +67,7 @@ export default class Console extends React.Component {
       url.pathname = '/token';
       url.search = $.param({
         redirect_uri: window.location.href,
-        login: Boolean(login),
-        private: true
+        login: Boolean(login)
       });
       window.location = Url.format(url);
     });
@@ -76,89 +78,51 @@ export default class Console extends React.Component {
   }
 
   renderToken() {
-    let tokenStyle = { color: '#40d1f5' };
-    let resetStyle = { color: '#efe860', cursor: 'pointer' };
+    let tokenStyle = { color: '#40d1f5', wordWrap: 'break-word', width: '500px' };
+    let resetStyle = { color: '#ff0000', cursor: 'pointer' };
     return (
-      <span>
+      <div>
         Using token:&nbsp;
-        <span style={tokenStyle}>{this.state.token}</span>
-        &nbsp;
         <a style={resetStyle} onClick={this.reset.bind(this)}>(reset)</a>
-      </span>
+        <br />
+        <div style={tokenStyle}>{this.state.token}</div>
+        &nbsp;
+      </div>
     );
+  }
+
+  setToken(token) {
+    this.setState({ token });
   }
 
   showModal(element) {
-    let outerCloseFn = this.setState.bind(this, { activeModal: undefined });
-    let closeFn = () => outerCloseFn();
     return () => {
-      let modalProps = {
-        show: true,
-        onHide: closeFn,
-        close: closeFn,
-        closeWithDelay: () => setTimeout(closeFn, 1000)
-      };
-      let modalElement = React.cloneElement(element, modalProps);
-      this.setState({ activeModal: modalElement });
+      this.setState({ activeModal: element });
     };
+  }
+
+  closeModal() {
+    this.setState({ activeModal: undefined });
   }
 
   renderUnauthorized() {
-    let loginTokenFn = this.authorize.bind(this, true);
-    let basicTokenFn = this.authorize.bind(this, false);
     let linkStyle = { color: '#59e287', cursor: 'pointer' };
-    if (this.state.privateApi) {
-      return (
-        <span>
-          Not Authorized:&nbsp;
-          <a style={linkStyle} onClick={this.showModal(<LoginModal />)}>Login To Brandfolder</a>
-        </span>
-      );
-    }
+
     return (
       <span>
         Not Authorized:&nbsp;
-        <a style={linkStyle} onClick={loginTokenFn}>Get User Token</a>
-        &nbsp;or&nbsp;
-        <a style={linkStyle} onClick={basicTokenFn}>Get Public Token</a>
+        <a
+          style={linkStyle}
+          onClick={this.showModal(<LoginModal />)}
+        >
+          Login To Brandfolder
+        </a>
       </span>
     );
-  }
-
-  renderPrivateStatus() {
-    let removePrivate = () => this.setState({
-      privateApi: undefined,
-      token: undefined
-    });
-    let privateStyle = {
-      float: 'right',
-      color: 'red',
-      cursor: 'pointer'
-    };
-    if (this.state.privateApi) {
-      return (
-        <span style={privateStyle} onClick={removePrivate}>
-          PRIVATE API
-        </span>
-      );
-    }
   }
 
   renderTokenStatus() {
     return this.state.token ? this.renderToken() : this.renderUnauthorized();
-  }
-
-  promptForToken() {
-    swal({
-      title: 'Request requires token!',
-      text: 'This query requires a valid user token, fetch one now?',
-      type: 'warning',
-      showCancelButton: true,
-      cancelButtonText: 'Continue Unauthorized',
-      confirmButtonColor: '#59e287',
-      confirmButtonText: 'Fetch Token',
-      closeOnConfirm: false
-    }, this.authorize.bind(this, true));
   }
 
   fetcher(graphQLParams) {
@@ -192,22 +156,17 @@ export default class Console extends React.Component {
 
   render() {
     return (
-      <div id='container'>
-        {this.state.activeModal}
-        <header style={{
-          padding: '5px',
-          minHeight: '30px',
-          fontSize: '1.1em',
-          backgroundColor: '#384650',
-          color: '#fff',
-          fontFamily: 'monospace'
-        }}>
-        {this.renderTokenStatus()}
-        {this.renderPrivateStatus()}
-        <div style={{ clear: 'both' }} />
-        </header>
-        <GraphiQL fetcher={this.fetcher.bind(this)}/>
-      </div>
+        <GraphiQL fetcher={this.fetcher.bind(this)}>
+          <GraphiQL.Logo>
+          Brandfolder GraphQL Console
+          </GraphiQL.Logo>
+          <GraphiQL.Footer>
+            {this.state.activeModal}
+            <div style={{ padding: '10px' }}>
+              {this.renderTokenStatus()}
+            </div>
+          </GraphiQL.Footer>
+        </GraphiQL>
     );
   }
 }

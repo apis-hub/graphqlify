@@ -1,6 +1,7 @@
-import ApiResourceType from '../builders/ApiResourceType';
-import requireType from '../helpers/requireType';
 import * as types from './standard';
+
+import requireType from '../helpers/requireType';
+import ApiResourceType from '../builders/ApiResourceType';
 
 const userType = new ApiResourceType('User', () => {
   return {
@@ -13,7 +14,8 @@ const userType = new ApiResourceType('User', () => {
     relatesToMany: {
       organizations: requireType('Organization'),
       brandfolders: requireType('Brandfolder'),
-      collections: requireType('Collection')
+      collections: requireType('Collection'),
+      sessions: requireType('Session')
     }
   };
 });

@@ -1,4 +1,5 @@
 import { GraphQLObjectType } from 'graphql/type';
+
 import requireMutations from '../helpers/requireMutations';
 
 let mutationType = new GraphQLObjectType({
@@ -11,6 +12,7 @@ let mutationType = new GraphQLObjectType({
     ...requireMutations('InvitationMutations'),
     ...requireMutations('OrganizationMutations'),
     ...requireMutations('SectionMutations'),
+    ...requireMutations('SessionMutations'),
     ...requireMutations('SocialLinkMutations'),
     ...requireMutations('UserMutations'),
     ...requireMutations('UserPermissionMutations')

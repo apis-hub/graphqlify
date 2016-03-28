@@ -1,8 +1,9 @@
+import { GraphQLObjectType } from 'graphql';
+
+import requireType from '../helpers/requireType';
+import { apiResourceField } from '../interfaces/apiResource';
 import { nodeField } from '../interfaces/node';
 import { slugField } from '../interfaces/slug';
-import { apiResourceField } from '../interfaces/apiResource';
-import requireType from '../helpers/requireType';
-import { GraphQLObjectType } from 'graphql';
 
 let queryType = new GraphQLObjectType({
   name: 'Query',
@@ -13,8 +14,8 @@ let queryType = new GraphQLObjectType({
       resolve: context => context.api
     },
     viewer: {
-      type: requireType('Viewer').type,
-      resolve: () => ({})
+      type: requireType('User').type,
+      resolve: rootValue => rootValue.api.resource('users').get('current')
     },
     apiResource: apiResourceField,
     node: nodeField,
