@@ -39,8 +39,6 @@ const graphQLMiddleware = graphqlHTTP(request => {
     headers
   });
 
-  debugger
-
   api.addMiddleware(jsonApionifyLogger);
 
   return {

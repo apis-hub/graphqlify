@@ -1,41 +1,19 @@
-import _ from 'lodash';
 import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
-import * as types from '../types/standard';
-import { catchUnauthorized } from '../helpers/catchErrors';
-import { CreateAttributesType, UpdateAttributesType } from './AttributeTypes';
+
 import buildAttributesField from './concerns/buildAttributesField';
+import buildIdInputField from './concerns/buildIdInputField';
+import buildResourceOutputField from './concerns/buildResourceOutputField';
+import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
-
-// Output Field for resource
-function buildResourceOutputField({ name, type }) {
-  let fields = {};
-  fields[_.snakeCase(name)] = {
-    type,
-    resolve: ({ resultResponse }) => resultResponse
-  };
-  return fields;
-}
-
-// Id input field
-function buildIdInputField() {
-  return {
-    id: {
-      type: new types.GraphQLNonNull(types.GraphQLID)
-    }
-  };
-}
+import { catchUnauthorized } from '../helpers/catchErrors';
+import { UpdateAttributesType } from './AttributeTypes';
 
 // Create Mutation
 function buildCreateMutation(mutator) {
   return mutationWithClientMutationId({
     name: `create${mutator.name}`,
-    inputFields: () => ({
-      ...mutator.inputFields,
-      ...buildAttributesField(
-        mutator.name, mutator.attributes, CreateAttributesType
-      )
-    }),
-    outputFields: () => mutator.outputFields,
+    inputFields: () => mutator.createInputFields,
+    outputFields: () => mutator.createOutputFields,
     mutateAndGetPayload: ({ attributes }, { rootValue }) => {
       return rootValue.api.resource(
         mutator.resource
@@ -52,14 +30,8 @@ function buildCreateMutation(mutator) {
 function buildUpdateMutation(mutator) {
   return mutationWithClientMutationId({
     name: `update${mutator.name}`,
-    inputFields: () => ({
-      ...mutator.inputFields,
-      ...buildIdInputField(),
-      ...buildAttributesField(
-        mutator.name, mutator.attributes, UpdateAttributesType
-      )
-    }),
-    outputFields: () => mutator.outputFields,
+    inputFields: () => mutator.updateInputFields,
+    outputFields: () => mutator.updateOutputFields,
     mutateAndGetPayload: ({ id: globalId, attributes }, { rootValue }) => {
       let { id } = fromGlobalId(globalId);
       return rootValue.api.resource(
@@ -79,14 +51,8 @@ function buildUpdateMutation(mutator) {
 function buildDeleteMutation(mutator) {
   return mutationWithClientMutationId({
     name: `delete${mutator.name}`,
-    inputFields: () => ({
-      ...mutator.inputFields,
-      ...buildIdInputField(),
-    }),
-    outputFields: () => ({
-      ...mutator.outputFields,
-      ...buildDeleteResourceOutputFields(mutator)
-    }),
+    inputFields: () => mutator.deleteInputFields,
+    outputFields: () => mutator.deleteOutputFields,
     mutateAndGetPayload: ({ id: globalId }, { rootValue }) => {
       let { id } = fromGlobalId(globalId);
       return rootValue.api.resource(
@@ -100,22 +66,6 @@ function buildDeleteMutation(mutator) {
       );
     }
   });
-}
-
-function buildDeleteResourceOutputFields({ type }) {
-  let outputFields = {};
-  outputFields[`deleted${type.name}Id`] = {
-    type: new types.GraphQLNonNull(types.GraphQLID),
-    resolve: ({ deletedId }) => deletedId
-  };
-  outputFields[`deleted${type.name}`] = {
-    type,
-    resolve: ({ resultResponse }) => {
-      let { instance, response } = resultResponse;
-      return { instance, response };
-    }
-  };
-  return outputFields;
 }
 
 // Root Resource Mutator
@@ -134,10 +84,28 @@ class RootResourceMutator extends BaseMutator {
     );
   }
 
-  get outputFields() {
+  get options() {
     return {
-      ...super.outputFields,
-      ...buildResourceOutputField(this)
+      updateInputFields: {},
+      updateOutputFields: {},
+      ...super.options
+    };
+  }
+
+  get updateInputFields() {
+    return {
+      ...this.inputFields,
+      ...resolveMaybeThunk(this.options.updateInputFields),
+      ...buildIdInputField(),
+      ...buildAttributesField(this.name, this.attributes, UpdateAttributesType)
+    };
+  }
+
+  get updateOutputFields() {
+    return {
+      ...this.outputFields,
+      ...resolveMaybeThunk(this.options.updateOutputFields),
+      ...buildResourceOutputField(this, 'updated')
     };
   }
 

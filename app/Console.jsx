@@ -132,10 +132,6 @@ export default class Console extends React.Component {
 
     headers['Content-Type'] = 'application/json';
 
-    if (this.state.privateApi) {
-      headers['x-brandfolder-client-id'] = process.env('BRANDFOLDER_CLIENT_ID');
-    }
-
     if (this.state.token) {
       headers['Authorization'] = `JWT ${this.state.token}`;
     }
@@ -158,7 +154,7 @@ export default class Console extends React.Component {
     return (
         <GraphiQL fetcher={this.fetcher.bind(this)}>
           <GraphiQL.Logo>
-          Brandfolder GraphQL Console
+            Brandfolder GraphQL Console
           </GraphiQL.Logo>
           <GraphiQL.Footer>
             {this.state.activeModal}

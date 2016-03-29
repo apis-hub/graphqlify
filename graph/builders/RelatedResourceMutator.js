@@ -1,13 +1,13 @@
+import * as types from '../types/standard';
+
 import _ from 'lodash';
 import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
-import * as types from '../types/standard';
-import { catchUnauthorized } from '../helpers/catchErrors';
+
 import fetchTypeById from '../helpers/fetchTypeById';
-import { collectionToEdges } from '../helpers/connectionHelpers';
-import { CreateAttributesType } from './AttributeTypes';
-import buildAttributesField from './concerns/buildAttributesField';
-import BaseMutator from './BaseMutator';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
+import BaseMutator from './BaseMutator';
+import { catchUnauthorized } from '../helpers/catchErrors';
+import { collectionToEdges } from '../helpers/connectionHelpers';
 
 _.mixin(require('lodash-inflection'));
 
@@ -16,22 +16,8 @@ function buildCreateMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `create${mutator.singularName}`,
-
-    // Extend the inputFields to include the attributesType
-    inputFields: () => ({
-      ...mutator.inputFields,
-      ...buildAttributesField(
-        mutator.name, mutator.attributes, CreateAttributesType
-      )
-    }),
-
-    // Extend the outputFields to include the resultResponse
-    outputFields: () => {
-      return {
-        ...mutator.outputFields,
-        ...buildCreateResourceOutputField(mutator)
-      };
-    },
+    inputFields: () => mutator.createInputFields,
+    outputFields: () => mutator.createOutputFields,
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
@@ -54,7 +40,7 @@ function buildCreateMutation(mutator) {
 // Build the create resource field
 function buildCreateResourceOutputField({ relationship: relName, edgeType }) {
   let fields = {};
-  fields[`${relName}Edge`] = {
+  fields[_.camelCase(`created_${_.singularize(relName)}_edge`)] = {
     type: edgeType,
     resolve: ({ resultResponse }) => {
       return resultResponse.collection.reload(
@@ -71,20 +57,8 @@ function buildDeleteMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `delete${mutator.singularName}`,
-
-    // Extend the inputFields to include the attributesType
-    inputFields: () => ({
-      ...mutator.inputFields,
-      id: {
-        type: new types.GraphQLNonNull(types.GraphQLID)
-      }
-    }),
-
-    // Extend the outputFields to include the resultResponse
-    outputFields: () => ({
-      ...mutator.outputFields,
-      ...buildDeleteResourceOutputFields(mutator)
-    }),
+    inputFields: () => mutator.deleteInputFields,
+    outputFields: () => mutator.deleteOutputFields,
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
@@ -115,33 +89,16 @@ function buildDeleteMutation(mutator) {
   });
 }
 
-function buildDeleteResourceOutputFields({ type }) {
-  let outputFields = {};
-  outputFields[`deleted${type.name}Id`] = {
-    type: new types.GraphQLNonNull(types.GraphQLID),
-    resolve: ({ deletedId }) => deletedId
-  };
-  return outputFields;
-}
-
 // Mutate a relationship given a method
 function buildRelationshipMutation(mutator, method) {
-  let { outputFields, pluralName, inputFields, parentType } = mutator;
+  let { pluralName, parentType } = mutator;
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `${method}${pluralName}`,
 
     // Extend the inputFields to include the ids
-    inputFields: () => ({
-      ...inputFields,
-      ...buildIdsFields()
-    }),
-
-    // Extend the provided outputFields to include the globalids
-    outputFields: () => ({
-      ...outputFields,
-      ...buildRelationshipOutputFields(mutator)
-    }),
+    inputFields: () => mutator[`${method}InputFields`],
+    outputFields: () => mutator[`${method}OutputFields`],
 
     // Specify how the mutation gets invoked
     mutateAndGetPayload: (args, context) => {
@@ -162,7 +119,7 @@ function buildRelationshipMutation(mutator, method) {
   });
 }
 
-function buildIdsFields() {
+function buildIdsInputField() {
   return {
     ids: {
       type: new types.GraphQLList(types.GraphQLID)
@@ -288,6 +245,18 @@ class RelatedResourceMutator extends BaseMutator {
     );
   }
 
+  get options() {
+    return {
+      addInputFields: {},
+      addOutputFields: {},
+      removeInputFields: {},
+      removeOutputFields: {},
+      replaceInputFields: {},
+      replaceOutputFields: {},
+      ...super.options
+    };
+  }
+
   get name() {
     let pluralParentName = _.pluralize(this.parentType.type.name);
     let camelizedRel = _.upperFirst(_.camelCase(this.relationship));
@@ -325,6 +294,62 @@ class RelatedResourceMutator extends BaseMutator {
     return {
       ...super.outputFields,
       ...buildParentOutputField(this)
+    };
+  }
+
+  get createOutputFields() {
+    return {
+      ...this.outputFields,
+      ...resolveMaybeThunk(this.options.createOutputFields),
+      ...buildCreateResourceOutputField(this)
+    };
+  }
+
+  get addInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.addInputFields)
+    };
+  }
+
+  get addOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
+    };
+  }
+
+  get removeInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.removeInputFields)
+    };
+  }
+
+  get removeOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
+    };
+  }
+
+  get replaceInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.replaceInputFields)
+    };
+  }
+
+  get replaceOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
     };
   }
 }

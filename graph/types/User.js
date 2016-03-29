@@ -9,7 +9,13 @@ const userType = new ApiResourceType('User', () => {
       first_name: types.GraphQLString,
       last_name: types.GraphQLString,
       email: types.GraphQLString,
+      initials: types.GraphQLString,
+      initials_colors: new types.GraphQLList(types.GraphQLString),
+      gravatar_url: types.GraphQLString,
       ...require('./concerns/timestamps')
+    },
+    relatesToOne: {
+      current_session: requireType('Session')
     },
     relatesToMany: {
       organizations: requireType('Organization'),

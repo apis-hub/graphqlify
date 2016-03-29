@@ -20,7 +20,7 @@ const webPackConfig = {
   output: {
     publcPath: '/assets/',
     path: path.join(__dirname, '../public/assets'),
-    filename: 'app.js',
+    filename: 'index.js',
   },
   module: {
     loaders: [
@@ -53,10 +53,6 @@ const webPackConfig = {
         loader: 'imports?jQuery=jquery'
       }
     ]
-  },
-  output: {
-    filename: 'index.js',
-    path: '/assets'
   }
 };
 

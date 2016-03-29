@@ -1,14 +1,21 @@
+import '../helpers/requireType';
 import * as types from '../types/standard';
 
-import requireMutations from '../helpers/requireMutations';
+import requireType from '../helpers/requireType';
 import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { createSession, deleteSession } = new RootResourceMutator(() => ({
   name: 'Session',
-  type: () => require('../types/Session'),
+  type: () => requireType('Session'),
   attributes: () => ({
     email: new types.GraphQLNonNull(types.GraphQLString),
     password: new types.GraphQLNonNull(types.GraphQLString)
+  }),
+  deleteOutputFields: () => ({
+    session: {
+      type: requireType('Session').type,
+      resolve: ({ resultResponse }) => resultResponse
+    }
   })
 }));
 

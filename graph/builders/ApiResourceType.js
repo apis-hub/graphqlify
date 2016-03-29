@@ -1,3 +1,5 @@
+import * as types from '../types/standard';
+
 import _ from 'lodash';
 import urlJoin from 'url-join';
 import {
@@ -5,17 +7,17 @@ import {
   globalIdField,
   connectionDefinitions
 } from 'graphql-relay';
-import * as types from '../types/standard';
-import { apiResourceInterface } from '../interfaces/apiResource';
-import { nodeInterface } from '../interfaces/node';
-import { catchUnauthorized } from '../helpers/catchErrors';
+
 import expandInputTypes from './concerns/expandInputTypes';
+import ResourceMappingObject from './concerns/ResourceMappingObject';
+import { catchUnauthorized } from '../helpers/catchErrors';
 import {
   getRelatedWithFields,
   connectionFromRelatesToMany,
   collectionToConnection
 } from '../helpers/connectionHelpers';
-import ResourceMappingObject from './concerns/ResourceMappingObject';
+import { apiResourceInterface } from '../interfaces/apiResource';
+import { nodeInterface } from '../interfaces/node';
 
 const baseUrl = (
   process.env.BRANDFOLDER_API_ENDPOINT || 'https://api.brandfolder.com/v2'

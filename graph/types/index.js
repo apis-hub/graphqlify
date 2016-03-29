@@ -15,7 +15,7 @@ let queryType = new GraphQLObjectType({
     },
     viewer: {
       type: requireType('User').type,
-      resolve: rootValue => rootValue.api.resource('users').get('current')
+      resolve: rootValue => rootValue.api.resource('users').read('current')
     },
     apiResource: apiResourceField,
     node: nodeField,
