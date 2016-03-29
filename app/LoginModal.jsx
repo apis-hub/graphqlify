@@ -26,7 +26,7 @@ export default class LoginModal extends React.Component {
   renderErrors() {
     return this.state.errors.map((err, i) => {
       return <Alert key={i} bsStyle="danger">{err.message}</Alert>;
-    })
+    });
   }
 
   submitLogin(e) {
@@ -35,7 +35,7 @@ export default class LoginModal extends React.Component {
       query: `
         mutation Login($input: createSessionInput!){
           createSession(input: $input){
-            session {
+            createdSession {
               token
             }
           }
@@ -52,10 +52,10 @@ export default class LoginModal extends React.Component {
       }
     }).then(({ data, errors }) => {
       if (errors) {
-        this.setState({ errors })
-        return
+        this.setState({ errors });
+        return;
       }
-      this.context.setToken(data.createSession.session.token);
+      this.context.setToken(data.createSession.createdSession.token);
       this.context.closeModal();
     });
   }
