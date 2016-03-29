@@ -1,5 +1,6 @@
 import { GraphQLObjectType } from 'graphql';
 
+import fetchTypeById from '../helpers/fetchTypeById';
 import requireType from '../helpers/requireType';
 import { apiResourceField } from '../interfaces/apiResource';
 import { nodeField } from '../interfaces/node';
@@ -15,7 +16,9 @@ let queryType = new GraphQLObjectType({
     },
     viewer: {
       type: requireType('User').type,
-      resolve: rootValue => rootValue.api.resource('users').read('current')
+      resolve: (rootValue, args, context) => fetchTypeById(
+        'users', 'current', context, {}, 'viewer'
+      )
     },
     apiResource: apiResourceField,
     node: nodeField,
