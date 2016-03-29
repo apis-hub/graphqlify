@@ -28,16 +28,14 @@ const graphQLMiddleware = graphqlHTTP(request => {
 
   headers.forwarded = `for=${request.ip}`;
   headers['x-forwarded-for'] = request.ip;
-
-  if (request.headers['x-api-private']) {
-    headers['x-api-private'] = request.headers['x-api-private'];
-  }
+  headers.Accept = 'application/vnd.api+json;brandfolder-api=private';
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
   }
 
   let api = new JSONAPIonify(endpoint, {
+    allowSetHeaders: true,
     headers
   });
 
