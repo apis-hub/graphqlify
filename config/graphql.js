@@ -31,8 +31,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
 
   if (request.headers['x-api-private']) {
     headers['x-api-private'] = request.headers['x-api-private'];
-  };
-
+  }
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
