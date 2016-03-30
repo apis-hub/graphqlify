@@ -216,25 +216,25 @@ function globalIdsToRelationshipIds(ids) {
 class RelatedResourceMutator extends BaseMutator {
   constructor(options) {
     super(options);
-    this.defProperty(
+    this.defGetter(
       `create${this.singularName}`,
-      { get: () => buildCreateMutation(this) }
+      () => buildCreateMutation(this)
     );
-    this.defProperty(
+    this.defGetter(
       `add${this.pluralName}`,
-      { get: () => buildRelationshipMutation(this, 'add') }
+      () => buildRelationshipMutation(this, 'add')
     );
-    this.defProperty(
+    this.defGetter(
       `remove${this.pluralName}`,
-      { get: () => buildRelationshipMutation(this, 'remove') }
+      () => buildRelationshipMutation(this, 'remove')
     );
-    this.defProperty(
+    this.defGetter(
       `replace${this.pluralName}`,
-      { get: () => buildRelationshipMutation(this, 'replace') }
+      () => buildRelationshipMutation(this, 'replace')
     );
-    this.defProperty(
+    this.defGetter(
       `delete${this.singularName}`,
-      { get: () => buildDeleteMutation(this) }
+      () => buildDeleteMutation(this)
     );
   }
 

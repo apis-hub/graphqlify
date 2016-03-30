@@ -19,8 +19,8 @@ class BaseMutator {
     this.config = Object.freeze({ options });
   }
 
-  defProperty(name, ...args) {
-    Object.defineProperty(this, name, ...args);
+  defGetter(name, fn) {
+    Object.defineProperty(this, name, { get: fn, enumerable: true });
   }
 
   get attributes() {

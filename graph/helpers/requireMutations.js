@@ -1,8 +1,10 @@
 import _ from 'lodash';
 
+import { lazyPickBy } from './lazy';
+
 function requireMutations(file) {
   let prefixes = [ 'create', 'update', 'delete', 'add', 'remove', 'replace' ];
-  return _.pickBy(require(`../mutations/${file}`), (value, name) => {
+  return lazyPickBy(require(`../mutations/${file}`), name => {
     return prefixes.find(prefix => _.startsWith(name, prefix)) !== undefined;
   });
 }

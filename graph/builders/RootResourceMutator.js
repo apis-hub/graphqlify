@@ -66,14 +66,14 @@ class RootResourceMutator extends BaseMutator {
 
   constructor(options) {
     super(options);
-    this.defProperty(
-      `create${this.name}`, { get: () => buildCreateMutation(this) }
+    this.defGetter(
+      `create${this.name}`, () => buildCreateMutation(this)
     );
-    this.defProperty(
-      `update${this.name}`, { get: () => buildUpdateMutation(this) }
+    this.defGetter(
+      `update${this.name}`, () => buildUpdateMutation(this)
     );
-    this.defProperty(
-      `delete${this.name}`, { get: () => buildDeleteMutation(this) }
+    this.defGetter(
+      `delete${this.name}`, () => buildDeleteMutation(this)
     );
   }
 
