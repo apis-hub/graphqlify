@@ -1,12 +1,13 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 
 const assetApprovalType = new ApiResourceType('AssetApproval', () => ({
   attributes: {
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    asset: require('./Asset'),
-    user: require('./User')
+    asset: requireType('Asset'),
+    user: requireType('User')
   }
 }));
 

@@ -1,13 +1,12 @@
-import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
-import _ from 'lodash';
 import * as types from '../types/standard';
-import { catchUnauthorized } from './catchErrors';
-import { collectionToEdges } from './connectionHelpers';
+
+import _ from 'lodash';
+import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
+
 import fetchTypeById from '../helpers/fetchTypeById';
-import { CreateAttributesType } from './buildAttributesType';
-import buildAttributesField from './buildAttributesField';
+import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
-import resolveMaybeThunk from './resolveMaybeThunk';
+import { collectionToEdges } from '../helpers/connectionHelpers';
 
 _.mixin(require('lodash-inflection'));
 
@@ -16,41 +15,29 @@ function buildCreateMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `create${mutator.singularName}`,
-
-    // Extend the inputFields to include the attributesType
-    inputFields: () => ({
-      ...mutator.inputFields,
-      ...buildAttributesField(mutator.name, mutator.attributes, CreateAttributesType)
-    }),
-
-    // Extend the outputFields to include the resultResponse
-    outputFields: () => {
-      return {
-        ...mutator.outputFields,
-        ...buildCreateResourceOutputField(mutator)
-      };
-    },
+    inputFields: () => mutator.createInputFields,
+    outputFields: () => mutator.createOutputFields,
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
-      let parent_id = args[`${_.singularize(mutator.parentType.resource)}_id`];
+      let parentId = args[`${_.singularize(mutator.parentType.resource)}_id`];
       return getRelatedFromContext(
-        mutator, parent_id, context
+        mutator, parentId, context
       ).then(({ collection, parentInstance }) => {
-        return collection.create({ attributes: args.attributes }).then(resultResponse => {
+        return collection.create(
+          { attributes: args.attributes }
+        ).then(resultResponse => {
           return { resultResponse, parentInstance };
         });
-      }).catch(catchUnauthorized(
-        context.rootValue
-      ));
+      });
     }
   });
 }
 
 // Build the create resource field
-function buildCreateResourceOutputField({ relationship: relationshipName, edgeType }) {
+function buildCreateResourceOutputField({ relationship: relName, edgeType }) {
   let fields = {};
-  fields[`${relationshipName}Edge`] = {
+  fields[_.camelCase(`created_${_.singularize(relName)}_edge`)] = {
     type: edgeType,
     resolve: ({ resultResponse }) => {
       return resultResponse.collection.reload(
@@ -67,31 +54,24 @@ function buildDeleteMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `delete${mutator.singularName}`,
-
-    // Extend the inputFields to include the attributesType
-    inputFields: () => ({
-      ...mutator.inputFields,
-      id: {
-        type: new types.GraphQLNonNull(types.GraphQLID)
-      }
-    }),
-
-    // Extend the outputFields to include the resultResponse
-    outputFields: () => ({
-      ...mutator.outputFields,
-      ...buildDeleteResourceOutputFields(mutator)
-    }),
+    inputFields: () => mutator.deleteInputFields,
+    outputFields: () => mutator.deleteOutputFields,
 
     // Mutate
     mutateAndGetPayload: (args, context) => {
-      let { resource: parentResource } = parentType;
+      let parentGId = args[`${_.singularize(mutator.parentType.resource)}_id`];
+      let { id: parentId } = fromGlobalId(parentGId);
       let { parentType } = mutator;
+      let { resource: parentResource } = parentType;
       let { id: globalId } = args;
       let { rootValue } = context;
       let { api } = rootValue;
       let { resource } = mutator;
-      let parentInstance = resource(parentResource).new({ id: args.parent_id });
-      return getMinimalInstance(api, resource, globalId).then(({ instance }) => {
+      let parentInstance =
+        api.resource(parentResource).new({ id: parentId });
+      return getMinimalInstance(
+        api, resource, globalId
+      ).then(({ instance }) => {
         return instance.delete().then(({ response }) => {
           let { id: deletedId } = instance;
           if (!response.ok) {
@@ -104,39 +84,22 @@ function buildDeleteMutation(mutator) {
   });
 }
 
-function buildDeleteResourceOutputFields({ type }) {
-  let outputFields = {};
-  outputFields[`deleted${type.name}Id`] = {
-    type: new types.GraphQLNonNull(types.GraphQLID),
-    resolve: ({ deletedId }) => deletedId
-  };
-  return outputFields;
-}
-
 // Mutate a relationship given a method
 function buildRelationshipMutation(mutator, method) {
-  let { outputFields, pluralName, inputFields, parentType } = mutator;
+  let { pluralName, parentType } = mutator;
   return mutationWithClientMutationId({
     // Give the mutation a name
     name: `${method}${pluralName}`,
 
     // Extend the inputFields to include the ids
-    inputFields: () => ({
-      ...inputFields,
-      ...buildIdsFields()
-    }),
-
-    // Extend the provided outputFields to include the globalids
-    outputFields: () => ({
-      ...outputFields,
-      ...buildRelationshipOutputFields(mutator)
-    }),
+    inputFields: () => mutator[`${method}InputFields`],
+    outputFields: () => mutator[`${method}OutputFields`],
 
     // Specify how the mutation gets invoked
     mutateAndGetPayload: (args, context) => {
-      let parent_id = args[`${_.singularize(parentType.resource)}_id`];
+      let parentId = args[`${_.singularize(parentType.resource)}_id`];
       return getRelationshipFromContext(
-        mutator, parent_id, context
+        mutator, parentId, context
       ).then(({ parentInstance, relationship: rel }) => {
         // Convert Ids
         let ids = globalIdsToRelationshipIds(args.ids);
@@ -144,14 +107,12 @@ function buildRelationshipMutation(mutator, method) {
         return rel[method](ids).then(({ relationship: newRel }) => {
           return { relationship: newRel, parentInstance };
         });
-      }).catch(
-        catchUnauthorized(context.rootValue)
-      );
+      });
     }
   });
 }
 
-function buildIdsFields() {
+function buildIdsInputField() {
   return {
     ids: {
       type: new types.GraphQLList(types.GraphQLID)
@@ -195,7 +156,9 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
     type: edgeType,
     resolve: ({ ids }, args, context) => {
       return Promise.all(
-        ids.map(id => fetchTypeById(resource, id, context, {}, nodeName, 'node'))
+        ids.map(id => fetchTypeById(
+          resource, id, context, {}, nodeName, 'node')
+        )
       ).then(
         responses => collectionToEdges(responses.map(({ instance: i }) => i))
       );
@@ -206,25 +169,35 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
 
 // Get the parent
 function getMinimalInstance(api, resource, globalId) {
-  var { id } = fromGlobalId(globalId);
+  let { id } = fromGlobalId(globalId);
   let parentParams = { fields: {} };
   parentParams.fields[resource] = null;
   return api.resource(resource).read(id, parentParams);
 }
 
 // Fetches a related collection, given the context and a parentResource
-function getRelatedFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
-    return parentInstance.related(relationshipName, { page: { first: 0 } }).then(({ collection }) => {
+function getRelatedFromContext(
+  { parentType, relationship: relName }, parentId, { rootValue }
+) {
+  return getMinimalInstance(
+    rootValue.api, parentType.resource, parentId
+  ).then(({ instance: parentInstance }) => {
+    return parentInstance.related(
+      relName, { page: { first: 0 } }
+    ).then(({ collection }) => {
       return { collection, parentInstance };
     });
   });
 }
 
 // Fetches a relationship, given the context and a parentResource
-function getRelationshipFromContext({ parentType, relationship: relationshipName }, parentId, { rootValue }) {
-  return getMinimalInstance(rootValue.api, parentType.resource, parentId).then(({ instance: parentInstance }) => {
-    return parentInstance.relationship(relationshipName).then(({ relationship }) => {
+function getRelationshipFromContext(
+  { parentType, relationship: relName }, parentId, { rootValue }
+) {
+  return getMinimalInstance(
+    rootValue.api, parentType.resource, parentId
+  ).then(({ instance: parentInstance }) => {
+    return parentInstance.relationship(relName).then(({ relationship }) => {
       return { relationship, parentInstance };
     });
   });
@@ -233,7 +206,7 @@ function getRelationshipFromContext({ parentType, relationship: relationshipName
 // Convert globalIds to resource names
 function globalIdsToRelationshipIds(ids) {
   return ids.map(gid => {
-    var { type, id } = fromGlobalId(gid);
+    let { type, id } = fromGlobalId(gid);
     type = _.pluralize(_.snakeCase(type));
     return { type, id };
   });
@@ -243,15 +216,44 @@ function globalIdsToRelationshipIds(ids) {
 class RelatedResourceMutator extends BaseMutator {
   constructor(options) {
     super(options);
-    this.defProperty(`create${this.singularName}`, { get: () => buildCreateMutation(this) });
-    this.defProperty(`add${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'add') });
-    this.defProperty(`remove${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'remove') });
-    this.defProperty(`replace${this.pluralName}`, { get: () => buildRelationshipMutation(this, 'replace') });
-    this.defProperty(`delete${this.singularName}`, { get: () => buildDeleteMutation(this) });
+    this.defProperty(
+      `create${this.singularName}`,
+      { get: () => buildCreateMutation(this) }
+    );
+    this.defProperty(
+      `add${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'add') }
+    );
+    this.defProperty(
+      `remove${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'remove') }
+    );
+    this.defProperty(
+      `replace${this.pluralName}`,
+      { get: () => buildRelationshipMutation(this, 'replace') }
+    );
+    this.defProperty(
+      `delete${this.singularName}`,
+      { get: () => buildDeleteMutation(this) }
+    );
+  }
+
+  get options() {
+    return {
+      addInputFields: {},
+      addOutputFields: {},
+      removeInputFields: {},
+      removeOutputFields: {},
+      replaceInputFields: {},
+      replaceOutputFields: {},
+      ...super.options
+    };
   }
 
   get name() {
-    return `${_.pluralize(this.parentType.type.name)}${_.upperFirst(_.camelCase(this.relationship))}`;
+    let pluralParentName = _.pluralize(this.parentType.type.name);
+    let camelizedRel = _.upperFirst(_.camelCase(this.relationship));
+    return `${pluralParentName}${camelizedRel}`;
   }
 
   get singularName() {
@@ -285,6 +287,62 @@ class RelatedResourceMutator extends BaseMutator {
     return {
       ...super.outputFields,
       ...buildParentOutputField(this)
+    };
+  }
+
+  get createOutputFields() {
+    return {
+      ...this.outputFields,
+      ...resolveMaybeThunk(this.options.createOutputFields),
+      ...buildCreateResourceOutputField(this)
+    };
+  }
+
+  get addInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.addInputFields)
+    };
+  }
+
+  get addOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
+    };
+  }
+
+  get removeInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.removeInputFields)
+    };
+  }
+
+  get removeOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
+    };
+  }
+
+  get replaceInputFields() {
+    return {
+      ...this.inputFields,
+      ...buildIdsInputField(),
+      ...resolveMaybeThunk(this.options.replaceInputFields)
+    };
+  }
+
+  get replaceOutputFields() {
+    return {
+      ...this.outputFields,
+      ...buildRelationshipOutputFields(this),
+      ...resolveMaybeThunk(this.options.updateOutputFields)
     };
   }
 }

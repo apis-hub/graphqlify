@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const sectionType = new ApiResourceType('Section', () => ({
@@ -10,10 +11,10 @@ const sectionType = new ApiResourceType('Section', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder')
+    brandfolder: requireType('Brandfolder')
   },
   relatesToMany: {
-    assets: require('./Asset'),
+    assets: requireType('Asset'),
   },
   connectionArgs: {
     has_assets: types.GraphQLBoolean

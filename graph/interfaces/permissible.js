@@ -1,4 +1,6 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
 import resolveType from '../helpers/resolveType';
 import _ from 'lodash';
 
@@ -18,10 +20,20 @@ let permissibleInterface = new GraphQLInterfaceType({
       type: GraphQLString
     },
     user_permissions: {
+      args: require('../types/UserPermission').connectionArgs,
       type: require('../types/UserPermission').connectionType
     },
     users: {
+      args: require('../types/User').connectionArgs,
       type: require('../types/User').connectionType
+    },
+    invitations: {
+      args: require('../types/Invitation').connectionArgs,
+      type: require('../types/Invitation').connectionType
+    },
+    access_requests: {
+      args: require('../types/AccessRequest').connectionArgs,
+      type: require('../types/AccessRequest').connectionType
     }
   }),
   resolveType

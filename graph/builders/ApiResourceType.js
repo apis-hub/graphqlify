@@ -1,13 +1,22 @@
-import _ from 'lodash';
 import * as types from '../types/standard';
-import { connectionArgs as GraphQLConnectionArgs, globalIdField, connectionDefinitions } from 'graphql-relay';
-import { nodeInterface } from '../interfaces/node';
-import { apiResourceInterface } from '../interfaces/apiResource';
-import { catchUnauthorized } from './catchErrors';
-import { getRelatedWithFields, connectionFromRelatesToMany } from './connectionHelpers';
-import expandInputTypes from './expandInputTypes';
-import resolveMaybeThunk from './resolveMaybeThunk';
+
+import _ from 'lodash';
 import urlJoin from 'url-join';
+import {
+  connectionArgs as GraphQLConnectionArgs,
+  globalIdField,
+  connectionDefinitions
+} from 'graphql-relay';
+
+import expandInputTypes from './concerns/expandInputTypes';
+import ResourceMappingObject from './concerns/ResourceMappingObject';
+import {
+  getRelatedWithFields,
+  connectionFromRelatesToMany,
+  collectionToConnection
+} from '../helpers/connectionHelpers';
+import { apiResourceInterface } from '../interfaces/apiResource';
+import { nodeInterface } from '../interfaces/node';
 
 const baseUrl = (
   process.env.BRANDFOLDER_API_ENDPOINT || 'https://api.brandfolder.com/v2'
@@ -26,22 +35,25 @@ function buildApiInfo() {
   };
 }
 
-function buildRights() {
-  return {
-    rights: {
-      type: types.GraphQLReusableObject,
+function buildAttributes({ attributes }) {
+  return Object.keys(attributes).reduce((output, attr) => {
+    let type = attributes[attr];
+    output[attr] = {
+      type,
       resolve: ({ instance }) => {
-        return instance.meta.rights;
+        return instance.attributes[attr];
       }
-    }
-  };
+    };
+    return output;
+  }, {});
 }
 
-function buildFields({ name, mapping }) {
+function buildFields({ name, mapping, fields }) {
   return {
+    ...fields,
     ...buildId(name),
     ...buildApiInfo(),
-    ...buildRights(),
+    ...buildFetchTimestamp(),
     ...buildAttributes(mapping),
     ...buildRelatesToOne(mapping),
     ...buildRelatesToMany(mapping)
@@ -54,17 +66,13 @@ function buildId(name) {
   };
 }
 
-function buildAttributes({ attributes }) {
-  return Object.keys(attributes).reduce((output, attr) => {
-    let type = attributes[attr];
-    output[attr] = {
-      type,
-      resolve: ({ instance }) => {
-        return instance.attributes[attr];
-      }
-    };
-    return output;
-  }, {});
+function buildFetchTimestamp() {
+  return {
+    fetchTimestamp: {
+      type: new types.GraphQLNonNull(types.GraphQLInt),
+      resolve: (obj, args, { rootValue }) => rootValue.timestamp
+    }
+  };
 }
 
 function buildRelatesToOne({ relatesToOne }) {
@@ -89,7 +97,7 @@ function buildRelatesToOne({ relatesToOne }) {
       resolve: ({ instance }, args, context) => {
         return getRelatedWithFields(
           instance, relationshipName, {}, context
-        ).catch(catchUnauthorized(context.rootValue));
+        );
       }
     };
     return output;
@@ -129,7 +137,7 @@ function buildRelatesToMany({ relatesToMany }) {
       resolve: ({ instance }, args, context) => {
         return connectionFromRelatesToMany(
           instance, relationshipName, args, context
-        ).catch(catchUnauthorized(context.rootValue));
+        );
       }
     };
     return output;
@@ -138,10 +146,8 @@ function buildRelatesToMany({ relatesToMany }) {
 
 function buildConnectionFields({ mapping }) {
   return {
-    rights: {
-      type: types.GraphQLReusableObject
-    },
-    ...(mapping.connectionFields || {})
+    ...mapping.connectionFields,
+    ...buildFetchTimestamp()
   };
 }
 
@@ -163,8 +169,8 @@ function buildConnectionDefinitions(resource) {
 function buildType(resource) {
   return new types.GraphQLObjectType({
     name: resource.name,
-    description: `Fetches ${resource.name} resources from the API. For more information
-    see ${urlJoin(baseUrl, `docs#${resource.resource}`)}.`,
+    description: `Fetches ${resource.name} resources from the API. For more
+    information see ${urlJoin(baseUrl, `docs#${resource.resource}`)}.`,
     fields: () => buildFields(resource),
     interfaces: resource.interfaces
   });
@@ -192,6 +198,10 @@ class ApiResourceType {
     return this.connectionDefinitions.connectionType;
   }
 
+  get fields() {
+    return this.mapping.fields;
+  }
+
   get edgeType() {
     return this.connectionDefinitions.edgeType;
   }
@@ -200,46 +210,22 @@ class ApiResourceType {
     return buildFields(this);
   }
 
+  get connectionStub() {
+    return {
+      args: this.connectionArgs,
+      type: this.connectionType,
+      resolve: (obj, args, { rootValue }) => collectionToConnection({
+        collection: rootValue.api.resource(this.resource).emptyCollection()
+      })
+    };
+  }
+
   get mapping() {
-    return new MappingObject(this.config.mapping);
+    return new ResourceMappingObject(this.config.mapping);
   }
 
   get connectionArgs() {
     return this.mapping.connectionArgs;
-  }
-
-  buildConnectionArgs(...args) {
-    return this.mapping.buildConnectionArgs(...args);
-  }
-}
-
-class MappingObject {
-  constructor(config) {
-    // Set Defaults
-    config = {
-      connectionArgs: {},
-      fields: {},
-      edgeFields: {},
-      connectionFields: {},
-      relatesToMany: {},
-      relatesToOne: {},
-      ...resolveMaybeThunk(config)
-    };
-
-    // Set the variables
-    Object.keys(config).forEach(key => {
-      let value = config[key];
-      this[key] = value;
-    });
-
-    // Include the default connection args
-    this.connectionArgs = {
-      ...GraphQLConnectionArgs,
-      ...this.connectionArgs,
-    };
-
-    // Freeze
-    Object.freeze(this);
   }
 
   buildConnectionArgs(args = {}) {

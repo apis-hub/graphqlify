@@ -1,4 +1,4 @@
-import RelatedResourceMutator from '../../helpers/RelatedResourceMutator';
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 
 const { createAssetsApproval, deleteAssetsApproval } =
   new RelatedResourceMutator(() => ({

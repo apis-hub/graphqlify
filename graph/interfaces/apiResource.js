@@ -1,8 +1,10 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
-import { catchUnauthorized } from '../helpers/catchErrors';
+import _ from 'lodash';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
+
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveType from '../helpers/resolveType';
-import _ from 'lodash';
 
 _.mixin(require('lodash-inflection'));
 
@@ -39,8 +41,6 @@ let apiResourceField = {
   },
   resolve: (query, args, context) => fetchTypeById(
     args.apiType, args.apiId, context, {}, 'apiResource'
-  ).catch(
-    catchUnauthorized(context.rootValue)
   )
 };
 

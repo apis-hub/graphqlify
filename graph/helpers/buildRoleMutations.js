@@ -1,5 +1,6 @@
 import * as types from '../types/standard';
-import RelatedResourceMutator from './RelatedResourceMutator';
+
+import RelatedResourceMutator from '../builders/RelatedResourceMutator';
 
 function buildInvitationMutations(parentType) {
   let mutations = {};
@@ -16,8 +17,8 @@ function buildInvitationMutations(parentType) {
     attributes
   }));
   let { pluralName } = mutator;
-  mutations[`Add${pluralName}`] = mutator[`Add${pluralName}`];
-  mutations[`Remove${pluralName}`] = mutator[`Remove${pluralName}`];
+  mutations[`create${pluralName}`] = mutator[`create${pluralName}`];
+  mutations[`delete${pluralName}`] = mutator[`delete${pluralName}`];
   return mutations;
 }
 
@@ -31,9 +32,8 @@ function buildUserPermissionMutations(parentType) {
     relationship
   }));
   let { pluralName, singularName } = mutator;
-  mutations[`Add${pluralName}`] = mutator[`Add${pluralName}`];
-  mutations[`Remove${pluralName}`] = mutator[`Remove${pluralName}`];
-  mutations[`Delete${singularName}`] = mutator[`Delete${singularName}`];
+  mutations[`create${pluralName}`] = mutator[`add${pluralName}`];
+  mutations[`delete${singularName}`] = mutator[`delete${singularName}`];
   return mutations;
 }
 
@@ -46,8 +46,8 @@ function buildUserMutations(parentType, roles) {
       relationship,
     });
     let { pluralName } = mutator;
-    mutations[`Add${pluralName}`] = mutator[`Add${pluralName}`];
-    mutations[`Remove${pluralName}`] = mutator[`Remove${pluralName}`];
+    mutations[`add${pluralName}`] = mutator[`add${pluralName}`];
+    mutations[`remove${pluralName}`] = mutator[`remove${pluralName}`];
     return mutations;
   }, {});
 }

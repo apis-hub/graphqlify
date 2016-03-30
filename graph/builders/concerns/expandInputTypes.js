@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import types from '../types/standard';
+import types from '../../types/standard';
 
 function expandInputTypes(inputs) {
   // Force shorthand into longhand

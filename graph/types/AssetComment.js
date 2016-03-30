@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const assetCommentType = new ApiResourceType('AssetComment', () => ({
@@ -7,8 +8,8 @@ const assetCommentType = new ApiResourceType('AssetComment', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    asset: require('./Asset'),
-    author: require('./User')
+    asset: requireType('Asset'),
+    author: requireType('User')
   },
   relatesToMany: {
     replies: assetCommentType,

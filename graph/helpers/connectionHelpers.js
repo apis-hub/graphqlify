@@ -3,7 +3,9 @@ import { parseOptions } from './apiHelpers';
 import _ from 'lodash';
 
 // Builds a GraphQL Connection from an API relationship
-function connectionFromRelatesToMany(parentObj, relationshipName, { order, after, before, first, last }, context) {
+function connectionFromRelatesToMany(
+  parentObj, relName, { order, after, before, first, last }, context
+) {
   order = order || 'id';
   let params = {};
 
@@ -13,25 +15,25 @@ function connectionFromRelatesToMany(parentObj, relationshipName, { order, after
     params.page = _.omitBy({ after, before, first, last }, _.isUndefined);
   }
 
-  if (getFieldNamesFromContext(context, relationshipName).indexOf('edges') === -1) {
-    return parentObj.related(relationshipName, { page: { first: 0 } }).then(
+  if (getFieldNamesFromContext(context, relName).indexOf('edges') === -1) {
+    return parentObj.related(relName, { page: { first: 0 } }).then(
       collectionToConnection
     );
   }
 
   return getRelatedWithFields(
-    parentObj, relationshipName, params, context, 'edges', 'node'
+    parentObj, relName, params, context, 'edges', 'node'
   ).then(collectionToConnection);
 }
 
 // Get a relationship with the fields specified in the context
-function getRelatedWithFields(parentObj, relationshipName, params, context, ...path) {
-  return parentObj.relatedOptions(relationshipName, params).then(
+function getRelatedWithFields(parentObj, relName, params, context, ...path) {
+  return parentObj.relatedOptions(relName, params).then(
     parseOptions('GET')
   ).then(
-    paramsFromContext(params, context, relationshipName, ...path)
+    paramsFromContext(params, context, relName, ...path)
   ).then(
-    reqParams => parentObj.related(relationshipName, reqParams)
+    reqParams => parentObj.related(relName, reqParams)
   );
 }
 

@@ -1,10 +1,12 @@
+import cors from 'cors';
 import express from 'express';
 import path from 'path';
-import cors from 'cors';
-import logger from './config/logger';
-import webpack from './config/webpack';
-import graphql from './config/graphql';
+import { printSchema } from 'graphql/utilities';
 
+import graphql from './config/graphql';
+import logger from './config/logger';
+import schema from './graph/schema.js';
+import webpack from './config/webpack';
 
 const app = express();
 
@@ -12,20 +14,26 @@ const app = express();
 app.use(logger);
 
 // Enable Cors
-app.use('/graphql', cors());
+app.use('/graphql', cors({
+  origin: true,
+  methods: [ 'POST' ],
+  allowedHeaders: 'Authorization,Content-Type,Accept'
+}));
 
 // Serve Webpack
 app.use('/assets', webpack);
 
-// Serve Static
-app.use('/', express.static(path.join(__dirname, 'public')));
-
 // Serve GraphQL
 app.use('/graphql', graphql);
 
+// load human readable graphql
+app.get('/schema.graphql', (req, res) => {
+  res.write(printSchema(schema));
+});
+
 // load console at root
 app.get('/', (req, res) => res.sendFile(
-  path.resolve(__dirname, 'views/console.html')
+  path.resolve(__dirname, 'views/index.html')
 ));
 
 // Start the server

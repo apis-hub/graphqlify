@@ -1,4 +1,4 @@
-import RootResourceMutator from '../helpers/RootResourceMutator';
+import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
 
 const { createUser, updateUser, deleteUser } = new RootResourceMutator(() => ({

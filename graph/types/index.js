@@ -1,21 +1,24 @@
+import { GraphQLObjectType } from 'graphql';
+
+import fetchTypeById from '../helpers/fetchTypeById';
+import requireType from '../helpers/requireType';
+import { apiResourceField } from '../interfaces/apiResource';
 import { nodeField } from '../interfaces/node';
 import { slugField } from '../interfaces/slug';
-import { apiResourceField } from '../interfaces/apiResource';
-import { type as viewerType } from './Viewer';
-import { type as apiType } from './Api';
-import { GraphQLObjectType } from 'graphql';
 
 let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
     api: {
-      type: apiType,
+      type: requireType('Api').type,
       resolve: context => context.api
     },
     viewer: {
-      type: viewerType,
-      resolve: () => ({})
+      type: requireType('User').type,
+      resolve: (rootValue, args, context) => fetchTypeById(
+        'users', 'current', context, {}, 'viewer'
+      )
     },
     apiResource: apiResourceField,
     node: nodeField,

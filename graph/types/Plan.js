@@ -1,4 +1,5 @@
-import ApiResourceType from '../helpers/ApiResourceType';
+import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const planType = new ApiResourceType('Plan', () => ({
@@ -18,7 +19,7 @@ const planType = new ApiResourceType('Plan', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    organization: require('./Organization'),
+    organization: requireType('Organization'),
   }
 }));
 

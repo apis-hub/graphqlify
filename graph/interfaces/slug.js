@@ -1,6 +1,8 @@
-import { GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull } from 'graphql';
 import _ from 'lodash';
-import { catchUnauthorized } from '../helpers/catchErrors';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
+} from 'graphql';
+
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveType from '../helpers/resolveType';
 
@@ -8,7 +10,8 @@ _.mixin(require('lodash-inflection'));
 
 let slugInterface = new GraphQLInterfaceType({
   name: 'Slug',
-  description: 'For objects that have a slug and that are routable on brandfolder.com',
+  description: `For objects that have a slug and that are routable on
+                brandfolder.com`,
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLID)
@@ -32,8 +35,6 @@ let slugField = {
   },
   resolve: (query, args, context) => fetchTypeById(
     'slug', args.uri, context, {}, 'slug'
-  ).catch(
-    catchUnauthorized(context.rootValue)
   )
 };
 

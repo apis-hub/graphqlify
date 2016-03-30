@@ -30,7 +30,7 @@ function colorDuration(duration) {
 }
 
 function colorMethod(method) {
-  var colormap = {
+  let colormap = {
     GET: 'green',
     POST: 'yellow',
     PUT: 'yellow',

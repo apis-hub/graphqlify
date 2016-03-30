@@ -1,5 +1,7 @@
-import ApiResourceType from '../helpers/ApiResourceType';
 import * as types from './standard';
+
+import requireType from '../helpers/requireType';
+import ApiResourceType from '../builders/ApiResourceType';
 
 const attachmentType = new ApiResourceType('Attachment', () => ({
   attributes: {
@@ -13,11 +15,12 @@ const attachmentType = new ApiResourceType('Attachment', () => ({
     thumbnailed: types.GraphQLBoolean,
     width: types.GraphQLInt,
     height: types.GraphQLInt,
-    metadata: types.GraphQLReusableObject,
+    best_metadata: types.GraphQLReusableObject,
+    other_metadata: types.GraphQLReusableObject
   },
   relatesToOne: {
-    asset: require('./Asset'),
-    creator: require('./User')
+    asset: requireType('Asset'),
+    creator: requireType('User')
   }
 }));
 
