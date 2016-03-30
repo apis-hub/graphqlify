@@ -6,7 +6,6 @@ import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
-import { catchUnauthorized } from '../helpers/catchErrors';
 import { collectionToEdges } from '../helpers/connectionHelpers';
 
 _.mixin(require('lodash-inflection'));
@@ -30,9 +29,7 @@ function buildCreateMutation(mutator) {
         ).then(resultResponse => {
           return { resultResponse, parentInstance };
         });
-      }).catch(catchUnauthorized(
-        context.rootValue
-      ));
+      });
     }
   });
 }
@@ -82,9 +79,7 @@ function buildDeleteMutation(mutator) {
           }
           return { deletedId, resultResponse: response, parentInstance };
         });
-      }).catch(
-        catchUnauthorized(rootValue)
-      );
+      });
     }
   });
 }
@@ -112,9 +107,7 @@ function buildRelationshipMutation(mutator, method) {
         return rel[method](ids).then(({ relationship: newRel }) => {
           return { relationship: newRel, parentInstance };
         });
-      }).catch(
-        catchUnauthorized(context.rootValue)
-      );
+      });
     }
   });
 }

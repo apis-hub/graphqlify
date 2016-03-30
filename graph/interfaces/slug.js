@@ -1,8 +1,8 @@
+import _ from 'lodash';
 import {
   GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
 } from 'graphql';
-import _ from 'lodash';
-import { catchUnauthorized } from '../helpers/catchErrors';
+
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveType from '../helpers/resolveType';
 
@@ -35,8 +35,6 @@ let slugField = {
   },
   resolve: (query, args, context) => fetchTypeById(
     'slug', args.uri, context, {}, 'slug'
-  ).catch(
-    catchUnauthorized(context.rootValue)
   )
 };
 

@@ -10,7 +10,6 @@ import {
 
 import expandInputTypes from './concerns/expandInputTypes';
 import ResourceMappingObject from './concerns/ResourceMappingObject';
-import { catchUnauthorized } from '../helpers/catchErrors';
 import {
   getRelatedWithFields,
   connectionFromRelatesToMany,
@@ -98,7 +97,7 @@ function buildRelatesToOne({ relatesToOne }) {
       resolve: ({ instance }, args, context) => {
         return getRelatedWithFields(
           instance, relationshipName, {}, context
-        ).catch(catchUnauthorized(context.rootValue));
+        );
       }
     };
     return output;
@@ -138,7 +137,7 @@ function buildRelatesToMany({ relatesToMany }) {
       resolve: ({ instance }, args, context) => {
         return connectionFromRelatesToMany(
           instance, relationshipName, args, context
-        ).catch(catchUnauthorized(context.rootValue));
+        );
       }
     };
     return output;

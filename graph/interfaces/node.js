@@ -1,6 +1,6 @@
-import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
 import _ from 'lodash';
-import { catchUnauthorized } from '../helpers/catchErrors';
+import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
+
 import fetchTypeById from '../helpers/fetchTypeById';
 import resolveType from '../helpers/resolveType';
 
@@ -12,8 +12,6 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     type = _.pluralize(type.toLowerCase());
     return fetchTypeById(
       type, id, context, {}, 'node'
-    ).catch(
-      catchUnauthorized(context.rootValue)
     );
   },
   resolveType

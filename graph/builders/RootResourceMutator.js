@@ -5,7 +5,6 @@ import buildIdInputField from './concerns/buildIdInputField';
 import buildResourceOutputField from './concerns/buildResourceOutputField';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
-import { catchUnauthorized } from '../helpers/catchErrors';
 import { UpdateAttributesType } from './AttributeTypes';
 
 // Create Mutation
@@ -19,8 +18,6 @@ function buildCreateMutation(mutator) {
         mutator.resource
       ).create({ attributes }).then(
         resultResponse => ({ resultResponse })
-      ).catch(
-        catchUnauthorized(rootValue)
       );
     }
   });
@@ -40,8 +37,6 @@ function buildUpdateMutation(mutator) {
         return instance.updateAttributes(attributes);
       }).then(
         resultResponse => ({ resultResponse })
-      ).catch(
-        catchUnauthorized(rootValue)
       );
     }
   });
@@ -61,8 +56,6 @@ function buildDeleteMutation(mutator) {
         return instance.delete();
       }).then(
         resultResponse => ({ resultResponse, deletedId: globalId })
-      ).catch(
-        catchUnauthorized(rootValue)
       );
     }
   });
