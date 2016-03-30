@@ -2,6 +2,7 @@ import * as types from '../types/standard';
 
 import requireMutations from '../helpers/requireMutations';
 import RootResourceMutator from '../builders/RootResourceMutator';
+import { lazyMerge } from '../helpers/lazy';
 
 const { updateBrandfolder, deleteBrandfolder } =
   new RootResourceMutator(() => ({
@@ -25,11 +26,10 @@ const { updateBrandfolder, deleteBrandfolder } =
     })
   }));
 
-module.exports = {
-  updateBrandfolder,
-  deleteBrandfolder,
-  ...requireMutations('Brandfolder/AssetsMutations'),
-  ...requireMutations('Brandfolder/CollectionsMutations'),
-  ...requireMutations('Brandfolder/SocialLinksMutations'),
-  ...requireMutations('Brandfolder/UsersMutations')
-};
+module.exports = lazyMerge(
+  { updateBrandfolder, deleteBrandfolder },
+  requireMutations('Brandfolder/AssetsMutations'),
+  requireMutations('Brandfolder/CollectionsMutations'),
+  requireMutations('Brandfolder/SocialLinksMutations'),
+  requireMutations('Brandfolder/UsersMutations')
+);
