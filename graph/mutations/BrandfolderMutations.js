@@ -1,6 +1,7 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { updateBrandfolder, deleteBrandfolder } =
   new RootResourceMutator(() => ({
