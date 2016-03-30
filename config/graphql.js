@@ -1,4 +1,4 @@
-import graphqlHTTP from 'brandfolder-express-graphql';
+import graphqlHTTP from 'express-graphql';
 import stackTrace from 'stack-trace';
 import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
 
@@ -8,8 +8,8 @@ function logError(error) {
   console.error('');
 
   error = error.error !== undefined ? error.error : error;
-  let stack = stackTrace.parse(error);
-  console.error(error.toString());
+  let stack = stackTrace.parse(error.originalError);
+  console.error(error.originalError.toString());
   stack.forEach(function (trace, index) {
     let file = trace.getFileName();
     let ln = trace.getLineNumber();
@@ -18,7 +18,11 @@ function logError(error) {
   });
 
   console.error('');
-  return error;
+
+  return {
+    message: JSON.stringify(error.originalError.errors),
+    locations: error.locations
+  };
 }
 
 const graphQLMiddleware = graphqlHTTP(request => {
