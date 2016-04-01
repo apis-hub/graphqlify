@@ -60,7 +60,7 @@ function connectionFromIndex(resource, args, context) {
 }
 
 // Get the index of a resource  with the fields specified in the context
-function getIndexWithFields(resource, params, context, ...path) {
+function getIndexWithFields(resource, params, context) {
   return context.rootValue.api.resource(resource).options(params).then(
     parseOptions('GET')
   ).then(
@@ -79,7 +79,7 @@ function collectionToEdges(collection) {
 }
 
 // Converts a collection to GraphQL compliant connection
-function collectionToConnection({ collection, response }) {
+function collectionToConnection({ collection }) {
   return {
     edges: collectionToEdges(collection),
     pageInfo: {

@@ -19,9 +19,15 @@ function logError(error) {
 
   console.error('');
 
+  let { locations, message } = error;
+
+  if (error.originalError.errors instanceof Array) {
+    message = JSON.stringify(error.originalError.errors);
+  }
+
   return {
-    message: JSON.stringify(error.originalError.errors),
-    locations: error.locations
+    message,
+    locations
   };
 }
 
