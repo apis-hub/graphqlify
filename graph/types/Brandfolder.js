@@ -1,8 +1,9 @@
-import { slugInterface } from '../interfaces/slug';
+import * as types from './standard';
+
+import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 import { permissibleInterface } from '../interfaces/permissible';
-import requireType from '../helpers/requireType';
-import * as types from './standard';
+import { slugInterface } from '../interfaces/slug';
 
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
