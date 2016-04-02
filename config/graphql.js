@@ -1,5 +1,6 @@
 import graphqlHTTP from 'express-graphql';
 import stackTrace from 'stack-trace';
+import Honeybadger from 'honeybadger';
 import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
 
 import schema from '../graph/schema';
@@ -32,33 +33,43 @@ function logError(error) {
 }
 
 const graphQLMiddleware = graphqlHTTP(request => {
-  let timestamp = Math.floor(Date.now() / 1000);
-  let headers = {};
-  let endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
-
-  headers.forwarded = `for=${request.ip}`;
-  headers['x-forwarded-for'] = request.ip;
-  headers.Accept = 'application/vnd.api+json;brandfolder-api=private';
-
-  if (request.headers.authorization) {
-    headers.authorization = request.headers.authorization;
-  }
-
-  let api = new JSONAPIonify(endpoint, {
-    allowSetHeaders: true,
-    headers
+  const { hostname } = request;
+  const hb = new Honeybadger({
+    apiKey: process.env.HONEYBADGER_API_KEY,
+    server: { hostname }
   });
+  try {
+    let timestamp = Math.floor(Date.now() / 1000);
+    let headers = {};
+    let endpoint = process.env.BRANDFOLDER_API_ENDPOINT;
 
-  api.addMiddleware(jsonApionifyLogger);
+    headers.forwarded = `for=${request.ip}`;
+    headers['x-forwarded-for'] = request.ip;
+    headers.Accept = 'application/vnd.api+json;brandfolder-api=private';
 
-  return {
-    formatError: logError,
-    schema,
-    rootValue: {
-      api,
-      timestamp
+    if (request.headers.authorization) {
+      headers.authorization = request.headers.authorization;
     }
-  };
+
+    let api = new JSONAPIonify(endpoint, {
+      allowSetHeaders: true,
+      headers
+    });
+
+    api.addMiddleware(jsonApionifyLogger);
+
+    return {
+      formatError: logError,
+      schema,
+      rootValue: {
+        api,
+        timestamp
+      }
+    };
+  } catch (error) {
+    hb.send(error);
+    throw error;
+  }
 });
 
 export default graphQLMiddleware;
