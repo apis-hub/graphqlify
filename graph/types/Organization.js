@@ -1,8 +1,9 @@
-import { slugInterface } from '../interfaces/slug';
-import { permissibleInterface } from '../interfaces/permissible';
-import ApiResourceType from '../builders/ApiResourceType';
 import * as types from './standard';
+
 import requireType from '../helpers/requireType';
+import ApiResourceType from '../builders/ApiResourceType';
+import { permissibleInterface } from '../interfaces/permissible';
+import { slugInterface } from '../interfaces/slug';
 
 const organizationType = new ApiResourceType('Organization', () => ({
   attributes: {
@@ -12,6 +13,8 @@ const organizationType = new ApiResourceType('Organization', () => ({
     plan_name: types.GraphQLString,
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_brandfolders: new types.GraphQLNonNull(types.GraphQLInt),
+    can_own: new types.GraphQLNonNull(types.GraphQLBoolean),
+    ...require('./concerns/rolePermissions'),
     ...require('./concerns/timestamps')
   },
   relatesToOne: {

@@ -18,7 +18,7 @@ function connectionFromRelatesToMany(parentObj, relName, args, context) {
   let params = connectionArgsToParams(args);
 
   // If there are no edges, make a request for 0 items
-  if (getFieldNamesFromContext(context, relName).indexOf('edges') === -1) {
+  if (getFieldNamesFromContext(context, [ relName ]).indexOf('edges') === -1) {
     return parentObj.related(relName, { page: { first: 0 } }).then(
       collectionToConnection
     );
@@ -26,27 +26,28 @@ function connectionFromRelatesToMany(parentObj, relName, args, context) {
 
   // Get the related connection
   return getRelatedWithFields(
-    parentObj, relName, params, context, 'edges', 'node'
+    parentObj, relName, params, context, [ 'edges', 'node' ]
   ).then(collectionToConnection);
 }
 
 // Get a relationship with the fields specified in the context
-function getRelatedWithFields(parentObj, relName, params, context, ...path) {
+function getRelatedWithFields(parentObj, relName, params, context, path = []) {
   return parentObj.relatedOptions(relName, params).then(
     parseResponseOptions('GET')
   ).then(
-    paramsFromContext(params, context, relName, ...path)
+    paramsFromContext(params, context, [ relName, ...path ])
   ).then(
     reqParams => parentObj.related(relName, reqParams)
   );
 }
 
 // Gets a connection from a resource index
-function connectionFromIndex(resource, args, context) {
+function connectionFromIndex(resource, args, context, path) {
   let params = connectionArgsToParams(args);
+  path = path || [ resource ];
 
   // If there are no edges, make a request for 0 items
-  if (getFieldNamesFromContext(context, resource).indexOf('edges') === -1) {
+  if (getFieldNamesFromContext(context, path).indexOf('edges') === -1) {
     return context.rootValue.api.resource(resource).list(
       { page: { first: 0 } }
     ).then(
@@ -60,11 +61,12 @@ function connectionFromIndex(resource, args, context) {
 }
 
 // Get the index of a resource  with the fields specified in the context
-function getIndexWithFields(resource, params, context) {
+function getIndexWithFields(resource, params, context, path) {
+  path = path || [ resource ];
   return context.rootValue.api.resource(resource).options(params).then(
     parseResponseOptions('GET')
   ).then(
-    paramsFromContext(params, context, resource, 'edges', 'node')
+    paramsFromContext(params, context, [ ...path, 'edges', 'node' ])
   ).then(
     reqParams => context.rootValue.api.resource(resource).list(reqParams)
   );

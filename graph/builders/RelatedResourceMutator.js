@@ -141,7 +141,7 @@ function buildParentOutputField({ parentType }) {
         parentInstance.id,
         context,
         {},
-        nodeName
+        [ nodeName ]
       );
     }
   };
@@ -157,7 +157,7 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
     resolve: ({ ids }, args, context) => {
       return Promise.all(
         ids.map(id => fetchTypeById(
-          resource, id, context, {}, nodeName, 'node')
+          resource, id, context, {}, nodeName, [ 'node' ])
         )
       ).then(
         responses => collectionToEdges(responses.map(({ instance: i }) => i))
