@@ -78,8 +78,10 @@ export default class Console extends React.Component {
   }
 
   renderToken() {
-    let tokenStyle = { color: '#40d1f5', wordWrap: 'break-word', width: '500px' };
-    let resetStyle = { color: '#ff0000', cursor: 'pointer' };
+    let tokenStyle =
+      { color: '#40d1f5', wordWrap: 'break-word', width: '500px' };
+    let resetStyle =
+      { color: '#ff0000', cursor: 'pointer' };
     return (
       <div>
         Using token:&nbsp;
