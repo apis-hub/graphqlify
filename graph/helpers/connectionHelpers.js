@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { parseOptions } from './apiHelpers';
+import { parseResponseOptions } from './apiHelpers';
 import { getFieldNamesFromContext, paramsFromContext } from './contextHelpers';
 
 function connectionArgsToParams(args) {
@@ -33,7 +33,7 @@ function connectionFromRelatesToMany(parentObj, relName, args, context) {
 // Get a relationship with the fields specified in the context
 function getRelatedWithFields(parentObj, relName, params, context, ...path) {
   return parentObj.relatedOptions(relName, params).then(
-    parseOptions('GET')
+    parseResponseOptions('GET')
   ).then(
     paramsFromContext(params, context, relName, ...path)
   ).then(
@@ -60,9 +60,9 @@ function connectionFromIndex(resource, args, context) {
 }
 
 // Get the index of a resource  with the fields specified in the context
-function getIndexWithFields(resource, params, context, ...path) {
+function getIndexWithFields(resource, params, context) {
   return context.rootValue.api.resource(resource).options(params).then(
-    parseOptions('GET')
+    parseResponseOptions('GET')
   ).then(
     paramsFromContext(params, context, resource, 'edges', 'node')
   ).then(
@@ -79,7 +79,7 @@ function collectionToEdges(collection) {
 }
 
 // Converts a collection to GraphQL compliant connection
-function collectionToConnection({ collection, response }) {
+function collectionToConnection({ collection }) {
   return {
     edges: collectionToEdges(collection),
     pageInfo: {
