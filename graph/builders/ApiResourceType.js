@@ -245,8 +245,7 @@ class ApiResourceType {
 
   instanceFieldAs(name, { apiId: defaultApiId } = {}) {
     let object = {};
-    let singularName = this.singularName.toLowerCase();
-    let contextPath = [ singularName ];
+    let contextPath = [ name ];
     object[name] = {
       type: this.type,
       resolve: (rootValue, { apiId }, context) => fetchTypeById(

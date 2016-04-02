@@ -11,7 +11,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     let { type, id } = fromGlobalId(globalId);
     type = _.pluralize(type.toLowerCase());
     return fetchTypeById(
-      type, id, context, {}, 'node'
+      type, id, context, {}, [ 'node' ]
     );
   },
   resolveType
