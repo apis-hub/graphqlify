@@ -1,6 +1,4 @@
-import fetchTypeById from '../helpers/fetchTypeById';
 import requireType from '../helpers/requireType';
-import { apiResourceField } from '../interfaces/apiResource';
 import { nodeField } from '../interfaces/node';
 import { slugField } from '../interfaces/slug';
 import { GraphQLObjectType } from './standard';
@@ -9,21 +7,28 @@ let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    api: {
-      type: requireType('Api').type,
-      resolve: context => context.api
-    },
-    viewer: {
-      type: requireType('User').type,
-      resolve: (rootValue, args, context) => fetchTypeById(
-        'users', 'current', context, {}, 'viewer'
-      )
-    },
-    search: {
-      type: requireType('GlobalSearch').type,
+    ...requireType('User').instanceFieldAs('viewer'),
+    apiIndex: {
+      type: requireType('ApiIndex').type,
       resolve: () => ({})
     },
-    apiResource: apiResourceField,
+    ...requireType('AccessRequest').instanceField,
+    ...requireType('Asset').instanceField,
+    ...requireType('AssetApproval').instanceField,
+    ...requireType('AssetComment').instanceField,
+    ...requireType('Attachment').instanceField,
+    ...requireType('Brandfolder').instanceField,
+    ...requireType('Collection').instanceField,
+    ...requireType('Brandfolder').instanceField,
+    ...requireType('Invitation').instanceField,
+    ...requireType('Organization').instanceField,
+    ...requireType('Plan').instanceField,
+    ...requireType('Section').instanceField,
+    ...requireType('Session').instanceField,
+    ...requireType('SocialLink').instanceField,
+    ...requireType('User').instanceField,
+    ...requireType('UserPermission').instanceField,
+
     node: nodeField,
     slug: slugField
   })

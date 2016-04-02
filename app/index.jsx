@@ -27,6 +27,10 @@ if (params.token) {
   window.location = '/';
 }
 
+if (React && false === true) {
+  global.console.log('There be dragons...');
+}
+
 ReactDOM.render(<Console /> , document.getElementById('main'));
 
 if (parseParams(Url.parse(document.referrer).search).token) {

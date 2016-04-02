@@ -34,7 +34,7 @@ let slugField = {
     }
   },
   resolve: (query, args, context) => fetchTypeById(
-    'slug', args.uri, context, {}, 'slug'
+    'slug', args.uri, context, {}, [ 'slug' ]
   )
 };
 
