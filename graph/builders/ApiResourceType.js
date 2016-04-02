@@ -243,21 +243,24 @@ class ApiResourceType {
     return this.indexFieldAs(this.resource);
   }
 
-  instanceFieldAs(name) {
+  instanceFieldAs(name, { apiId: defaultApiId } = {}) {
     let object = {};
     let singularName = this.singularName.toLowerCase();
+    let contextPath = [ singularName ];
     object[name] = {
-      args: {
+      type: this.type,
+      resolve: (rootValue, { apiId }, context) => fetchTypeById(
+        this.resource, apiId || defaultApiId, context, {}, contextPath
+      )
+    };
+    if (!defaultApiId) {
+      object[name].args = {
         apiId: {
           description: `The api id of the ${this.singularName}.`,
           type: new types.GraphQLNonNull(types.GraphQLString)
         }
-      },
-      type: this.type,
-      resolve: (rootValue, args, context) => fetchTypeById(
-        this.resource, args.apiId, context, {}, [ singularName ]
-      )
-    };
+      };
+    }
     return object;
   }
 

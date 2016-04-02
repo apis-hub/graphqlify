@@ -4,9 +4,8 @@ import { parseResponseOptions } from './apiHelpers';
 import { getFieldNamesFromContext, paramsFromContext } from './contextHelpers';
 
 function connectionArgsToParams(args) {
-  let { order, after, before, first, last } = args;
-  let params = _.omit(args, [ 'order', 'after', 'before', 'first', 'last' ]);
-  params.sort = order || 'id';
+  let { after, before, first, last } = args;
+  let params = _.omit(args, [ 'after', 'before', 'first', 'last' ]);
   if (after || before || first || last) {
     params.page = _.omitBy({ after, before, first, last }, _.isUndefined);
   }

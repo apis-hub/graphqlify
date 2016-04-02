@@ -7,7 +7,7 @@ let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    ...requireType('User').instanceFieldAs('viewer'),
+    ...requireType('User').instanceFieldAs('viewer', { apiId: 'current' }),
     apiIndex: {
       type: requireType('ApiIndex').type,
       resolve: () => ({})

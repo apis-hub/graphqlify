@@ -3,13 +3,18 @@ import resolveMaybeThunk from '../../helpers/resolveMaybeThunk';
 class ConfigObject {
   constructor(config, defaults = {}) {
     config = resolveMaybeThunk(config);
+    defaults = resolveMaybeThunk(defaults);
     // Assign Defaults first
-    Object.assign(this, defaults);
-
-    // Apply config to defaults
-    Object.keys(config).forEach(key => {
-      let value = config[key];
-      this[key] = this[key] ? Object.assign(this[key], value) : value;
+    let allKeys = Object.keys(Object.assign({}, defaults, config));
+    allKeys.forEach(key => {
+      Object.defineProperty(this, key, { get: () => {
+        let defaultValue = resolveMaybeThunk(defaults[key]);
+        let configValue = resolveMaybeThunk(config[key]);
+        if (defaultValue) {
+          return Object.assign(defaultValue, configValue);
+        }
+        return configValue || defaultValue;
+      } });
     });
 
     // Freeze

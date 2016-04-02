@@ -32,17 +32,6 @@ export default class Console extends React.Component {
     };
   }
 
-  componentDidMount() {
-    let component = this;
-    require('konami-komando')({
-      once: false,
-      useCapture: true,
-      callback: () => {
-        component.setState({ token: undefined });
-      }
-    });
-  }
-
   componentDidUpdate() {
     let newCookies = {};
     newCookies['token'] = this.state.token;

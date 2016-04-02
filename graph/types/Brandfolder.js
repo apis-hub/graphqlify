@@ -6,6 +6,13 @@ import ParamsType from '../builders/ParamsType';
 import { permissibleInterface } from '../interfaces/permissible';
 import { slugInterface } from '../interfaces/slug';
 
+const searchParamsType = new ParamsType('Search', {
+  description: 'The params for the search.',
+  fields: {
+    query: types.GraphQLString
+  }
+});
+
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
@@ -40,19 +47,11 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     access_requests: requireType('AccessRequest'),
     ...require('./concerns/permissibleRelationships')()
   },
-  connectionArgs: () => ({
-    args: {
-      ...brandfolderType.connectionArgs,
-      search: {
-        type: new ParamsType('Search', {
-          description: 'The params for the search.',
-          fields: {
-            query: types.GraphQLString
-          }
-        })
-      }
+  connectionArgs: {
+    search: {
+      type: searchParamsType
     }
-  })
+  }
 }), slugInterface, permissibleInterface);
 
 module.exports = brandfolderType;
