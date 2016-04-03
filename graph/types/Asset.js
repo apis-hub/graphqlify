@@ -1,6 +1,7 @@
-import ApiResourceType from '../builders/ApiResourceType';
-import requireType from '../helpers/requireType';
 import * as types from './standard';
+
+import requireType from '../helpers/requireType';
+import ApiResourceType from '../builders/ApiResourceType';
 
 const assetType = new ApiResourceType('Asset', () => ({
   attributes: {
@@ -23,6 +24,12 @@ const assetType = new ApiResourceType('Asset', () => ({
     collections: requireType('Collection'),
     comments: requireType('AssetComment'),
     appovals: requireType('AssetApproval')
+  },
+  beforeRequest: (parent, context, args) => {
+    let type = (((parent || {}).collection || {}).parent || {}).type;
+    if (type === 'collections') {
+      args.filter = { collection: parent.collection.parent.id };
+    }
   }
 }));
 
