@@ -82,22 +82,27 @@ function buildRelatesToOne({ relatesToOne }) {
   return Object.keys(relatesToOne).reduce((output, relationshipName) => {
     let value = relatesToOne[relationshipName];
     let argsMap = {};
+    let beforeRequest;
 
     // map/convert the type
     let type;
     if (value instanceof ApiResourceType) {
       type = value.type;
+      beforeRequest = value.mapping.beforeRequest;
     } else if (value.type instanceof ApiResourceType) {
       type = value.type.type;
+      beforeRequest = value.type.mapping.beforeRequest;
       argsMap = { ...(value.args || {}) };
     } else {
       type = value;
+      beforeRequest = () => {};
     }
 
     output[relationshipName] = {
       type,
       args: argsMap,
       resolve: ({ instance }, args, context) => {
+        beforeRequest(instance, context, args);
         return getRelatedWithFields(
           instance, relationshipName, {}, context
         );
@@ -111,12 +116,14 @@ function buildRelatesToMany({ relatesToMany }) {
   return Object.keys(relatesToMany).reduce((output, relationshipName) => {
     let value = relatesToMany[relationshipName];
     let argsMap = {};
+    let beforeRequest;
     let type;
     let typeArgs;
 
     // The value is directly an ApiResourceType
     if (value instanceof ApiResourceType) {
       type = value.connectionType;
+      beforeRequest = value.mapping.beforeRequest;
       argsMap = value.buildConnectionArgs();
 
     // The value is nested under a object with type and args keys
@@ -124,12 +131,14 @@ function buildRelatesToMany({ relatesToMany }) {
     } else if (value.type instanceof ApiResourceType) {
       typeArgs = value.args || {};
       type = value.type.connectionType;
+      beforeRequest = value.type.mapping.beforeRequest;
       argsMap = value.buildConnectionArgs(typeArgs);
 
     // The value is a basic object
     } else {
       typeArgs = value.args || {};
       type = value.type;
+      beforeRequest = () => {};
       argsMap = { ...GraphQLConnectionArgs, ...typeArgs };
     }
 
@@ -138,6 +147,7 @@ function buildRelatesToMany({ relatesToMany }) {
       type,
       args: argsMap,
       resolve: ({ instance }, args, context) => {
+        beforeRequest(instance, context, args);
         return connectionFromRelatesToMany(
           instance, relationshipName, args, context
         );
@@ -232,9 +242,10 @@ class ApiResourceType {
     object[this.resource] = {
       args: this.connectionArgs,
       type: this.connectionType,
-      resolve: (o, args, context) => (
-        connectionFromIndex(this.resource, args, context, [ name ])
-      )
+      resolve: (indexField, args, context) => {
+        this.mapping.beforeRequest(indexField, context, args);
+        return connectionFromIndex(this.resource, args, context, [ name ]);
+      }
     };
     return object;
   }
@@ -248,9 +259,13 @@ class ApiResourceType {
     let contextPath = [ name ];
     object[name] = {
       type: this.type,
-      resolve: (rootValue, { apiId }, context) => fetchTypeById(
-        this.resource, apiId || defaultApiId, context, {}, contextPath
-      )
+      resolve: (rootValue, { apiId }, context) => {
+        let params = {};
+        this.mapping.beforeRequest(rootValue, context, params);
+        return fetchTypeById(
+          this.resource, apiId || defaultApiId, context, params, contextPath
+        );
+      }
     };
     if (!defaultApiId) {
       object[name].args = {
@@ -280,6 +295,7 @@ class ApiResourceType {
         },
         ...GraphQLConnectionArgs
       },
+      beforeRequest: () => {},
       fields: {},
       edgeFields: {},
       connectionFields: {},

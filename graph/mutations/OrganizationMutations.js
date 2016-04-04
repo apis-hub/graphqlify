@@ -1,6 +1,7 @@
 import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
 import requireMutations from '../helpers/requireMutations';
+import { lazyMerge } from '../helpers/lazy';
 
 const { updateOrganization } = new RootResourceMutator(() => ({
   name: 'Organization',
@@ -11,7 +12,8 @@ const { updateOrganization } = new RootResourceMutator(() => ({
   })
 }));
 
-module.exports = {
-  updateOrganization,
-  ...requireMutations('Organization/BrandfoldersMutations')
-};
+module.exports = lazyMerge(
+  { updateOrganization },
+  requireMutations('Organization/BrandfoldersMutations'),
+  requireMutations('Organization/UsersMutations')
+);

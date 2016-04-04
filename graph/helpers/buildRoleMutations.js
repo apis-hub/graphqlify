@@ -26,6 +26,7 @@ function buildInvitationMutations(parentType) {
     type: () => require('../types/Invitation'),
     attributes: () => ({
       email: new types.GraphQLNonNull(types.GraphQLString),
+      personal_message: types.GraphQLString,
       permission_level: new types.GraphQLNonNull(types.GraphQLString)
     }),
     relationship: 'invitations'

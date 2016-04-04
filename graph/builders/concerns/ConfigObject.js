@@ -8,9 +8,9 @@ class ConfigObject {
     let allKeys = Object.keys(Object.assign({}, defaults, config));
     allKeys.forEach(key => {
       Object.defineProperty(this, key, { get: () => {
-        let defaultValue = resolveMaybeThunk(defaults[key]);
-        let configValue = resolveMaybeThunk(config[key]);
-        if (defaultValue) {
+        let defaultValue = defaults[key];
+        let configValue = config[key];
+        if (defaultValue && defaultValue.constructor.name === 'Object') {
           return Object.assign(defaultValue, configValue);
         }
         return configValue || defaultValue;
