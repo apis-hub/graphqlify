@@ -5,6 +5,7 @@ import requireMutations from '../helpers/requireMutations';
 let mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
+    ...requireMutations('AccessRequestMutations'),
     ...requireMutations('AssetCommentMutations'),
     ...requireMutations('AssetMutations'),
     ...requireMutations('BrandfolderMutations'),

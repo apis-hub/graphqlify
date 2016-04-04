@@ -4,8 +4,6 @@ import * as types from './standard';
 
 const invitationType = new ApiResourceType('Invitation', () => ({
   attributes: {
-    first_name: types.GraphQLString,
-    last_name: types.GraphQLString,
     email: new types.GraphQLNonNull(types.GraphQLString),
     permission_level: new types.GraphQLNonNull(types.GraphQLString),
     personal_message: types.GraphQLString,

@@ -13,6 +13,9 @@ let permissibleInterface = new GraphQLInterfaceType({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
+    apiId: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
     slug: {
       type: new GraphQLNonNull(GraphQLString)
     },

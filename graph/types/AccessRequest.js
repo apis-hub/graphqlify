@@ -1,14 +1,15 @@
 import ApiResourceType from '../builders/ApiResourceType';
+import requireType from '../helpers/requireType';
 import * as types from './standard';
 
 const accessRequestType = new ApiResourceType('AccessRequest', () => ({
   attributes: {
-    email: new types.GraphQLNonNull(types.GraphQLString),
+    email: types.GraphQLString,
     prompt_response: types.GraphQLString,
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: require('./Brandfolder')
+    brandfolder: requireType('Brandfolder'),
   }
 }));
 

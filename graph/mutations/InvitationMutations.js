@@ -4,8 +4,8 @@ import * as types from '../types/standard';
 const { updateInvitation, deleteInvitation } = new RootResourceMutator(() => ({
   name: 'Invitation',
   type: () => require('../types/Invitation'),
-  attributes: () => ({
-    permission_level: new types.GraphQLNonNull(types.GraphQLString)
+  updateAttributes: () => ({
+    active: new types.GraphQLNonNull(types.GraphQLBoolean)
   })
 }));
 

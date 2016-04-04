@@ -8,6 +8,4 @@ const { updateAccessRequest } = new RootResourceMutator(() => ({
   })
 }));
 
-module.exports = {
-  updateAccessRequest
-};
+export { updateAccessRequest };
