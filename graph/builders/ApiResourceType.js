@@ -9,14 +9,17 @@ import {
 } from 'graphql-relay';
 
 import expandInputTypes from './concerns/expandInputTypes';
-import ResourceMappingObject from './concerns/ResourceMappingObject';
+import fetchTypeById from '../helpers/fetchTypeById';
+import ConfigObject from './concerns/ConfigObject';
 import {
   getRelatedWithFields,
   connectionFromRelatesToMany,
-  collectionToConnection
+  collectionToConnection,
+  connectionFromIndex
 } from '../helpers/connectionHelpers';
-import { apiResourceInterface } from '../interfaces/apiResource';
 import { nodeInterface } from '../interfaces/node';
+
+_.mixin(require('lodash-inflection'));
 
 const baseUrl = (
   process.env.BRANDFOLDER_API_ENDPOINT || 'https://api.brandfolder.com/v2'
@@ -48,9 +51,9 @@ function buildAttributes({ attributes }) {
   }, {});
 }
 
-function buildFields({ name, mapping, fields }) {
+function buildFields({ name, mapping }) {
   return {
-    ...fields,
+    ...mapping.fields,
     ...buildId(name),
     ...buildApiInfo(),
     ...buildFetchTimestamp(),
@@ -108,26 +111,26 @@ function buildRelatesToMany({ relatesToMany }) {
   return Object.keys(relatesToMany).reduce((output, relationshipName) => {
     let value = relatesToMany[relationshipName];
     let argsMap = {};
-
-    // All connections support order
-    argsMap.order = {
-      type: types.GraphQLString
-    };
-
-    // map/convert the type
     let type;
     let typeArgs;
+
+    // The value is directly an ApiResourceType
     if (value instanceof ApiResourceType) {
       type = value.connectionType;
-      argsMap = { ...argsMap, ...value.buildConnectionArgs() };
+      argsMap = value.buildConnectionArgs();
+
+    // The value is nested under a object with type and args keys
+    // and is an ApiResourceType
     } else if (value.type instanceof ApiResourceType) {
       typeArgs = value.args || {};
       type = value.type.connectionType;
-      argsMap = { ...argsMap, ...value.buildConnectionArgs(typeArgs) };
+      argsMap = value.buildConnectionArgs(typeArgs);
+
+    // The value is a basic object
     } else {
       typeArgs = value.args || {};
       type = value.type;
-      argsMap = { ...GraphQLConnectionArgs, ...argsMap, ...typeArgs };
+      argsMap = { ...GraphQLConnectionArgs, ...typeArgs };
     }
 
     // Return the relationship
@@ -190,8 +193,12 @@ class ApiResourceType {
     Object.freeze(this);
   }
 
+  get singularName() {
+    return _.singularize(this.name);
+  }
+
   get interfaces() {
-    return [ nodeInterface, apiResourceInterface, ...this.config.interfaces ];
+    return [ nodeInterface, ...this.config.interfaces ];
   }
 
   get connectionType() {
@@ -199,7 +206,7 @@ class ApiResourceType {
   }
 
   get fields() {
-    return this.mapping.fields;
+    return buildFields(this);
   }
 
   get edgeType() {
@@ -207,7 +214,7 @@ class ApiResourceType {
   }
 
   get attributes() {
-    return buildFields(this);
+    return this.mapping.attributes;
   }
 
   get connectionStub() {
@@ -220,8 +227,65 @@ class ApiResourceType {
     };
   }
 
+  indexFieldAs(name) {
+    let object = {};
+    object[this.resource] = {
+      args: this.connectionArgs,
+      type: this.connectionType,
+      resolve: (o, args, context) => (
+        connectionFromIndex(this.resource, args, context, [ name ])
+      )
+    };
+    return object;
+  }
+
+  get indexField() {
+    return this.indexFieldAs(this.resource);
+  }
+
+  instanceFieldAs(name, { apiId: defaultApiId } = {}) {
+    let object = {};
+    let contextPath = [ name ];
+    object[name] = {
+      type: this.type,
+      resolve: (rootValue, { apiId }, context) => fetchTypeById(
+        this.resource, apiId || defaultApiId, context, {}, contextPath
+      )
+    };
+    if (!defaultApiId) {
+      object[name].args = {
+        apiId: {
+          description: `The api id of the ${this.singularName}.`,
+          type: new types.GraphQLNonNull(types.GraphQLString)
+        }
+      };
+    }
+    return object;
+  }
+
+  get instanceField() {
+    let singularName = this.singularName.toLowerCase();
+    return this.instanceFieldAs(singularName);
+  }
+
   get mapping() {
-    return new ResourceMappingObject(this.config.mapping);
+    return new ConfigObject(this.config.mapping, {
+      attributes: {
+        ...require('../types/concerns/basicPermissions')
+      },
+      connectionArgs: {
+        sort: {
+          description: 'Specifies the sort of the results',
+          type: types.GraphQLString,
+        },
+        ...GraphQLConnectionArgs
+      },
+      fields: {},
+      edgeFields: {},
+      connectionFields: {},
+      relatesToMany: {},
+      relatesToOne: {},
+    });
   }
 
   get connectionArgs() {

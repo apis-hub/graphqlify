@@ -30,6 +30,7 @@ deployment:
 
       # Deploy
       - 'git push ssh://deis.brandfolder.ninja:2222/graphql-staging.git $CIRCLE_BRANCH:master'
+      - if [ "`git rev-parse HEAD`" = "`deis run -a graphql-staging 'echo $GIT_SHA' | tail -1`" ] ; then true ; else false ; fi
 
       # Upcheck
       - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-staging.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
@@ -43,6 +44,7 @@ deployment:
 
       # Deploy
       - 'git push ssh://deis.brandfolder.ninja:2222/graphql-production.git $CIRCLE_BRANCH:master'
+      - if [ "`git rev-parse HEAD`" = "`deis run -a graphql-production 'echo $GIT_SHA' | tail -1`" ] ; then true ; else false ; fi
 
       # Upcheck
       - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-production.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"

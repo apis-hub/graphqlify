@@ -8,23 +8,25 @@ import schema from '../graph/schema';
 function logError(error) {
   console.error('');
 
-  error = error.error !== undefined ? error.error : error;
-  let stack = stackTrace.parse(error.originalError);
-  console.error(error.originalError.toString());
-  stack.forEach(function (trace, index) {
-    let file = trace.getFileName();
-    let ln = trace.getLineNumber();
-    let fn = trace.getFunctionName();
-    console.error(`${index}: ${file}:${ln}:in ${fn}`);
-  });
+  let { locations, message } = error;
+  if (error.originalError) {
+    // Display trace server side
+    let trace = stackTrace.parse(error.originalError);
+    console.error(error.originalError.toString());
+    trace.forEach(function (t, index) {
+      let file = t.getFileName();
+      let ln = t.getLineNumber();
+      let fn = t.getFunctionName();
+      console.error(`${index}: ${file}:${ln}:in ${fn}`);
+    });
+
+    // Return JSONAPI errors
+    if (error.originalError.errors instanceof Array) {
+      message = JSON.stringify(error.originalError.errors);
+    }
+  }
 
   console.error('');
-
-  let { locations, message } = error;
-
-  if (error.originalError.errors instanceof Array) {
-    message = JSON.stringify(error.originalError.errors);
-  }
 
   return {
     message,
@@ -60,6 +62,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
 
     return {
       formatError: logError,
+      pretty: process.env.NODE_ENV !== 'production',
       schema,
       rootValue: {
         api,
