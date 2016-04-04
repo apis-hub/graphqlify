@@ -1,4 +1,4 @@
-function getFieldNamesFromContext(context, ...names) {
+function getFieldNamesFromContext(context, names = []) {
   // Dive down into the AST until the final name is reached
   let dive = (asts, depth, fieldNames = []) => {
     let name = names[depth];
@@ -45,10 +45,10 @@ function getFieldNamesFromContext(context, ...names) {
   return dive(context.fieldASTs, 0);
 }
 
-function paramsFromContext(existingParams, context, ...path) {
+function paramsFromContext(existingParams, context, path = []) {
   return ({ type, validFields, validRelationships }) => {
     let params = { ...existingParams };
-    let contextFieldNames = getFieldNamesFromContext(context, ...path);
+    let contextFieldNames = getFieldNamesFromContext(context, path);
     let relationships = contextFieldNames.filter(
       name => validRelationships.indexOf(name) > -1
     );

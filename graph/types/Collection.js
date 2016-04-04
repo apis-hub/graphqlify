@@ -1,8 +1,9 @@
-import { slugInterface } from '../interfaces/slug';
+import * as types from './standard';
+
+import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 import { permissibleInterface } from '../interfaces/permissible';
-import requireType from '../helpers/requireType';
-import * as types from './standard';
+import { slugInterface } from '../interfaces/slug';
 
 const collectionType = new ApiResourceType('Collection', () => ({
   attributes: {
@@ -15,6 +16,7 @@ const collectionType = new ApiResourceType('Collection', () => ({
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
+    ...require('./concerns/rolePermissions'),
     ...require('./concerns/timestamps')
   },
   relatesToOne: {

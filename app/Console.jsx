@@ -32,17 +32,6 @@ export default class Console extends React.Component {
     };
   }
 
-  componentDidMount() {
-    let component = this;
-    require('konami-komando')({
-      once: false,
-      useCapture: true,
-      callback: () => {
-        component.setState({ token: undefined });
-      }
-    });
-  }
-
   componentDidUpdate() {
     let newCookies = {};
     newCookies['token'] = this.state.token;
@@ -78,8 +67,10 @@ export default class Console extends React.Component {
   }
 
   renderToken() {
-    let tokenStyle = { color: '#40d1f5', wordWrap: 'break-word', width: '500px' };
-    let resetStyle = { color: '#ff0000', cursor: 'pointer' };
+    let tokenStyle =
+      { color: '#40d1f5', wordWrap: 'break-word', width: '500px' };
+    let resetStyle =
+      { color: '#ff0000', cursor: 'pointer' };
     return (
       <div>
         Using token:&nbsp;
