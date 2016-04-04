@@ -1,6 +1,7 @@
 import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
 import requireMutations from '../helpers/requireMutations';
+import { lazyMerge } from '../helpers/lazy';
 
 const { updateCollection, deleteCollection } = new RootResourceMutator(() => ({
   name: 'Collection',
@@ -16,9 +17,8 @@ const { updateCollection, deleteCollection } = new RootResourceMutator(() => ({
   })
 }));
 
-module.exports = {
-  updateCollection,
-  deleteCollection,
-  ...requireMutations('Collection/AssetsMutations'),
-  ...requireMutations('Collection/UsersMutations')
-};
+module.exports = lazyMerge(
+  { updateCollection, deleteCollection },
+  requireMutations('Collection/AssetsMutations'),
+  requireMutations('Collection/UsersMutations')
+);

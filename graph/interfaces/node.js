@@ -9,7 +9,7 @@ _.mixin(require('lodash-inflection'));
 const { nodeInterface, nodeField } = nodeDefinitions(
   (globalId, context) => {
     let { type, id } = fromGlobalId(globalId);
-    type = _.pluralize(type.toLowerCase());
+    type = _.pluralize(_.snakeCase(type));
     return fetchTypeById(
       type, id, context, {}, [ 'node' ]
     );
