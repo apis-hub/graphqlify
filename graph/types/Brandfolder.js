@@ -51,6 +51,12 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     search: {
       type: searchParamsType
     }
+  },
+  fields: {
+    can_own: {
+      type: new types.GraphQLNonNull(types.GraphQLBoolean),
+      resolve: () => false
+    }
   }
 }), slugInterface, permissibleInterface);
 

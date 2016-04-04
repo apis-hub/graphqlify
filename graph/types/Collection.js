@@ -30,7 +30,11 @@ const collectionType = new ApiResourceType('Collection', () => ({
     ...require('./concerns/permissibleRelationships')()
   },
   fields: {
-    access_requests: requireType('AccessRequest').connectionStub
+    access_requests: requireType('AccessRequest').connectionStub,
+    can_own: {
+      type: new types.GraphQLNonNull(types.GraphQLBoolean),
+      resolve: () => false
+    }
   }
 }), slugInterface, permissibleInterface);
 

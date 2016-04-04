@@ -1,8 +1,9 @@
-import {
-  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull
-} from 'graphql';
-import resolveType from '../helpers/resolveType';
 import _ from 'lodash';
+import {
+  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull, GraphQLBoolean
+} from 'graphql';
+
+import resolveType from '../helpers/resolveType';
 
 _.mixin(require('lodash-inflection'));
 
@@ -21,6 +22,18 @@ let permissibleInterface = new GraphQLInterfaceType({
     },
     name: {
       type: GraphQLString
+    },
+    can_own: {
+      type: new GraphQLNonNull(GraphQLBoolean)
+    },
+    can_admin: {
+      type: new GraphQLNonNull(GraphQLBoolean)
+    },
+    can_collaborate: {
+      type: new GraphQLNonNull(GraphQLBoolean)
+    },
+    can_read: {
+      type: new GraphQLNonNull(GraphQLBoolean)
     },
     user_permissions: {
       args: require('../types/UserPermission').connectionArgs,
