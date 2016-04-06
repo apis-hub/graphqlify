@@ -4,13 +4,8 @@ import RelatedResourceMutator from '../builders/RelatedResourceMutator';
 import { lazyMerge, lazyPickBy } from './lazy';
 
 class MutationBuilder {
-  constructor({ parentType, relationship, type, attributes }) {
-    this.mutator = new RelatedResourceMutator(() => ({
-      type,
-      parentType,
-      relationship,
-      attributes
-    }));
+  constructor(opts) {
+    this.mutator = new RelatedResourceMutator(() => opts);
   }
 
   pick(...names) {
@@ -18,20 +13,6 @@ class MutationBuilder {
       this.mutator, name => names.find(n => name.indexOf(n) === 0)
     );
   }
-}
-
-function buildInvitationMutations(parentType) {
-  let builder = new MutationBuilder({
-    parentType,
-    type: () => require('../types/Invitation'),
-    attributes: () => ({
-      email: new types.GraphQLNonNull(types.GraphQLString),
-      personal_message: types.GraphQLString,
-      permission_level: new types.GraphQLNonNull(types.GraphQLString)
-    }),
-    relationship: 'invitations'
-  });
-  return builder.pick('create', 'delete');
 }
 
 function buildUserPermissionMutations(parentType) {
@@ -62,8 +43,7 @@ function buildUserMutations(parentType, roles) {
 function buildRoleMutations({ parentType, roles }) {
   return lazyMerge(
     buildUserMutations(parentType, roles),
-    buildUserPermissionMutations(parentType),
-    buildInvitationMutations(parentType)
+    buildUserPermissionMutations(parentType)
   );
 }
 
