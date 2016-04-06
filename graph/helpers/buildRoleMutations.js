@@ -2,15 +2,11 @@ import * as types from '../types/standard';
 
 import RelatedResourceMutator from '../builders/RelatedResourceMutator';
 import { lazyMerge, lazyPickBy } from './lazy';
+import { collectionToEdges } from '../helpers/connectionHelpers';
 
 class MutationBuilder {
-  constructor({ parentType, relationship, type, attributes }) {
-    this.mutator = new RelatedResourceMutator(() => ({
-      type,
-      parentType,
-      relationship,
-      attributes
-    }));
+  constructor(opts) {
+    this.mutator = new RelatedResourceMutator(() => opts);
   }
 
   pick(...names) {
@@ -29,7 +25,23 @@ function buildInvitationMutations(parentType) {
       personal_message: types.GraphQLString,
       permission_level: new types.GraphQLNonNull(types.GraphQLString)
     }),
-    relationship: 'invitations'
+    relationship: 'invitations',
+    createOutputFields: () => ({
+      createdUserPermissionEdge: {
+        type: require('../types/UserPermission').edgeType,
+        resolve: ({ resultResponse, parentInstance }) => {
+          return resultResponse.instance.related(
+            'user_permission'
+          ).then(({ instance }) => {
+            return parentInstance.related(
+              'user_permissions', { filter: { id: instance.id } }
+            );
+          }).then(({ collection }) => {
+            return collectionToEdges(collection)[0];
+          });
+        }
+      }
+    })
   });
   return builder.pick('create', 'delete');
 }

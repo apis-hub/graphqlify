@@ -13,7 +13,15 @@ const { updateCollection, deleteCollection } = new RootResourceMutator(() => ({
     public: types.GraphQLBoolean,
     stealth: types.GraphQLBoolean,
     card_image: types.GraphQLString,
-    header_image: types.GraphQLString
+    header_image: types.GraphQLString,
+    bulk_invitations: { type: new types.GraphQLInputObjectType({
+      name: 'CollectionInvitationsInput',
+      fields: {
+        emails: { type: new types.GraphQLList(types.GraphQLString) },
+        permission_level: { type: types.GraphQLString },
+        personal_message: { type: types.GraphQLString }
+      }
+    }) }
   })
 }));
 
