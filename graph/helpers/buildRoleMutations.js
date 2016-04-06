@@ -2,7 +2,6 @@ import * as types from '../types/standard';
 
 import RelatedResourceMutator from '../builders/RelatedResourceMutator';
 import { lazyMerge, lazyPickBy } from './lazy';
-import { collectionToEdges } from '../helpers/connectionHelpers';
 
 class MutationBuilder {
   constructor(opts) {
@@ -14,36 +13,6 @@ class MutationBuilder {
       this.mutator, name => names.find(n => name.indexOf(n) === 0)
     );
   }
-}
-
-function buildInvitationMutations(parentType) {
-  let builder = new MutationBuilder({
-    parentType,
-    type: () => require('../types/Invitation'),
-    attributes: () => ({
-      email: new types.GraphQLNonNull(types.GraphQLString),
-      personal_message: types.GraphQLString,
-      permission_level: new types.GraphQLNonNull(types.GraphQLString)
-    }),
-    relationship: 'invitations',
-    createOutputFields: () => ({
-      createdUserPermissionEdge: {
-        type: require('../types/UserPermission').edgeType,
-        resolve: ({ resultResponse, parentInstance }) => {
-          return resultResponse.instance.related(
-            'user_permission'
-          ).then(({ instance }) => {
-            return parentInstance.related(
-              'user_permissions', { filter: { id: instance.id } }
-            );
-          }).then(({ collection }) => {
-            return collectionToEdges(collection)[0];
-          });
-        }
-      }
-    })
-  });
-  return builder.pick('create', 'delete');
 }
 
 function buildUserPermissionMutations(parentType) {
@@ -74,8 +43,7 @@ function buildUserMutations(parentType, roles) {
 function buildRoleMutations({ parentType, roles }) {
   return lazyMerge(
     buildUserMutations(parentType, roles),
-    buildUserPermissionMutations(parentType),
-    buildInvitationMutations(parentType)
+    buildUserPermissionMutations(parentType)
   );
 }
 
