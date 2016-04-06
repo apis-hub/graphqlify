@@ -8,7 +8,15 @@ const { updateOrganization } = new RootResourceMutator(() => ({
   type: () => require('../types/Organization'),
   attributes: () => ({
     slug: new types.GraphQLNonNull(types.GraphQLString),
-    name: new types.GraphQLNonNull(types.GraphQLString)
+    name: new types.GraphQLNonNull(types.GraphQLString),
+    bulk_invitations: { type: new types.GraphQLInputObjectType({
+      name: 'OrganizationInvitationsInput',
+      fields: {
+        emails: { type: new types.GraphQLList(types.GraphQLString) },
+        permission_level: { type: types.GraphQLString },
+        personal_message: { type: types.GraphQLString }
+      }
+    }) }
   })
 }));
 
