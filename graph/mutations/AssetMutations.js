@@ -9,6 +9,7 @@ const { updateAsset } = new RootResourceMutator(() => ({
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
     custom_fields: types.GraphQLReusableObject,
+    tag_names: types.GraphQLReusableObject,
     approved: types.GraphQLBoolean
   })
 }));
