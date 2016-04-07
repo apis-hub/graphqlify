@@ -102,7 +102,7 @@ function buildRelatesToOne({ relatesToOne }) {
       type,
       args: argsMap,
       resolve: ({ instance }, args, context) => {
-        beforeRequest(instance, context, args);
+        beforeRequest(instance, args, context);
         return getRelatedWithFields(
           instance, relationshipName, {}, context
         );
@@ -147,7 +147,7 @@ function buildRelatesToMany({ relatesToMany }) {
       type,
       args: argsMap,
       resolve: ({ instance }, args, context) => {
-        beforeRequest(instance, context, args);
+        beforeRequest(instance, args, context);
         return connectionFromRelatesToMany(
           instance, relationshipName, args, context
         );
@@ -243,7 +243,7 @@ class ApiResourceType {
       args: this.connectionArgs,
       type: this.connectionType,
       resolve: (indexField, args, context) => {
-        this.mapping.beforeRequest(indexField, context, args);
+        this.mapping.beforeRequest(indexField, args, context);
         return connectionFromIndex(this.resource, args, context, [ name ]);
       }
     };
@@ -261,7 +261,7 @@ class ApiResourceType {
       type: this.type,
       resolve: (rootValue, { apiId }, context) => {
         let params = {};
-        this.mapping.beforeRequest(rootValue, context, params);
+        this.mapping.beforeRequest(rootValue, params, context);
         return fetchTypeById(
           this.resource, apiId || defaultApiId, context, params, contextPath
         );
