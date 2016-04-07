@@ -21,7 +21,7 @@ let permissibleInterface = new GraphQLInterfaceType({
       type: new GraphQLNonNull(GraphQLString)
     },
     name: {
-      type: GraphQLString
+      type: new GraphQLNonNull(GraphQLString)
     },
     can_own: {
       type: new GraphQLNonNull(GraphQLBoolean)
