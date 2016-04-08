@@ -18,6 +18,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
     tagline: types.GraphQLString,
+    password: types.GraphQLString,
     public: new types.GraphQLNonNull(types.GraphQLBoolean),
     private: new types.GraphQLNonNull(types.GraphQLBoolean),
     stealth: new types.GraphQLNonNull(types.GraphQLBoolean),
