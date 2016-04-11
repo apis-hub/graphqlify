@@ -1,6 +1,7 @@
-import ApiResourceType from '../builders/ApiResourceType';
-import requireType from '../helpers/requireType';
 import * as types from './standard';
+
+import requireType from '../helpers/requireType';
+import ApiResourceType from '../builders/ApiResourceType';
 
 const sectionType = new ApiResourceType('Section', () => ({
   attributes: {
