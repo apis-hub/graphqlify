@@ -52,7 +52,12 @@ export default class LoginModal extends React.Component {
       }
     }).then(({ data, errors }) => {
       if (errors) {
-        this.setState({ errors });
+        const messages = errors.reduce(
+          (errs, { message }) => errs.concat(
+            JSON.parse(message).map(error => ({ message: error.detail }))
+          ), []
+        )
+        this.setState({ errors: messages });
         return;
       }
       this.context.setToken(data.createSession.createdSession.token);
