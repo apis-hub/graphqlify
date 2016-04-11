@@ -2,16 +2,8 @@ import * as types from './standard';
 
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
-import ParamsType from '../builders/ParamsType';
 import { permissibleInterface } from '../interfaces/permissible';
 import { slugInterface } from '../interfaces/slug';
-
-const searchParamsType = new ParamsType('Search', {
-  description: 'The params for the search.',
-  fields: {
-    query: types.GraphQLString
-  }
-});
 
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
@@ -50,7 +42,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   },
   connectionArgs: {
     search: {
-      type: searchParamsType
+      type: requireType('SearchParams').type
     }
   },
   fields: {
