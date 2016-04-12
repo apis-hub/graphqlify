@@ -6,12 +6,13 @@ const searchFilterType = new ApiResourceType('SearchFilter', () => ({
   attributes: {
     query: new types.GraphQLNonNull(types.GraphQLString),
     position: new types.GraphQLNonNull(types.GraphQLInt),
-    label: new types.GraphQLNonNull(types.GraphQLString),
-    assets: types.GraphQLList
-
+    label: new types.GraphQLNonNull(types.GraphQLString)
   },
   relatesToOne: {
     brandfolder: requireType('Brandfolder')
+  },
+  relatesToMany: {
+    assets: requireType('Asset')
   }
 }));
 
