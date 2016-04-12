@@ -1,5 +1,6 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
+import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { updateUserPermission, deleteUserPermission } =
   new RootResourceMutator(() => ({

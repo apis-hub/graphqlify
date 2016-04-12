@@ -7,9 +7,12 @@ import RootResourceMutator from '../builders/RootResourceMutator';
 const { createSession, deleteSession } = new RootResourceMutator(() => ({
   name: 'Session',
   type: () => requireType('Session'),
-  attributes: () => ({
+  createAttributes: () => ({
     email: new types.GraphQLNonNull(types.GraphQLString),
     password: new types.GraphQLNonNull(types.GraphQLString)
+  }),
+  updateAttributes: () => ({
+    mfa_token: new types.GraphQLNonNull(types.GraphQLString)
   }),
   deleteOutputFields: () => ({
     session: {
