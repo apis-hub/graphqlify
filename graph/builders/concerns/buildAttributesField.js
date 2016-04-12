@@ -1,10 +1,12 @@
-function buildAttributesField(name, attrs, klass) {
+import AttributesType from '../AttributesType';
+
+function buildAttributesField(name, type, attrs) {
   if (Object.keys(attrs).length === 0) {
     return {};
   }
   return {
     attributes: {
-      type: new klass(name, attrs)
+      type: new AttributesType(name, type, attrs)
     }
   };
 }

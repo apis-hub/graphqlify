@@ -1,12 +1,13 @@
-import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 import * as types from '../../types/standard';
+
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 
 const { createAssetCommentsReply, deleteAssetCommentsReply } =
   new RelatedResourceMutator(() => ({
     type: () => require('../../types/AssetComment'),
     parentType: () => require('../../types/AssetComment'),
     relationship: 'replies',
-    attributes: () => ({
+    createAttributes: () => ({
       body: new types.GraphQLNonNull(types.GraphQLString)
     })
   }));

@@ -1,11 +1,12 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { updateAsset } = new RootResourceMutator(() => ({
   type: () => require('../types/Asset'),
   attributes: () => ({
-    name: new types.GraphQLNonNull(types.GraphQLString),
+    name: types.GraphQLString,
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
     custom_fields: types.GraphQLReusableObject,

@@ -5,7 +5,6 @@ import buildIdInputField from './concerns/buildIdInputField';
 import buildResourceOutputField from './concerns/buildResourceOutputField';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
-import { UpdateAttributesType } from './AttributeTypes';
 
 // Create Mutation
 function buildCreateMutation(mutator) {
@@ -85,12 +84,19 @@ class RootResourceMutator extends BaseMutator {
     };
   }
 
+  get updateAttributes() {
+    return {
+      ...this.attributes,
+      ...resolveMaybeThunk(this.options.updateAttibutes)
+    };
+  }
+
   get updateInputFields() {
     return {
       ...this.inputFields,
       ...resolveMaybeThunk(this.options.updateInputFields),
       ...buildIdInputField(),
-      ...buildAttributesField(this.name, this.attributes, UpdateAttributesType)
+      ...buildAttributesField(this.name, 'update', this.updateAttributes)
     };
   }
 

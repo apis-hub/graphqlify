@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 import types from '../../types/standard';
 
 function expandInputTypes(inputs) {
