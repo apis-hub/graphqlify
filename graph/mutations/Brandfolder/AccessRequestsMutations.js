@@ -1,12 +1,13 @@
-import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 import * as types from '../../types/standard';
+
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 
 const { createBrandfoldersAccessRequest } = new RelatedResourceMutator(() => ({
   type: () => require('../../types/AccessRequest'),
   parentType: () => require('../../types/Brandfolder'),
   relationship: 'access_requests',
-  attributes: () => ({
-    email: types.GraphQLString,
+  createAttributes: () => ({
+    email: new types.GraphQLNonNull(types.GraphQLString),
     prompt_response: types.GraphQLString
   })
 }));

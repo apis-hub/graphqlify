@@ -1,13 +1,14 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { updateSection } = new RootResourceMutator(() => ({
   name: 'Section',
   type: () => require('../types/Section'),
   attributes: () => ({
-    name: new types.GraphQLNonNull(types.GraphQLString),
-    position: new types.GraphQLNonNull(types.GraphQLInt)
+    name: types.GraphQLString,
+    position: types.GraphQLInt
   })
 }));
 

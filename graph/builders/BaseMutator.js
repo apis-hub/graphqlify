@@ -3,7 +3,6 @@ import buildIdInputField from './concerns/buildIdInputField';
 import buildResourceOutputField from './concerns/buildResourceOutputField';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import types from '../types/standard';
-import { CreateAttributesType } from './AttributeTypes';
 
 function buildDeletedIdField({ type }) {
   let outputFields = {};
@@ -27,6 +26,13 @@ class BaseMutator {
     return resolveMaybeThunk(this.options.attributes);
   }
 
+  get createAttributes() {
+    return {
+      ...this.attributes,
+      ...resolveMaybeThunk(this.options.createAttributes)
+    };
+  }
+
   get name() {
     return this.type.name;
   }
@@ -34,6 +40,8 @@ class BaseMutator {
   get options() {
     return {
       attributes: {},
+      createAttributes: {},
+      updateAttributes: {},
       inputFields: {},
       outputFields: {},
       createInputFields: {},
@@ -56,7 +64,7 @@ class BaseMutator {
     return {
       ...this.inputFields,
       ...resolveMaybeThunk(this.options.createInputFields),
-      ...buildAttributesField(this.name, this.attributes, CreateAttributesType)
+      ...buildAttributesField(this.name, 'create', this.createAttributes)
     };
   }
 

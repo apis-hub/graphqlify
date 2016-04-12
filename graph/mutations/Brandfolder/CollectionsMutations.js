@@ -1,13 +1,14 @@
-import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 import * as types from '../../types/standard';
+
+import RelatedResourceMutator from '../../builders/RelatedResourceMutator';
 
 const { createBrandfoldersCollection } = new RelatedResourceMutator(() => ({
   type: () => require('../../types/Collection'),
   parentType: () => require('../../types/Brandfolder'),
   relationship: 'collections',
-  attributes: () => ({
+  createAttributes: () => ({
+    name: new types.GraphQLNonNull(types.GraphQLString),
     slug: types.GraphQLString,
-    name: types.GraphQLString,
     private: types.GraphQLBoolean,
     public: types.GraphQLBoolean,
     stealth: types.GraphQLBoolean,

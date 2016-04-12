@@ -1,14 +1,24 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 import { lazyMerge } from '../helpers/lazy';
 
-const { updateOrganization } = new RootResourceMutator(() => ({
+const { createOrganization, updateOrganization } = new RootResourceMutator(() => ({
   name: 'Organization',
   type: () => require('../types/Organization'),
   attributes: () => ({
+    slug: types.GraphQLString,
+    name: types.GraphQLString
+  }),
+  createAttributes: () => ({
     slug: new types.GraphQLNonNull(types.GraphQLString),
     name: new types.GraphQLNonNull(types.GraphQLString),
+    plan_name: new types.GraphQLNonNull(types.GraphQLString),
+    credit_card_token: new types.GraphQLNonNull(types.GraphQLString),
+    frequency: types.GraphQLString
+  }),
+  updateAttributes: () => ({
     bulk_invitations: { type: new types.GraphQLInputObjectType({
       name: 'OrganizationInvitationsInput',
       fields: {
@@ -21,7 +31,7 @@ const { updateOrganization } = new RootResourceMutator(() => ({
 }));
 
 module.exports = lazyMerge(
-  { updateOrganization },
+  { createOrganization, updateOrganization },
   requireMutations('Organization/BrandfoldersMutations'),
   requireMutations('Organization/UsersMutations')
 );

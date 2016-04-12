@@ -1,19 +1,25 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 import { lazyMerge } from '../helpers/lazy';
 
 const { updateCollection, deleteCollection } = new RootResourceMutator(() => ({
   name: 'Collection',
   type: () => require('../types/Collection'),
   attributes: () => ({
-    slug: types.GraphQLString,
     name: types.GraphQLString,
+    slug: types.GraphQLString,
     private: types.GraphQLBoolean,
     public: types.GraphQLBoolean,
     stealth: types.GraphQLBoolean,
     card_image: types.GraphQLString,
     header_image: types.GraphQLString,
+  }),
+  createAttributes: () => ({
+    name: new types.GraphQLNonNull(types.GraphQLString)
+  }),
+  updateAttributes: () => ({
     bulk_invitations: { type: new types.GraphQLInputObjectType({
       name: 'CollectionInvitationsInput',
       fields: {
