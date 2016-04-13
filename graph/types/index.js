@@ -24,11 +24,13 @@ let queryType = new GraphQLObjectType({
     ...requireType('Invitation').instanceField,
     ...requireType('Organization').instanceField,
     ...requireType('Plan').instanceField,
+    ...requireType('SearchFilter').instanceField,
     ...requireType('Section').instanceField,
     ...requireType('Session').instanceField,
     ...requireType('SocialLink').instanceField,
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
+
 
     node: nodeField,
     slug: slugField
