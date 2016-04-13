@@ -279,7 +279,7 @@ class ApiResourceType {
   }
 
   get instanceField() {
-    let singularName = this.singularName.toLowerCase();
+    let singularName = _.snakeCase(this.singularName);
     return this.instanceFieldAs(singularName);
   }
 
