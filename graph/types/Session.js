@@ -9,6 +9,7 @@ const sessionType = new ApiResourceType('Session', () => ({
     most_recent_ip: new types.GraphQLNonNull(types.GraphQLString),
     authenticated: new types.GraphQLNonNull(types.GraphQLBoolean),
     awaiting_mfa: new types.GraphQLNonNull(types.GraphQLBoolean),
+    mfa_phone_number: types.GraphQLString,
     last_active_at: new types.GraphQLNonNull(types.GraphQLString),
     created_at: new types.GraphQLNonNull(types.GraphQLString),
     token: new types.GraphQLNonNull(types.GraphQLString)
