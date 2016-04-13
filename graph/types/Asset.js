@@ -25,10 +25,9 @@ const assetType = new ApiResourceType('Asset', () => ({
     comments: requireType('AssetComment'),
     appovals: requireType('AssetApproval')
   },
-  beforeRequest: (parent, context, args) => {
-    let type = (((parent || {}).collection || {}).parent || {}).type;
-    if (type === 'collections') {
-      args.filter = { collection: parent.collection.parent.id };
+  connectionArgs: {
+    search: {
+      type: requireType('SearchParams').type
     }
   }
 }));

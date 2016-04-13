@@ -3,7 +3,7 @@ import * as types from './standard';
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 
-const sectionType = new ApiResourceType('Section', () => ({
+const sectionType = new ApiResourceType('CollectionSection', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     default_asset_type: new types.GraphQLNonNull(types.GraphQLString),
@@ -12,7 +12,8 @@ const sectionType = new ApiResourceType('Section', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    brandfolder: requireType('Brandfolder')
+    brandfolder: requireType('Brandfolder'),
+    collection: requireType('Collection')
   },
   relatesToMany: {
     assets: requireType('Asset'),

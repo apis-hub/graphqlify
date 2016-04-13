@@ -24,9 +24,8 @@ const collectionType = new ApiResourceType('Collection', () => ({
     brandfolder: requireType('Brandfolder')
   },
   relatesToMany: {
-    sections: requireType('Section'),
+    sections: requireType('CollectionSection'),
     assets: requireType('Asset'),
-    collections: requireType('Collection'),
     ...require('./concerns/permissibleRelationships')()
   },
   fields: {

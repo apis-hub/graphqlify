@@ -1,11 +1,12 @@
-import RootResourceMutator from '../builders/RootResourceMutator';
 import * as types from '../types/standard';
+
 import requireMutations from '../helpers/requireMutations';
+import RootResourceMutator from '../builders/RootResourceMutator';
 
 const { updateAssetComment } = new RootResourceMutator(() => ({
   type: () => require('../types/AssetComment'),
   attributes: () => ({
-    body: new types.GraphQLNonNull(types.GraphQLString),
+    body: types.GraphQLString,
   })
 }));
 

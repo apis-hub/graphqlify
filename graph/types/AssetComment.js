@@ -3,6 +3,9 @@ import * as types from './standard';
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 
+// import _ from 'lodash';
+// import { getFieldNamesFromContext } from '../helpers/contextHelpers';
+
 const assetCommentType = new ApiResourceType('AssetComment', () => ({
   attributes: {
     body: new types.GraphQLNonNull(types.GraphQLString),
@@ -15,7 +18,28 @@ const assetCommentType = new ApiResourceType('AssetComment', () => ({
   },
   relatesToMany: {
     replies: assetCommentType,
-  }
+  },
+  // TODO: Improve performance for comments, needs client update
+  // beforeRequest: (parent, args, context) => {
+  //   const fields = getFieldNamesFromContext(
+  //     context, [ 'comments', 'edges', 'node' ]
+  //   );
+  //
+  //   // Include replies in the request
+  //   if (fields.find(name => name === 'replies')) {
+  //     const repliesFields = getFieldNamesFromContext(
+  //       context, [ 'comments', 'edges', 'node', 'replies', 'edges', 'node' ]
+  //     );
+  //     // Include reply authors in the request
+  //     const replyInclude = repliesFields.find(name => name === 'author') ?
+  //       'replies.author' : 'replies';
+  //     args.include = _.compact([ args.include, replyInclude ]).join(',');
+  //   }
+  //   // Include authors in the request
+  //   if (fields.find(name => name === 'author')) {
+  //     args.include = _.compact([ args.include, 'author' ]).join(',');
+  //   }
+  // }
 }));
 
 module.exports = assetCommentType;

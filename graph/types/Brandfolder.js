@@ -2,22 +2,15 @@ import * as types from './standard';
 
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
-import ParamsType from '../builders/ParamsType';
 import { permissibleInterface } from '../interfaces/permissible';
 import { slugInterface } from '../interfaces/slug';
-
-const searchParamsType = new ParamsType('Search', {
-  description: 'The params for the search.',
-  fields: {
-    query: types.GraphQLString
-  }
-});
 
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
     tagline: types.GraphQLString,
+    password: types.GraphQLString,
     public: new types.GraphQLNonNull(types.GraphQLBoolean),
     private: new types.GraphQLNonNull(types.GraphQLBoolean),
     stealth: new types.GraphQLNonNull(types.GraphQLBoolean),
@@ -49,7 +42,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   },
   connectionArgs: {
     search: {
-      type: searchParamsType
+      type: requireType('SearchParams').type
     }
   },
   fields: {

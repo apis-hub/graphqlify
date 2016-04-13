@@ -1,16 +1,16 @@
 import * as types from '../types/standard';
 
-import { lazyMerge } from '../helpers/lazy';
 import requireMutations from '../helpers/requireMutations';
 import RootResourceMutator from '../builders/RootResourceMutator';
+import { lazyMerge } from '../helpers/lazy';
 
 const { updateBrandfolder, deleteBrandfolder } =
   new RootResourceMutator(() => ({
     name: 'Brandfolder',
     type: () => require('../types/Brandfolder'),
     attributes: () => ({
-      slug: types.GraphQLString,
       name: types.GraphQLString,
+      slug: types.GraphQLString,
       tagline: types.GraphQLString,
       private: types.GraphQLBoolean,
       public: types.GraphQLBoolean,
@@ -22,7 +22,9 @@ const { updateBrandfolder, deleteBrandfolder } =
       enable_simple_password: types.GraphQLBoolean,
       card_image: types.GraphQLString,
       header_image: types.GraphQLString,
-      google_analytics_id: types.GraphQLString,
+      google_analytics_id: types.GraphQLString
+    }),
+    updateAttributes: () => ({
       bulk_invitations: { type: new types.GraphQLInputObjectType({
         name: 'BrandfolderInvitationsInput',
         fields: {
