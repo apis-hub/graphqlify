@@ -9,10 +9,10 @@ const { createSession, deleteSession } = new RootResourceMutator(() => ({
   type: () => requireType('Session'),
   createAttributes: () => ({
     email: new types.GraphQLNonNull(types.GraphQLString),
-    password: new types.GraphQLNonNull(types.GraphQLString)
-  }),
-  updateAttributes: () => ({
-    mfa_token: new types.GraphQLNonNull(types.GraphQLString)
+    password: new types.GraphQLNonNull(types.GraphQLString),
+    request_mfa_text: types.GraphQLBoolean,
+    request_mfa_call: types.GraphQLBoolean,
+    mfa_token: types.GraphQLString
   }),
   deleteOutputFields: () => ({
     session: {
