@@ -20,15 +20,17 @@ let queryType = new GraphQLObjectType({
     ...requireType('Brandfolder').instanceField,
     ...requireType('Collection').instanceField,
     ...requireType('CollectionSection').instanceField,
-    ...requireType('Brandfolder').instanceField,
     ...requireType('Invitation').instanceField,
     ...requireType('Organization').instanceField,
     ...requireType('Plan').instanceField,
+    ...requireType('SearchFilter').instanceField,
+    ...requireType('SearchFilterSection').instanceField,
     ...requireType('Section').instanceField,
     ...requireType('Session').instanceField,
     ...requireType('SocialLink').instanceField,
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
+
 
     node: nodeField,
     slug: slugField

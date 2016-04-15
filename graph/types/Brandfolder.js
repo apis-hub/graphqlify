@@ -36,6 +36,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     sections: requireType('Section'),
     collections: requireType('Collection'),
     social_links: requireType('SocialLink'),
+    search_filters: requireType('SearchFilter'),
     users: requireType('User'),
     access_requests: requireType('AccessRequest'),
     ...require('./concerns/permissibleRelationships')()
