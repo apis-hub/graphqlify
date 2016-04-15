@@ -13,7 +13,8 @@ const searchFilterType = new ApiResourceType('SearchFilter', () => ({
     brandfolder: requireType('Brandfolder')
   },
   relatesToMany: {
-    assets: requireType('Asset')
+    assets: requireType('Asset'),
+    sections: requireType('SearchFilterSection'),
   }
 }));
 
