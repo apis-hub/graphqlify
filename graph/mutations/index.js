@@ -8,6 +8,7 @@ let mutationType = new GraphQLObjectType({
     ...requireMutations('AccessRequestMutations'),
     ...requireMutations('AssetCommentMutations'),
     ...requireMutations('AssetMutations'),
+    ...requireMutations('AttachmentMutations'),
     ...requireMutations('BrandfolderMutations'),
     ...requireMutations('CollectionMutations'),
     ...requireMutations('InvitationMutations'),
