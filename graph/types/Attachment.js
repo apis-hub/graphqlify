@@ -17,7 +17,8 @@ const attachmentType = new ApiResourceType('Attachment', () => ({
     height: types.GraphQLInt,
     best_metadata: types.GraphQLReusableObject,
     other_metadata: types.GraphQLReusableObject,
-    conversion_options: new types.GraphQLList(types.GraphQLString)
+    conversion_options: new types.GraphQLList(types.GraphQLString),
+    position: types.GraphQLInt
   },
   relatesToOne: {
     asset: requireType('Asset'),

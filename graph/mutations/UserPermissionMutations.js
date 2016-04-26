@@ -2,7 +2,7 @@ import * as types from '../types/standard';
 
 import RootResourceMutator from '../builders/RootResourceMutator';
 
-const { updateUserPermission, deleteUserPermission } =
+const { updateUserPermission } =
   new RootResourceMutator(() => ({
     name: 'UserPermission',
     type: () => require('../types/UserPermission'),
@@ -11,4 +11,4 @@ const { updateUserPermission, deleteUserPermission } =
     })
   }));
 
-export { updateUserPermission, deleteUserPermission };
+export { updateUserPermission };

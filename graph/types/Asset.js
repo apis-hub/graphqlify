@@ -3,15 +3,19 @@ import * as types from './standard';
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 
+ // TODO: change new_custom_fields to custom_fields and remove old custom_fields
+ // object once boulder in sunsetted.
 const assetType = new ApiResourceType('Asset', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
+    position: types.GraphQLInt,
     asset_type: new types.GraphQLNonNull(types.GraphQLString),
     thumbnail_url: types.GraphQLString,
     preview_url: types.GraphQLString,
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
     custom_fields: types.GraphQLReusableObject,
+    new_custom_fields: new types.GraphQLList(types.GraphQLReusableObject),
     approved: types.GraphQLBoolean,
     tag_names: new types.GraphQLList(types.GraphQLString),
     ...require('./concerns/timestamps')
