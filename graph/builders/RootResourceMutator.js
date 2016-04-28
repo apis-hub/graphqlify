@@ -87,7 +87,7 @@ class RootResourceMutator extends BaseMutator {
   get updateAttributes() {
     return {
       ...this.attributes,
-      ...resolveMaybeThunk(this.options.updateAttibutes)
+      ...resolveMaybeThunk(this.options.updateAttributes)
     };
   }
 

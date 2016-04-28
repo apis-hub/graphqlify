@@ -13,7 +13,8 @@ const { createSession, deleteSession } = new RootResourceMutator(() => ({
     request_mfa_text: types.GraphQLBoolean,
     request_mfa_call: types.GraphQLBoolean,
     mfa_token: types.GraphQLString,
-    persistent: types.GraphQLBoolean
+    persistent: types.GraphQLBoolean,
+    invitation_token: types.GraphQLString
   }),
   deleteOutputFields: () => ({
     session: {
