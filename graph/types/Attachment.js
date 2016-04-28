@@ -16,11 +16,18 @@ const attachmentType = new ApiResourceType('Attachment', () => ({
     width: types.GraphQLInt,
     height: types.GraphQLInt,
     best_metadata: types.GraphQLReusableObject,
-    other_metadata: types.GraphQLReusableObject
+    other_metadata: types.GraphQLReusableObject,
+    conversion_options: new types.GraphQLList(types.GraphQLString),
+    position: types.GraphQLInt
   },
   relatesToOne: {
     asset: requireType('Asset'),
     creator: requireType('User')
+  },
+  connectionArgs: {
+    search: {
+      type: requireType('SearchParams').type
+    }
   }
 }));
 
