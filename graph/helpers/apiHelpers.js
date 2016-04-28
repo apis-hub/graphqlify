@@ -11,10 +11,10 @@ function parseRequestOptions(verb) {
 
 function parseResponseOptions(verb) {
   return ({ json }) => {
-    let validFields =
-      json.meta.requests[verb].response_attributes.map(({ name }) => name);
-    let validRelationships =
-      json.meta.requests['GET'].relationships.map(({ name }) => name);
+    let verbOptions = json.meta.requests[verb] || {};
+    let { response_attributes: responseAttributes = [], relationships = [] } = verbOptions;
+    let validFields = responseAttributes.map(({ name }) => name);
+    let validRelationships = relationships.map(({ name }) => name);
     return {
       type: json.meta.type,
       validFields,
