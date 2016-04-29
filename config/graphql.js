@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import graphqlHTTP from 'express-graphql';
 import stackTrace from 'stack-trace';
 import Honeybadger from 'honeybadger';
@@ -47,6 +48,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
 
     headers.forwarded = `for=${request.ip}`;
     headers['x-forwarded-for'] = request.ip;
+    Object.assign(headers, _.pick(request.headers, 'user-agent', 'referer'));
     headers.Accept = 'application/vnd.api+json;brandfolder-api=private';
 
     if (request.headers.authorization) {

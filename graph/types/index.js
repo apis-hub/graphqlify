@@ -21,6 +21,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('Collection').instanceField,
     ...requireType('CollectionSection').instanceField,
     ...requireType('Invitation').instanceField,
+    ...requireType('InvitationToken').instanceField,
     ...requireType('Organization').instanceField,
     ...requireType('Plan').instanceField,
     ...requireType('SearchFilter').instanceField,
