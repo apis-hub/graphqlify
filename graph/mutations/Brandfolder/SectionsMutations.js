@@ -9,7 +9,8 @@ const { createBrandfoldersSection, deleteBrandfoldersSection } =
     relationship: 'sections',
     createAttributes: () => ({
       name: new types.GraphQLNonNull(types.GraphQLString),
-      position: new types.GraphQLNonNull(types.GraphQLInt)
+      position: new types.GraphQLNonNull(types.GraphQLInt),
+      default_asset_type: new types.GraphQLNonNull(types.GraphQLString)
     })
   }));
 
