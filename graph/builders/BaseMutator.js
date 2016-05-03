@@ -48,6 +48,8 @@ class BaseMutator {
       createOutputFields: {},
       deleteInputFields: {},
       deleteOutputFields: {},
+      updateInputFields: {},
+      updateOutputFields: {},
       ...resolveMaybeThunk(this.config.options)
     };
   }
@@ -73,6 +75,30 @@ class BaseMutator {
       ...this.outputFields,
       ...resolveMaybeThunk(this.options.createOutputFields),
       ...buildResourceOutputField(this, 'created')
+    };
+  }
+
+  get updateAttributes() {
+    return {
+      ...this.attributes,
+      ...resolveMaybeThunk(this.options.updateAttributes)
+    };
+  }
+
+  get updateInputFields() {
+    return {
+      ...this.inputFields,
+      ...resolveMaybeThunk(this.options.updateInputFields),
+      ...buildIdInputField(),
+      ...buildAttributesField(this.name, 'update', this.updateAttributes)
+    };
+  }
+
+  get updateOutputFields() {
+    return {
+      ...this.outputFields,
+      ...resolveMaybeThunk(this.options.updateOutputFields),
+      ...buildResourceOutputField(this, 'updated')
     };
   }
 
