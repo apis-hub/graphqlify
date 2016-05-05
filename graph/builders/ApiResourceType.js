@@ -43,7 +43,8 @@ function buildAttributes({ attributes }) {
     let type = attributes[attr];
     output[attr] = {
       type,
-      resolve: ({ instance }) => {
+      resolve: obj => {
+        const { instance } = obj;
         return instance.attributes[attr];
       }
     };

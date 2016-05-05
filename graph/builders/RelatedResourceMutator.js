@@ -72,9 +72,9 @@ function buildUpdateMutation(mutator) {
       return getMinimalInstance(
         api, resource, globalId
       ).then(({ instance }) => {
-        return instance.updateAttributes(args.attributes).then(({ response }) => {
-          return { resultResponse: response, parentInstance };
-        });
+        return instance.updateAttributes(args.attributes).then(
+          resultResponse => ({ resultResponse, parentInstance })
+        );
       });
     }
   });
