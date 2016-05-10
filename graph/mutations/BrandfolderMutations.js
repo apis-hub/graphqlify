@@ -43,6 +43,7 @@ module.exports = lazyMerge(
   requireMutations('Brandfolder/AssetsMutations'),
   requireMutations('Brandfolder/CollectionsMutations'),
   requireMutations('Brandfolder/SocialLinksMutations'),
+  requireMutations('Brandfolder/SectionsMutations'),
   requireMutations('Brandfolder/UsersMutations'),
-  requireMutations('Brandfolder/AccessRequestsMutations'),
+  requireMutations('Brandfolder/AccessRequestsMutations')
 );

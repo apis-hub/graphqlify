@@ -76,38 +76,6 @@ class RootResourceMutator extends BaseMutator {
     );
   }
 
-  get options() {
-    return {
-      updateInputFields: {},
-      updateOutputFields: {},
-      ...super.options
-    };
-  }
-
-  get updateAttributes() {
-    return {
-      ...this.attributes,
-      ...resolveMaybeThunk(this.options.updateAttributes)
-    };
-  }
-
-  get updateInputFields() {
-    return {
-      ...this.inputFields,
-      ...resolveMaybeThunk(this.options.updateInputFields),
-      ...buildIdInputField(),
-      ...buildAttributesField(this.name, 'update', this.updateAttributes)
-    };
-  }
-
-  get updateOutputFields() {
-    return {
-      ...this.outputFields,
-      ...resolveMaybeThunk(this.options.updateOutputFields),
-      ...buildResourceOutputField(this, 'updated')
-    };
-  }
-
 }
 
 export default RootResourceMutator;
