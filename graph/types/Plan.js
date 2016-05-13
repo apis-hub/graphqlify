@@ -11,6 +11,7 @@ const planType = new ApiResourceType('Plan', () => ({
     asset_count: new types.GraphQLNonNull(types.GraphQLInt),
     collaborator_limit: new types.GraphQLNonNull(types.GraphQLInt),
     collaborator_count: new types.GraphQLNonNull(types.GraphQLInt),
+    collaborator_invite_count: new types.GraphQLNonNull(types.GraphQLInt),
     collection_limit: new types.GraphQLNonNull(types.GraphQLInt),
     collection_count: new types.GraphQLNonNull(types.GraphQLInt),
     api_call_limit: new types.GraphQLNonNull(types.GraphQLInt),
