@@ -31,7 +31,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('SocialLink').instanceField,
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
-
+    ...requireType('BulkSelection').instanceField,
 
     node: nodeField,
     slug: slugField

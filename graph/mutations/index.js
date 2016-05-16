@@ -17,7 +17,8 @@ let mutationType = new GraphQLObjectType({
     ...requireMutations('SessionMutations'),
     ...requireMutations('SocialLinkMutations'),
     ...requireMutations('UserMutations'),
-    ...requireMutations('UserPermissionMutations')
+    ...requireMutations('UserPermissionMutations'),
+    ...requireMutations('BulkSelectionMutations')
   })
 });
 
