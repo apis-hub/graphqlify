@@ -6,7 +6,11 @@ const { updateBulkSelection } = new RootResourceMutator(() => ({
   type: () => require('../types/BulkSelection'),
   updateAttributes: () => ({
     clicked_asset_key: types.GraphQLString,
-    shift_selected: types.GraphQLBoolean
+    shift_selected: types.GraphQLBoolean,
+    select_all: types.GraphQLBoolean,
+    deselect_all: types.GraphQLBoolean,
+    resource_key: types.GraphQLString,
+    resource_type: types.GraphQLString
   })
 }));
 
