@@ -29,7 +29,8 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    organization: requireType('Organization')
+    organization: requireType('Organization'),
+    plan: requireType('Plan')
   },
   relatesToMany: {
     assets: requireType('Asset'),
