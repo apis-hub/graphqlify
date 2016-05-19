@@ -9,6 +9,7 @@ const invitationType = new ApiResourceType('Invitation', () => ({
     personal_message: types.GraphQLString,
     active: new types.GraphQLNonNull(types.GraphQLBoolean),
     token: new types.GraphQLNonNull(types.GraphQLString),
+    inviteable: require('../interfaces/permissible').permissibleInterface,
     ...require('./concerns/timestamps')
   },
   relatesToOne: {

@@ -25,14 +25,16 @@ const { updateBrandfolder, deleteBrandfolder } =
       google_analytics_id: types.GraphQLString
     }),
     updateAttributes: () => ({
-      bulk_invitations: { type: new types.GraphQLInputObjectType({
-        name: 'BrandfolderInvitationsInput',
-        fields: {
-          emails: { type: new types.GraphQLList(types.GraphQLString) },
-          permission_level: { type: types.GraphQLString },
-          personal_message: { type: types.GraphQLString }
-        }
-      }) }
+      bulk_invitations: {
+        type: new types.GraphQLInputObjectType({
+          name: 'BrandfolderInvitationsInput',
+          fields: {
+            emails: { type: new types.GraphQLList(types.GraphQLString) },
+            permission_level: { type: types.GraphQLString },
+            personal_message: { type: types.GraphQLString }
+          }
+        })
+      }
     })
   }));
 
@@ -41,6 +43,7 @@ module.exports = lazyMerge(
   requireMutations('Brandfolder/AssetsMutations'),
   requireMutations('Brandfolder/CollectionsMutations'),
   requireMutations('Brandfolder/SocialLinksMutations'),
+  requireMutations('Brandfolder/SectionsMutations'),
   requireMutations('Brandfolder/UsersMutations'),
-  requireMutations('Brandfolder/AccessRequestsMutations'),
+  requireMutations('Brandfolder/AccessRequestsMutations')
 );

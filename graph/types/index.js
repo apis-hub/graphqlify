@@ -21,6 +21,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('Collection').instanceField,
     ...requireType('CollectionSection').instanceField,
     ...requireType('Invitation').instanceField,
+    ...requireType('InvitationToken').instanceField,
     ...requireType('Organization').instanceField,
     ...requireType('Plan').instanceField,
     ...requireType('SearchFilter').instanceField,
@@ -30,7 +31,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('SocialLink').instanceField,
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
-
+    ...requireType('BulkSelection').instanceField,
 
     node: nodeField,
     slug: slugField

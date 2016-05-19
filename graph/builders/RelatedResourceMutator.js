@@ -50,6 +50,36 @@ function buildCreateResourceOutputField({ relationship: relName, edgeType }) {
   return fields;
 }
 
+function buildUpdateMutation(mutator) {
+  return mutationWithClientMutationId({
+    // Give the mutation a name
+    name: `update${mutator.singularName}`,
+    inputFields: () => mutator.updateInputFields,
+    outputFields: () => mutator.updateOutputFields,
+
+    // Mutate
+    mutateAndGetPayload: (args, context) => {
+      let parentGId = args[`${_.singularize(mutator.parentType.resource)}_id`];
+      let { id: parentId } = fromGlobalId(parentGId);
+      let { parentType } = mutator;
+      let { resource: parentResource } = parentType;
+      let { id: globalId } = args;
+      let { rootValue } = context;
+      let { api } = rootValue;
+      let { resource } = mutator;
+      let parentInstance =
+        api.resource(parentResource).new({ id: parentId });
+      return getMinimalInstance(
+        api, resource, globalId
+      ).then(({ instance }) => {
+        return instance.updateAttributes(args.attributes).then(
+          resultResponse => ({ resultResponse, parentInstance })
+        );
+      });
+    }
+  });
+}
+
 function buildDeleteMutation(mutator) {
   return mutationWithClientMutationId({
     // Give the mutation a name
@@ -219,6 +249,10 @@ class RelatedResourceMutator extends BaseMutator {
     this.defGetter(
       `create${this.singularName}`,
       () => buildCreateMutation(this)
+    );
+    this.defGetter(
+      `update${this.singularName}`,
+      () => buildUpdateMutation(this)
     );
     this.defGetter(
       `add${this.pluralName}`,

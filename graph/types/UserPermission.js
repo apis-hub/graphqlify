@@ -8,7 +8,8 @@ const userPermissionType = new ApiResourceType('UserPermission', () => ({
     ...require('./concerns/timestamps')
   },
   relatesToOne: {
-    user: requireType('User')
+    user: requireType('User'),
+    plan: requireType('Plan')
   }
 }));
 
