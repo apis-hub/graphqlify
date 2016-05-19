@@ -7,7 +7,7 @@ const invitationType = new ApiResourceType('Invitation', () => ({
     email: new types.GraphQLNonNull(types.GraphQLString),
     permission_level: new types.GraphQLNonNull(types.GraphQLString),
     personal_message: types.GraphQLString,
-    active: types.GraphQLBoolean,
+    active: new types.GraphQLNonNull(types.GraphQLBoolean),
     token: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/timestamps')
   },

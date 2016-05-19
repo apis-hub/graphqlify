@@ -14,6 +14,7 @@ const organizationType = new ApiResourceType('Organization', () => ({
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_brandfolders: new types.GraphQLNonNull(types.GraphQLInt),
     can_own: new types.GraphQLNonNull(types.GraphQLBoolean),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/rolePermissions'),
     ...require('./concerns/timestamps')
   },

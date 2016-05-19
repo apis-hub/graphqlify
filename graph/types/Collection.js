@@ -16,6 +16,7 @@ const collectionType = new ApiResourceType('Collection', () => ({
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/rolePermissions'),
     ...require('./concerns/timestamps')
   },

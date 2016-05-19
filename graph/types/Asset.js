@@ -13,11 +13,12 @@ const assetType = new ApiResourceType('Asset', () => ({
     thumbnail_url: types.GraphQLString,
     preview_url: types.GraphQLString,
     description: types.GraphQLString,
-    asset_data: types.GraphQLReusableObject,
-    custom_fields: types.GraphQLReusableObject,
+    asset_data: new types.GraphQLNonNull(types.GraphQLReusableObject),
+    custom_fields: new types.GraphQLNonNull(types.GraphQLReusableObject),
     new_custom_fields: new types.GraphQLList(types.GraphQLReusableObject),
-    approved: types.GraphQLBoolean,
+    approved: new types.GraphQLNonNull(types.GraphQLBoolean),
     tag_names: new types.GraphQLList(types.GraphQLString),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/timestamps')
   },
   relatesToOne: {

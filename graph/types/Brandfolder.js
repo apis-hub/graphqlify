@@ -10,7 +10,6 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     name: new types.GraphQLNonNull(types.GraphQLString),
     slug: new types.GraphQLNonNull(types.GraphQLString),
     tagline: types.GraphQLString,
-    password: types.GraphQLString,
     public: new types.GraphQLNonNull(types.GraphQLBoolean),
     private: new types.GraphQLNonNull(types.GraphQLBoolean),
     stealth: new types.GraphQLNonNull(types.GraphQLBoolean),
@@ -25,6 +24,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_collections: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/rolePermissions'),
     ...require('./concerns/timestamps')
   },
