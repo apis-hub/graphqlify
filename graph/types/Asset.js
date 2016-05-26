@@ -15,7 +15,6 @@ const assetType = new ApiResourceType('Asset', () => ({
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
     custom_fields: types.GraphQLReusableObject,
-    new_custom_fields: new types.GraphQLList(types.GraphQLReusableObject),
     approved: types.GraphQLBoolean,
     tag_names: new types.GraphQLList(types.GraphQLString),
     ...require('./concerns/timestamps')

@@ -5,7 +5,10 @@ export default function buildResourceOutputField({ name, type }, prefix) {
   let fields = {};
   fields[_.camelCase(_.compact([ prefix, _.singularize(name) ]).join('_'))] = {
     type,
-    resolve: ({ resultResponse }) => resultResponse
+    resolve: (obj) => {
+      debugger;
+      return obj.resultResponse
+    }
   };
   return fields;
 }

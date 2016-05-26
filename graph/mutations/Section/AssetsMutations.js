@@ -9,9 +9,10 @@ const { createSectionsAsset, addSectionsAssets, removeSectionsAssets } =
     relationship: 'assets',
     createAttributes: () => ({
       name: new types.GraphQLNonNull(types.GraphQLString),
-      description: new types.GraphQLNonNull(types.GraphQLString),
+      description: types.GraphQLString,
       asset_data: types.GraphQLReusableObject,
-      custom_fields: types.GraphQLReusableObject,
+      new_custom_fields: new types.GraphQLList(types.GraphQLReusableObject),
+      tag_names: new types.GraphQLList(types.GraphQLString),
       approved: types.GraphQLBoolean
     }),
   }));
