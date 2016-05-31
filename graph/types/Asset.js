@@ -3,8 +3,6 @@ import * as types from './standard';
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 
- // TODO: change new_custom_fields to custom_fields and remove old custom_fields
- // object once boulder in sunsetted.
 const assetType = new ApiResourceType('Asset', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
