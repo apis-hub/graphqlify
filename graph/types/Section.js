@@ -9,6 +9,7 @@ const sectionType = new ApiResourceType('Section', () => ({
     default_asset_type: new types.GraphQLNonNull(types.GraphQLString),
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
     position: new types.GraphQLNonNull(types.GraphQLInt),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
     ...require('./concerns/timestamps')
   },
   relatesToOne: {

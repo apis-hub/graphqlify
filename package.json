@@ -24,6 +24,7 @@
     "bootstrap-sass": "^3.3.6",
     "cors": "^2.7.1",
     "css-loader": "^0.23.1",
+    "deepmerge": "^0.2.10",
     "exenv": "^1.2.0",
     "express": "^4.13.4",
     "express-graphql": "^0.4",

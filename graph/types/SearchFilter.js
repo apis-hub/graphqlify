@@ -7,7 +7,8 @@ const searchFilterType = new ApiResourceType('SearchFilter', () => ({
   attributes: {
     query: new types.GraphQLNonNull(types.GraphQLString),
     position: new types.GraphQLNonNull(types.GraphQLInt),
-    label: new types.GraphQLNonNull(types.GraphQLString)
+    label: new types.GraphQLNonNull(types.GraphQLString),
+    zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
   },
   relatesToOne: {
     brandfolder: requireType('Brandfolder')

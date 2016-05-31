@@ -18,6 +18,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('AssetComment').instanceField,
     ...requireType('Attachment').instanceField,
     ...requireType('Brandfolder').instanceField,
+    ...requireType('BulkSelection').instanceField,
     ...requireType('Collection').instanceField,
     ...requireType('CollectionSection').instanceField,
     ...requireType('Invitation').instanceField,
@@ -32,7 +33,6 @@ let queryType = new GraphQLObjectType({
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
     ...requireType('WebFont').instanceField,
-
     node: nodeField,
     slug: slugField
   })
