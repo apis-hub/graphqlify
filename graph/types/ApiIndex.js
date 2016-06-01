@@ -5,6 +5,7 @@ export const type = new GraphQLObjectType({
   name: 'ApiIndex',
   description: 'The Api indexes for various resource types',
   fields: () => ({
-    ...requireType('Brandfolder').indexField
+    ...requireType('Brandfolder').indexField,
+    ...requireType('WebFont').indexField
   })
 });
