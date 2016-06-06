@@ -10,7 +10,7 @@ const { updateAsset } = new RootResourceMutator(() => ({
     position: types.GraphQLInt,
     description: types.GraphQLString,
     asset_data: types.GraphQLReusableObject,
-    new_custom_fields: new types.GraphQLList(types.GraphQLReusableObject),
+    custom_fields: types.GraphQLReusableObject,
     tag_names: new types.GraphQLList(types.GraphQLString),
     approved: types.GraphQLBoolean
   })

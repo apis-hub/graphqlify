@@ -7,17 +7,18 @@ let queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The query root of the schema',
   fields: () => ({
-    ...requireType('User').instanceFieldAs('viewer', { apiId: 'current' }),
     apiIndex: {
       type: requireType('ApiIndex').type,
       resolve: () => ({})
     },
+    ...requireType('User').instanceFieldAs('viewer', { apiId: 'current' }),
     ...requireType('AccessRequest').instanceField,
     ...requireType('Asset').instanceField,
     ...requireType('AssetApproval').instanceField,
     ...requireType('AssetComment').instanceField,
     ...requireType('Attachment').instanceField,
     ...requireType('Brandfolder').instanceField,
+    ...requireType('BulkSelection').instanceField,
     ...requireType('Collection').instanceField,
     ...requireType('CollectionSection').instanceField,
     ...requireType('Invitation').instanceField,
@@ -31,8 +32,7 @@ let queryType = new GraphQLObjectType({
     ...requireType('SocialLink').instanceField,
     ...requireType('User').instanceField,
     ...requireType('UserPermission').instanceField,
-    ...requireType('BulkSelection').instanceField,
-
+    ...requireType('WebFont').instanceField,
     node: nodeField,
     slug: slugField
   })
