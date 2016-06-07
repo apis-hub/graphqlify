@@ -11,7 +11,8 @@ const searchFilterType = new ApiResourceType('SearchFilter', () => ({
     zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
   },
   relatesToOne: {
-    brandfolder: requireType('Brandfolder')
+    brandfolder: requireType('Brandfolder'),
+    bulk_selection: requireType('BulkSelection')
   },
   relatesToMany: {
     assets: requireType('Asset'),
