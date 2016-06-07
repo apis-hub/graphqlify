@@ -22,6 +22,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
     google_analytics_id: types.GraphQLString,
     feature_names: new types.GraphQLList(types.GraphQLString),
     number_of_assets: new types.GraphQLNonNull(types.GraphQLInt),
+    number_of_attachments: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_collections: new types.GraphQLNonNull(types.GraphQLInt),
     number_of_sections: new types.GraphQLNonNull(types.GraphQLInt),
     zip_download_url: new types.GraphQLNonNull(types.GraphQLString),
@@ -35,6 +36,7 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   },
   relatesToMany: {
     assets: requireType('Asset'),
+    attachments: requireType('Attachment'),
     sections: requireType('Section'),
     collections: requireType('Collection'),
     social_links: requireType('SocialLink'),
