@@ -25,6 +25,9 @@ const attachmentType = new ApiResourceType('Attachment', () => ({
     creator: requireType('User')
   },
   connectionArgs: {
+    filter: {
+      type: requireType('AttachmentFilterParams').type
+    },    
     search: {
       type: requireType('SearchParams').type
     }
