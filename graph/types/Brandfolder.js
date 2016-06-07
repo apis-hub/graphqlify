@@ -30,7 +30,8 @@ const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   },
   relatesToOne: {
     organization: requireType('Organization'),
-    plan: requireType('Plan')
+    plan: requireType('Plan'),
+    bulk_selection: requireType('BulkSelection')
   },
   relatesToMany: {
     assets: requireType('Asset'),

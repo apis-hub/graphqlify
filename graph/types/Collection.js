@@ -23,7 +23,8 @@ const collectionType = new ApiResourceType('Collection', () => ({
   relatesToOne: {
     organization: requireType('Organization'),
     brandfolder: requireType('Brandfolder'),
-    plan: requireType('Plan')
+    plan: requireType('Plan'),
+    bulk_selection: requireType('BulkSelection')
   },
   relatesToMany: {
     sections: requireType('CollectionSection'),
