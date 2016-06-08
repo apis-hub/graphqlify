@@ -4,7 +4,7 @@ import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
 
 // import _ from 'lodash';
-// import { getFieldNamesFromContext } from '../helpers/contextHelpers';
+// import { getFieldNamesFromResolveInfo } from '../helpers/contextHelpers';
 
 const assetCommentType = new ApiResourceType('AssetComment', () => ({
   attributes: {
@@ -20,15 +20,15 @@ const assetCommentType = new ApiResourceType('AssetComment', () => ({
     replies: assetCommentType,
   },
   // TODO: Improve performance for comments, needs client update
-  // beforeRequest: (parent, args, context) => {
-  //   const fields = getFieldNamesFromContext(
-  //     context, [ 'comments', 'edges', 'node' ]
+  // beforeRequest: (parent, args, __ignored, resolveInfo) => {
+  //   const fields = getFieldNamesFromResolveInfo(
+  //     resolveInfo, [ 'comments', 'edges', 'node' ]
   //   );
   //
   //   // Include replies in the request
   //   if (fields.find(name => name === 'replies')) {
-  //     const repliesFields = getFieldNamesFromContext(
-  //       context, [ 'comments', 'edges', 'node', 'replies', 'edges', 'node' ]
+  //     const repliesFields = getFieldNamesFromResolveInfo(
+  //       resolveInfo, [ 'comments', 'edges', 'node', 'replies', 'edges', 'node' ]
   //     );
   //     // Include reply authors in the request
   //     const replyInclude = repliesFields.find(name => name === 'author') ?

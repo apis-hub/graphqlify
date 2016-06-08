@@ -7,11 +7,11 @@ import resolveType from '../helpers/resolveType';
 _.mixin(require('lodash-inflection'));
 
 const { nodeInterface, nodeField } = nodeDefinitions(
-  (globalId, context) => {
+  (globalId, { api }, resolveInfo) => {
     let { type, id } = fromGlobalId(globalId);
     type = _.pluralize(_.snakeCase(type));
     return fetchTypeById(
-      type, id, context, {}, [ 'node' ]
+      type, id, api, resolveInfo, {}, [ 'node' ]
     );
   },
   resolveType

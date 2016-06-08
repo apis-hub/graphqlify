@@ -33,8 +33,8 @@ let slugField = {
       description: 'The slug uri of the object'
     }
   },
-  resolve: (query, args, context) => fetchTypeById(
-    'slug', args.uri, context, {}, [ 'slug' ]
+  resolve: (query, args, { api }, resolveInfo) => fetchTypeById(
+    'slug', args.uri, api, resolveInfo, {}, [ 'slug' ]
   )
 };
 

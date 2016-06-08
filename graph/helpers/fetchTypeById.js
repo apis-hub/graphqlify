@@ -1,12 +1,12 @@
 import { parseResponseOptions } from './apiHelpers';
-import { paramsFromContext } from './contextHelpers';
+import { paramsFromResolveInfo } from './contextHelpers';
 
-function fetchTypeById(type, id, context, params = {}, path = []) {
-  let resource = context.rootValue.api.resource(type);
+function fetchTypeById(type, id, api, resolveInfo, params = {}, path = []) {
+  let resource = api.resource(type);
   return resource.new({ id }).options().then(
     parseResponseOptions('GET')
   ).then(
-    paramsFromContext(params, context, path)
+    paramsFromResolveInfo(params, resolveInfo, path)
   ).then(
     reqParams => resource.read(id, reqParams)
   );

@@ -56,7 +56,7 @@ export default class LoginModal extends React.Component {
           (errs, { message }) => errs.concat(
             JSON.parse(message).map(error => ({ message: error.detail }))
           ), []
-        )
+        );
         this.setState({ errors: messages });
         return;
       }

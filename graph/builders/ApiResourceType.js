@@ -57,7 +57,6 @@ function buildFields({ name, mapping }) {
     ...mapping.fields,
     ...buildId(name),
     ...buildApiInfo(),
-    ...buildFetchTimestamp(),
     ...buildAttributes(mapping),
     ...buildRelatesToOne(mapping),
     ...buildRelatesToMany(mapping)
@@ -67,15 +66,6 @@ function buildFields({ name, mapping }) {
 function buildId(name) {
   return {
     id: globalIdField(name, ({ instance }) => instance.id)
-  };
-}
-
-function buildFetchTimestamp() {
-  return {
-    fetchTimestamp: {
-      type: new types.GraphQLNonNull(types.GraphQLInt),
-      resolve: (obj, args, { rootValue }) => rootValue.timestamp
-    }
   };
 }
 
@@ -102,10 +92,10 @@ function buildRelatesToOne({ relatesToOne }) {
     output[relationshipName] = {
       type,
       args: argsMap,
-      resolve: ({ instance }, args, context) => {
-        beforeRequest(instance, args, context);
+      resolve: ({ instance }, args, context, resolveInfo) => {
+        beforeRequest(instance, args, context, resolveInfo);
         return getRelatedWithFields(
-          instance, relationshipName, {}, context
+          instance, relationshipName, {}, resolveInfo
         );
       }
     };
@@ -147,10 +137,10 @@ function buildRelatesToMany({ relatesToMany }) {
     output[relationshipName] = {
       type,
       args: argsMap,
-      resolve: ({ instance }, args, context) => {
-        beforeRequest(instance, args, context);
+      resolve: ({ instance }, args, context, resolveInfo) => {
+        beforeRequest(instance, args, context, resolveInfo);
         return connectionFromRelatesToMany(
-          instance, relationshipName, args, context
+          instance, relationshipName, args, resolveInfo
         );
       }
     };
@@ -160,8 +150,7 @@ function buildRelatesToMany({ relatesToMany }) {
 
 function buildConnectionFields({ mapping }) {
   return {
-    ...mapping.connectionFields,
-    ...buildFetchTimestamp()
+    ...mapping.connectionFields
   };
 }
 
@@ -232,8 +221,8 @@ class ApiResourceType {
     return {
       args: this.connectionArgs,
       type: this.connectionType,
-      resolve: (obj, args, { rootValue }) => collectionToConnection({
-        collection: rootValue.api.resource(this.resource).emptyCollection()
+      resolve: (obj, args, { api }) => collectionToConnection({
+        collection: api.resource(this.resource).emptyCollection()
       })
     };
   }
@@ -243,9 +232,9 @@ class ApiResourceType {
     object[this.resource] = {
       args: this.connectionArgs,
       type: this.connectionType,
-      resolve: (indexField, args, context) => {
-        this.mapping.beforeRequest(indexField, args, context);
-        return connectionFromIndex(this.resource, args, context, [ name ]);
+      resolve: (indexField, args, context, resolveInfo) => {
+        this.mapping.beforeRequest(indexField, args, context, resolveInfo);
+        return connectionFromIndex(this.resource, args, context.api, resolveInfo, [ name ]);
       }
     };
     return object;
@@ -260,11 +249,11 @@ class ApiResourceType {
     let contextPath = [ name ];
     object[name] = {
       type: this.type,
-      resolve: (rootValue, { apiId }, context) => {
+      resolve: (rootValue, { apiId }, context, resolveInfo) => {
         let params = {};
-        this.mapping.beforeRequest(rootValue, params, context);
+        this.mapping.beforeRequest(rootValue, params, context, resolveInfo);
         return fetchTypeById(
-          this.resource, apiId || defaultApiId, context, params, contextPath
+          this.resource, apiId || defaultApiId, context.api, resolveInfo, params, contextPath
         );
       }
     };

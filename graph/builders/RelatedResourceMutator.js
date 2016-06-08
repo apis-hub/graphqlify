@@ -19,10 +19,10 @@ function buildCreateMutation(mutator) {
     outputFields: () => mutator.createOutputFields,
 
     // Mutate
-    mutateAndGetPayload: (args, context) => {
+    mutateAndGetPayload: (args, { api }) => {
       let parentId = args[`${_.singularize(mutator.parentType.resource)}_id`];
-      return getRelatedFromContext(
-        mutator, parentId, context
+      return getRelated(
+        mutator, parentId, api
       ).then(({ collection, parentInstance }) => {
         return collection.create(
           { attributes: args.attributes }
@@ -64,8 +64,7 @@ function buildUpdateMutation(mutator) {
       let { parentType } = mutator;
       let { resource: parentResource } = parentType;
       let { id: globalId } = args;
-      let { rootValue } = context;
-      let { api } = rootValue;
+      let { api } = context;
       let { resource } = mutator;
       let parentInstance =
         api.resource(parentResource).new({ id: parentId });
@@ -94,8 +93,7 @@ function buildDeleteMutation(mutator) {
       let { parentType } = mutator;
       let { resource: parentResource } = parentType;
       let { id: globalId } = args;
-      let { rootValue } = context;
-      let { api } = rootValue;
+      let { api } = context;
       let { resource } = mutator;
       let parentInstance =
         api.resource(parentResource).new({ id: parentId });
@@ -126,10 +124,10 @@ function buildRelationshipMutation(mutator, method) {
     outputFields: () => mutator[`${method}OutputFields`],
 
     // Specify how the mutation gets invoked
-    mutateAndGetPayload: (args, context) => {
+    mutateAndGetPayload: (args, { api }) => {
       let parentId = args[`${_.singularize(parentType.resource)}_id`];
-      return getRelationshipFromContext(
-        mutator, parentId, context
+      return getRelationship(
+        mutator, parentId, { api }
       ).then(({ parentInstance, relationship: rel }) => {
         // Convert Ids
         let ids = globalIdsToRelationshipIds(args.ids);
@@ -164,12 +162,13 @@ function buildParentOutputField({ parentType }) {
   let fields = {};
   fields[_.singularize(parentType.resource)] = {
     type: new types.GraphQLNonNull(parentType.type),
-    resolve: ({ parentInstance }, args, context) => {
+    resolve: ({ parentInstance }, args, { api }, resolveInfo) => {
       let nodeName = _.singularize(parentType.resource);
       return fetchTypeById(
         parentType.resource,
         parentInstance.id,
-        context,
+        api,
+        resolveInfo,
         {},
         [ nodeName ]
       );
@@ -184,10 +183,10 @@ function buildRelationshipOutputFields({ relationship, resource, edgeType }) {
   let nodeName = `${relationship}Edge`;
   fields[nodeName] = {
     type: edgeType,
-    resolve: ({ ids }, args, context) => {
+    resolve: ({ ids }, args, { api }, resolveInfo) => {
       return Promise.all(
         ids.map(id => fetchTypeById(
-          resource, id, context, {}, nodeName, [ 'node' ])
+          resource, id, api, resolveInfo, {}, nodeName, [ 'node' ])
         )
       ).then(
         responses => collectionToEdges(responses.map(({ instance: i }) => i))
@@ -206,11 +205,11 @@ function getMinimalInstance(api, resource, globalId) {
 }
 
 // Fetches a related collection, given the context and a parentResource
-function getRelatedFromContext(
-  { parentType, relationship: relName }, parentId, { rootValue }
+function getRelated(
+  { parentType, relationship: relName }, parentId, api
 ) {
   return getMinimalInstance(
-    rootValue.api, parentType.resource, parentId
+    api, parentType.resource, parentId
   ).then(({ instance: parentInstance }) => {
     return parentInstance.related(
       relName, { page: { first: 0 } }
@@ -221,11 +220,11 @@ function getRelatedFromContext(
 }
 
 // Fetches a relationship, given the context and a parentResource
-function getRelationshipFromContext(
-  { parentType, relationship: relName }, parentId, { rootValue }
+function getRelationship(
+  { parentType, relationship: relName }, parentId, api
 ) {
   return getMinimalInstance(
-    rootValue.api, parentType.resource, parentId
+    api, parentType.resource, parentId
   ).then(({ instance: parentInstance }) => {
     return parentInstance.relationship(relName).then(({ relationship }) => {
       return { relationship, parentInstance };

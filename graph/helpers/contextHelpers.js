@@ -1,4 +1,4 @@
-function getFieldNamesFromContext(context, names = []) {
+function getFieldNamesFromResolveInfo(resolveInfo, names = []) {
   // Dive down into the AST until the final name is reached
   let dive = (asts, depth, fieldNames = []) => {
     let name = names[depth];
@@ -33,7 +33,7 @@ function getFieldNamesFromContext(context, names = []) {
         // If the name is a fragment, then expand the fragment
         case 'FragmentSpread':
           expand(
-            context.fragments[f.name.value].selectionSet.selections, fields
+            resolveInfo.fragments[f.name.value].selectionSet.selections, fields
           );
           break;
       }
@@ -42,23 +42,19 @@ function getFieldNamesFromContext(context, names = []) {
   };
 
   // Start diving from the given node
-  return dive(context.fieldASTs, 0);
+  return dive(resolveInfo.fieldASTs, 0);
 }
 
-function paramsFromContext(existingParams, context, path = []) {
+function paramsFromResolveInfo(existingParams, resolveInfo, path = []) {
   return ({ type, validFields, validRelationships }) => {
     let params = { ...existingParams };
-    let contextFieldNames = getFieldNamesFromContext(context, path);
-    let relationships = contextFieldNames.filter(
-      name => validRelationships.indexOf(name) > -1
-    );
-    params['include-relationships'] = Boolean(relationships.length);
+    let resolveInfoFieldNames = getFieldNamesFromResolveInfo(resolveInfo, path);
     params.fields = {};
-    params.fields[type] = contextFieldNames.filter(
-      name => validFields.indexOf(name) > -1
+    params.fields[type] = resolveInfoFieldNames.filter(
+      name => validFields.indexOf(name) > -1 || validRelationships.indexOf(name) > -1
     ).join(',');
     return params;
   };
 }
 
-export { paramsFromContext, getFieldNamesFromContext };
+export { paramsFromResolveInfo, getFieldNamesFromResolveInfo };
