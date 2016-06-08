@@ -46,7 +46,6 @@ function colorUrl(url) {
   return `${ url }`['white'];
 }
 
-
 morgan.format('bf-simple', (tokens, req, res) => {
   if (!req._startAt || !res._startAt) {
     // missing request and/or response start time
@@ -68,7 +67,7 @@ morgan.format('bf-simple', (tokens, req, res) => {
     '|',
     colorDuration(duration),
     '|',
-    colorUrl(req.url)
+    colorUrl(req.originalUrl)
   ].join(' ');
 });
 

@@ -12,7 +12,7 @@ import Honeybadger from './config/honeybadger';
 const app = express();
 
 // Enable Logger
-app.use(logger);
+app.use('/graphql', logger);
 
 // Enable Honeybadger
 app.use(Honeybadger.requestHandler);
