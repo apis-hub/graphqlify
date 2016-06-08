@@ -34,7 +34,7 @@ const webPackConfig = {
       },
       {
         test: /\.s?css$/,
-        loader: `style!css!sass`
+        loader: 'style!css!sass'
       },
       {
         test: /\.(gif|jpe?g|png)/,

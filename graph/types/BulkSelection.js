@@ -1,6 +1,5 @@
-import ApiResourceType from '../builders/ApiResourceType';
 import requireType from '../helpers/requireType';
-import * as types from './standard';
+import ApiResourceType from '../builders/ApiResourceType';
 
 const bulkSelectionType = new ApiResourceType('BulkSelection', () => ({
   relatesToMany: {

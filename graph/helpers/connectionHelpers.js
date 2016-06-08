@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { parseResponseOptions } from './apiHelpers';
-import { getFieldNamesFromContext, paramsFromContext } from './contextHelpers';
+import { getFieldNamesFromResolveInfo, paramsFromResolveInfo } from './contextHelpers';
 
 function connectionArgsToParams(args) {
   let { after, before, first, last } = args;
@@ -13,11 +13,11 @@ function connectionArgsToParams(args) {
 }
 
 // Builds a GraphQL Connection from an API relationship
-function connectionFromRelatesToMany(parentObj, relName, args, context) {
+function connectionFromRelatesToMany(parentObj, relName, args, resolveInfo) {
   let params = connectionArgsToParams(args);
 
   // If there are no edges, make a request for 0 items
-  if (getFieldNamesFromContext(context, [ relName ]).indexOf('edges') === -1) {
+  if (getFieldNamesFromResolveInfo(resolveInfo, [ relName ]).indexOf('edges') === -1) {
     return parentObj.related(relName, { page: { first: 0 } }).then(
       collectionToConnection
     );
@@ -25,29 +25,29 @@ function connectionFromRelatesToMany(parentObj, relName, args, context) {
 
   // Get the related connection
   return getRelatedWithFields(
-    parentObj, relName, params, context, [ 'edges', 'node' ]
+    parentObj, relName, params, resolveInfo, [ 'edges', 'node' ]
   ).then(collectionToConnection);
 }
 
-// Get a relationship with the fields specified in the context
-function getRelatedWithFields(parentObj, relName, params, context, path = []) {
+// Get a relationship with the fields specified in the resolveInfo
+function getRelatedWithFields(parentObj, relName, params, resolveInfo, path = []) {
   return parentObj.relatedOptions(relName, params).then(
     parseResponseOptions('GET')
   ).then(
-    paramsFromContext(params, context, [ relName, ...path ])
+    paramsFromResolveInfo(params, resolveInfo, [ relName, ...path ])
   ).then(
     reqParams => parentObj.related(relName, reqParams)
   );
 }
 
 // Gets a connection from a resource index
-function connectionFromIndex(resource, args, context, path) {
+function connectionFromIndex(resource, args, api, resolveInfo, path) {
   let params = connectionArgsToParams(args);
   path = path || [ resource ];
 
   // If there are no edges, make a request for 0 items
-  if (getFieldNamesFromContext(context, path).indexOf('edges') === -1) {
-    return context.rootValue.api.resource(resource).list(
+  if (getFieldNamesFromResolveInfo(resolveInfo, path).indexOf('edges') === -1) {
+    return api.resource(resource).list(
       { page: { first: 0 } }
     ).then(
       collectionToConnection
@@ -55,19 +55,19 @@ function connectionFromIndex(resource, args, context, path) {
   }
 
   return getIndexWithFields(
-    resource, params, context
+    resource, params, api, resolveInfo
   ).then(collectionToConnection);
 }
 
 // Get the index of a resource  with the fields specified in the context
-function getIndexWithFields(resource, params, context, path) {
+function getIndexWithFields(resource, params, api, resolveInfo, path) {
   path = path || [ resource ];
-  return context.rootValue.api.resource(resource).options(params).then(
+  return api.resource(resource).options(params).then(
     parseResponseOptions('GET')
   ).then(
-    paramsFromContext(params, context, [ ...path, 'edges', 'node' ])
+    paramsFromResolveInfo(params, resolveInfo, [ ...path, 'edges', 'node' ])
   ).then(
-    reqParams => context.rootValue.api.resource(resource).list(reqParams)
+    reqParams => api.resource(resource).list(reqParams)
   );
 }
 
