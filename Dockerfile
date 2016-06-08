@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:6
 MAINTAINER Brandfolder, Inc. <developers@brandfolder.com>
 
 # Set up ENV
