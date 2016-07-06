@@ -6,6 +6,7 @@ import GraphiQL from 'graphiql';
 import React from 'react';
 import Url from 'url';
 
+import Bug from './Bug';
 import LoginModal from './LoginModal';
 
 export default class Console extends React.Component {
@@ -142,10 +143,26 @@ export default class Console extends React.Component {
   }
 
   render() {
+    const linkStyle = {
+      position: 'relative', display: 'inline-block', marginRight: 10
+    };
     return (
         <GraphiQL fetcher={this.fetcher.bind(this)}>
           <GraphiQL.Logo>
-            Brandfolder GraphQL Console
+            <a
+              href="https://brandfolder.com/home"
+              target="_blank"
+              style={linkStyle}
+            >
+              <Bug
+                color="#fff"
+                height={32}
+                style={{ position: 'relative', top: 10 }}
+              />
+            </a>
+            <span style={{ lineHeight: 30 }}>
+              GraphQL Console
+            </span>
           </GraphiQL.Logo>
           <GraphiQL.Footer>
             {this.state.activeModal}
