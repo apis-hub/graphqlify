@@ -1,5 +1,13 @@
 import React from 'react';
-import { Alert, Col, Modal, Input, ButtonInput } from 'react-bootstrap';
+import { Alert, Col, Modal, FormGroup, FormControl, Button } from 'react-bootstrap';
+
+function parseError(message) {
+  try {
+    return JSON.parse(message).map(error => ({ message: error.detail }));
+  } catch (e) {
+    return message;
+  }
+}
 
 export default class LoginModal extends React.Component {
 
@@ -16,7 +24,6 @@ export default class LoginModal extends React.Component {
     };
   }
 
-
   handleChange(e) {
     let newState = {};
     newState[e.target.name] = e.target.value;
@@ -31,6 +38,18 @@ export default class LoginModal extends React.Component {
 
   submitLogin(e) {
     e.preventDefault();
+    this.setState({ errors: [] });
+    const errors = [];
+    if (!this.state.email) {
+      errors.push({ message: 'Email cannot be blank' });
+    }
+    if (!this.state.password) {
+      errors.push({ message: 'Password cannot be blank' });
+    }
+    if (errors.length) {
+      this.setState({ errors });
+      return;
+    }
     this.context.fetcher({
       query: `
         mutation Login($input: createSessionInput!){
@@ -54,7 +73,7 @@ export default class LoginModal extends React.Component {
       if (errors) {
         const messages = errors.reduce(
           (errs, { message }) => errs.concat(
-            JSON.parse(message).map(error => ({ message: error.detail }))
+            { message: parseError(message) }
           ), []
         );
         this.setState({ errors: messages });
@@ -71,6 +90,12 @@ export default class LoginModal extends React.Component {
     }
   }
 
+  getValidationState() {
+    if (this.state.errors.length) {
+      return 'error';
+    }
+  }
+
   render() {
     return (
       <Modal show={true}>
@@ -80,32 +105,38 @@ export default class LoginModal extends React.Component {
         <form>
           <Modal.Body>
             {this.renderErrors()}
-            <Input bsSize="large" type="text" name="email"
-              bsStyle={this.requiredFieldClass('email')}
-              label="Email" onChange={this.handleChange.bind(this)} />
-            <Input bsSize="large" type="password" name="password"
-              bsStyle={this.requiredFieldClass('password')}
-              label="Password" onChange={this.handleChange.bind(this)} />
+            <FormGroup controlId="formBasicText" validationState={this.getValidationState()}>
+              <FormControl
+                bsSize="large" type="text" name="email"
+                placeholder="Email"
+                bsStyle={this.requiredFieldClass('email')}
+                onChange={this.handleChange.bind(this)} />
+            </FormGroup>
+            <FormGroup controlId="formBasicText" validationState={this.getValidationState()}>
+              <FormControl
+                bsSize="large" type="password" name="password"
+                placeholder="Password"
+                bsStyle={this.requiredFieldClass('password')}
+                onChange={this.handleChange.bind(this)} />
+            </FormGroup>
           </Modal.Body>
           <Modal.Footer>
             <Col xs={6}>
-              <ButtonInput
+              <Button
                 block
                 bsSize="large"
                 type="button"
-                value="Cancel"
                 onClick={this.context.closeModal}
-              />
+              >Cancel</Button>
             </Col>
             <Col xs={6}>
-              <ButtonInput
+              <Button
                 block
                 bsSize="large"
                 bsStyle="primary"
                 type="submit"
-                value="Submit"
                 onClick={this.submitLogin.bind(this)}
-              />
+              >Submit</Button>
             </Col>
           </Modal.Footer>
         </form>
