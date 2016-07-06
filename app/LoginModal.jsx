@@ -36,8 +36,7 @@ export default class LoginModal extends React.Component {
     });
   }
 
-  submitLogin(e) {
-    e.preventDefault();
+  checkErrors() {
     this.setState({ errors: [] });
     const errors = [];
     if (!this.state.email) {
@@ -50,6 +49,11 @@ export default class LoginModal extends React.Component {
       this.setState({ errors });
       return;
     }
+  }
+
+  submitLogin(e) {
+    e.preventDefault();
+    this.checkErrors();
     this.context.fetcher({
       query: `
         mutation Login($input: createSessionInput!){

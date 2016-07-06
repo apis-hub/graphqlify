@@ -143,11 +143,22 @@ export default class Console extends React.Component {
   }
 
   render() {
+    const linkStyle = {
+      position: 'relative', display: 'inline-block', marginRight: 10
+    };
     return (
         <GraphiQL fetcher={this.fetcher.bind(this)}>
           <GraphiQL.Logo>
-            <a href="https://brandfolder.com/home" target="_blank" style={{ position: 'relative', display: 'inline-block', marginRight: 10 }}>
-              <Bug color="#fff" height={32} style={{ position: 'relative', top: 10 }}/>
+            <a
+              href="https://brandfolder.com/home"
+              target="_blank"
+              style={linkStyle}
+            >
+              <Bug
+                color="#fff"
+                height={32}
+                style={{ position: 'relative', top: 10 }}
+              />
             </a>
             <span style={{ lineHeight: 30 }}>
               GraphQL Console
