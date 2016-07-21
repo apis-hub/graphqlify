@@ -1,58 +1,17 @@
-import _ from 'lodash';
-import {
-  GraphQLInterfaceType, GraphQLString, GraphQLID, GraphQLNonNull, GraphQLBoolean
-} from 'graphql';
+import * as types from '../types/standard';
 
-import resolveType from '../helpers/resolveType';
+import requireType from '../helpers/requireType';
+import ApiInterfaceType from '../builders/ApiInterfaceType';
 
-_.mixin(require('lodash-inflection'));
-
-let permissibleInterface = new GraphQLInterfaceType({
-  name: 'Permissible',
-  description: 'For objects that have users and user permissions',
-  fields: () => ({
-    id: {
-      type: new GraphQLNonNull(GraphQLID)
-    },
-    apiId: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    slug: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    name: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    can_own: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    can_admin: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    can_collaborate: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    can_read: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    user_permissions: {
-      args: require('../types/UserPermission').connectionArgs,
-      type: require('../types/UserPermission').connectionType
-    },
-    users: {
-      args: require('../types/User').connectionArgs,
-      type: require('../types/User').connectionType
-    },
-    invitations: {
-      args: require('../types/Invitation').connectionArgs,
-      type: require('../types/Invitation').connectionType
-    },
-    access_requests: {
-      args: require('../types/AccessRequest').connectionArgs,
-      type: require('../types/AccessRequest').connectionType
-    }
-  }),
-  resolveType
-});
-
-export { permissibleInterface };
+module.exports = new ApiInterfaceType('Permissible', () => ({
+  attributes: {
+    slug: new types.GraphQLNonNull(types.GraphQLString),
+    name: new types.GraphQLNonNull(types.GraphQLString),
+  },
+  relatesToMany: {
+    user_permissions: requireType('UserPermission'),
+    users: requireType('User'),
+    invitations: requireType('Invitation'),
+    access_requests: requireType('AccessRequest')
+  }
+}));

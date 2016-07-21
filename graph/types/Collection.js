@@ -2,7 +2,7 @@ import * as types from './standard';
 
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
-import { permissibleInterface } from '../interfaces/permissible';
+import { iface as permissibleInterface } from '../interfaces/Permissible';
 import { slugInterface } from '../interfaces/slug';
 
 const collectionType = new ApiResourceType('Collection', () => ({
