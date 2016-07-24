@@ -82,6 +82,7 @@ function collectionToEdges(collection) {
 // Converts a collection to GraphQL compliant connection
 function collectionToConnection({ collection }) {
   return {
+    total_count: collection.meta.total_count,
     edges: collectionToEdges(collection),
     pageInfo: {
       startCursor: collection.first() && collection.first().meta.cursor,

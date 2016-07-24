@@ -288,7 +288,11 @@ class ApiResourceType {
       beforeRequest: () => {},
       fields: {},
       edgeFields: {},
-      connectionFields: {},
+      connectionFields: {
+        total_count: {
+          type: new types.GraphQLNonNull(types.GraphQLInt)
+        }
+      },
       relatesToMany: {},
       relatesToOne: {},
     });
