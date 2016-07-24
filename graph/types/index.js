@@ -1,7 +1,7 @@
 import requireType from '../helpers/requireType';
 import { nodeField } from '../interfaces/node';
 import { slugField } from '../interfaces/slug';
-import { GraphQLObjectType, GraphQLString } from './standard';
+import { GraphQLObjectType } from './standard';
 
 let queryType = new GraphQLObjectType({
   name: 'Query',
