@@ -2,6 +2,7 @@ FROM node:6
 MAINTAINER Brandfolder, Inc. <developers@brandfolder.com>
 
 # Set up ENV
+ENV NPM_CONFIG_LOGLEVEL warn
 ENV BRANDFOLDER_API_ENDPOINT https://api.brandfolder.com/v2
 ENV PORT 5000
 
