@@ -2,14 +2,15 @@ import * as types from './standard';
 
 import requireType from '../helpers/requireType';
 import ApiResourceType from '../builders/ApiResourceType';
+import ImageDataType from './ImageData';
 
 const assetType = new ApiResourceType('Asset', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
     position: types.GraphQLInt,
     asset_type: new types.GraphQLNonNull(types.GraphQLString),
-    thumbnail_url: types.GraphQLString,
-    preview_url: types.GraphQLString,
+    thumbnail_url: ImageDataType,
+    preview_url: ImageDataType,
     description: types.GraphQLString,
     asset_data: new types.GraphQLNonNull(types.GraphQLReusableObject),
     custom_fields: new types.GraphQLNonNull(types.GraphQLReusableObject),
