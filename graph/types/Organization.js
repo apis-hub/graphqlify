@@ -26,7 +26,9 @@ const organizationType = new ApiResourceType('Organization', () => ({
     collections: requireType('Collection'),
     assets: requireType('Asset'),
     owners: requireType('User'),
-    adobe_integrations: requireType('AdobeIntegrations'),
+    all_users: requireType('User'),
+    licensed_users: requireType('User'),
+    adobe_integrations: requireType('AdobeIntegration'),
     ...require('./concerns/permissibleRelationships')()
   },
   fields: {
