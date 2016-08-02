@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-import types from '../../types/standard';
+import types from '../types/standard';
 
-function expandInputTypes(inputs) {
+function expandTypes(inputs) {
   // Force shorthand into longhand
   return _.reduce(inputs, (result, value, key) => {
     if (types.isType(value)) {
@@ -12,4 +12,4 @@ function expandInputTypes(inputs) {
   }, inputs);
 }
 
-export default expandInputTypes;
+export default expandTypes;

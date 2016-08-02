@@ -8,7 +8,7 @@ import {
   connectionDefinitions
 } from 'graphql-relay';
 
-import expandInputTypes from './concerns/expandInputTypes';
+import expandTypes from '../helpers/expandTypes';
 import fetchTypeById from '../helpers/fetchTypeById';
 import ConfigObject from './concerns/ConfigObject';
 import {
@@ -303,7 +303,7 @@ class ApiResourceType {
   }
 
   buildConnectionArgs(args = {}) {
-    return expandInputTypes({
+    return expandTypes({
       ...this.connectionArgs,
       ...args
     });

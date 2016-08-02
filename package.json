@@ -42,7 +42,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.0.0",
     "jquery.cookie": "^1.4.1",
-    "jsonapionify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#69d37659ff290827e45ef07ad5f98dacd58ba6ee",
+    "jsonapionify-client": "git+https://github.com/brandfolder/jsonapionify-client.git#0ad546e7fe73ffa322e3a00354c88a25390665c8",
     "lodash": "^4.13.1",
     "lodash-inflection": "^1.4.0",
     "morgan": "^1.7.0",
