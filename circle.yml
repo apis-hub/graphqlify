@@ -47,3 +47,7 @@ deployment:
 
       # Upcheck
       - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-production.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
+
+notify:
+  webhooks:
+    - url: https://cha-ching:l0ckd0wn@brandfolder-cha-ching.herokuapp.com/circle-webhook
