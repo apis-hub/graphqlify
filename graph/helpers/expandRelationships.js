@@ -1,4 +1,4 @@
- import _ from 'lodash';
+import _ from 'lodash';
 import { fromGlobalId } from 'graphql-relay';
 
 _.mixin(require('lodash-inflection'));
