@@ -13,6 +13,7 @@ let queryType = new GraphQLObjectType({
     },
     ...requireType('User').instanceFieldAs('viewer', { apiId: 'current' }),
     ...requireType('AccessRequest').instanceField,
+    ...requireType('AdobeIntegration').instanceField,
     ...requireType('Asset').instanceField,
     ...requireType('AssetApproval').instanceField,
     ...requireType('AssetComment').instanceField,

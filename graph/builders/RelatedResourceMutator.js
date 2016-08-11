@@ -7,6 +7,7 @@ import fetchTypeById from '../helpers/fetchTypeById';
 import resolveMaybeThunk from '../helpers/resolveMaybeThunk';
 import BaseMutator from './BaseMutator';
 import { collectionToEdges } from '../helpers/connectionHelpers';
+import expandRelationships from '../helpers/expandRelationships';
 
 _.mixin(require('lodash-inflection'));
 
@@ -24,9 +25,10 @@ function buildCreateMutation(mutator) {
       return getRelated(
         mutator, parentId, api
       ).then(({ collection, parentInstance }) => {
-        return collection.create(
-          { attributes: args.attributes }
-        ).then(resultResponse => {
+        return collection.create({
+          attributes: args.attributes,
+          relationships: expandRelationships(args.relationships)
+        }).then(resultResponse => {
           return { resultResponse, parentInstance };
         });
       });
@@ -71,7 +73,10 @@ function buildUpdateMutation(mutator) {
       return getMinimalInstance(
         api, resource, globalId
       ).then(({ instance }) => {
-        return instance.updateAttributes(args.attributes).then(
+        return instance.update({
+          attributes: args.attributes,
+          relationships: expandRelationships(args.relationships)
+        }).then(
           resultResponse => ({ resultResponse, parentInstance })
         );
       });

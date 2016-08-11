@@ -1,4 +1,4 @@
-import 'es6-promise'
+import 'es6-promise';
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';

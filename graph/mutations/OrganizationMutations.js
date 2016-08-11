@@ -33,5 +33,6 @@ const { createOrganization, updateOrganization } = new RootResourceMutator(() =>
 module.exports = lazyMerge(
   { createOrganization, updateOrganization },
   requireMutations('Organization/BrandfoldersMutations'),
-  requireMutations('Organization/UsersMutations')
+  requireMutations('Organization/UsersMutations'),
+  requireMutations('Organization/AdobeIntegrationsMutations')
 );

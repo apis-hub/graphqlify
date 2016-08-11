@@ -16,6 +16,8 @@ const planType = new ApiResourceType('Plan', () => ({
     collection_count: new types.GraphQLNonNull(types.GraphQLInt),
     api_call_limit: new types.GraphQLNonNull(types.GraphQLInt),
     api_call_count: new types.GraphQLNonNull(types.GraphQLInt),
+    adobe_integration_limit: new types.GraphQLNonNull(types.GraphQLInt),
+    adobe_integration_count: new types.GraphQLNonNull(types.GraphQLInt),
     available_features: new types.GraphQLList(types.GraphQLString),
     ...require('./concerns/timestamps')
   },
