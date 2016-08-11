@@ -1,6 +1,7 @@
 import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 
 import BaseMutator from './BaseMutator';
+import expandRelationships from '../helpers/expandRelationships';
 
 // Create Mutation
 function buildCreateMutation(mutator) {
@@ -8,10 +9,10 @@ function buildCreateMutation(mutator) {
     name: `create${mutator.name}`,
     inputFields: () => mutator.createInputFields,
     outputFields: () => mutator.createOutputFields,
-    mutateAndGetPayload: ({ attributes }, { api }) => {
+    mutateAndGetPayload: ({ attributes, relationships }, { api }) => {
       return api.resource(
         mutator.resource
-      ).create({ attributes }).then(
+      ).create({ attributes, relationships }).then(
         resultResponse => ({ resultResponse })
       );
     }
@@ -24,12 +25,15 @@ function buildUpdateMutation(mutator) {
     name: `update${mutator.name}`,
     inputFields: () => mutator.updateInputFields,
     outputFields: () => mutator.updateOutputFields,
-    mutateAndGetPayload: ({ id: globalId, attributes }, { api }) => {
+    mutateAndGetPayload: ({ id: globalId, attributes, relationships }, { api }) => {
       let { id } = fromGlobalId(globalId);
       return api.resource(
         mutator.resource
       ).read(id).then(({ instance }) => {
-        return instance.updateAttributes(attributes);
+        return instance.update({
+          attributes,
+          relationships: expandRelationships(relationships)
+        });
       }).then(
         resultResponse => ({ resultResponse })
       );

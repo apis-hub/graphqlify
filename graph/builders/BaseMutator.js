@@ -1,3 +1,4 @@
+import buildRelationshipsField from './concerns/buildRelationshipsField';
 import buildAttributesField from './concerns/buildAttributesField';
 import buildIdInputField from './concerns/buildIdInputField';
 import buildResourceOutputField from './concerns/buildResourceOutputField';
@@ -22,6 +23,29 @@ class BaseMutator {
     Object.defineProperty(this, name, { get: fn, enumerable: true });
   }
 
+  get options() {
+    return {
+      attributes: {},
+      createAttributes: {},
+      updateAttributes: {},
+      relatesToOne: [],
+      createRelatesToOne: [],
+      updateRelatesToOne: [],
+      relatesToMany: [],
+      createRelatesToMany: [],
+      updateRelatesToMany: [],
+      inputFields: {},
+      outputFields: {},
+      createInputFields: {},
+      createOutputFields: {},
+      deleteInputFields: {},
+      deleteOutputFields: {},
+      updateInputFields: {},
+      updateOutputFields: {},
+      ...resolveMaybeThunk(this.config.options)
+    };
+  }
+
   get attributes() {
     return resolveMaybeThunk(this.options.attributes);
   }
@@ -37,21 +61,40 @@ class BaseMutator {
     return this.type.name;
   }
 
-  get options() {
-    return {
-      attributes: {},
-      createAttributes: {},
-      updateAttributes: {},
-      inputFields: {},
-      outputFields: {},
-      createInputFields: {},
-      createOutputFields: {},
-      deleteInputFields: {},
-      deleteOutputFields: {},
-      updateInputFields: {},
-      updateOutputFields: {},
-      ...resolveMaybeThunk(this.config.options)
-    };
+  get relatesToOne() {
+    return resolveMaybeThunk(this.options.relatesToOne);
+  }
+
+  get createRelatesToOne() {
+    return [
+      ...this.relatesToOne,
+      ...resolveMaybeThunk(this.options.createRelatesToOne)
+    ];
+  }
+
+  get updateRelatesToOne() {
+    return [
+      ...this.relatesToOne,
+      ...resolveMaybeThunk(this.options.updateRelatesToOne)
+    ];
+  }
+
+  get relatesToMany() {
+    return resolveMaybeThunk(this.options.relatesToMany);
+  }
+
+  get createRelatesToMany() {
+    return [
+      ...this.relatesToMany,
+      ...resolveMaybeThunk(this.options.createRelatesToMany)
+    ];
+  }
+
+  get updateRelatesToMany() {
+    return [
+      ...this.relatesToMany,
+      ...resolveMaybeThunk(this.options.updateRelatesToMany)
+    ];
   }
 
   get inputFields() {
@@ -66,7 +109,8 @@ class BaseMutator {
     return {
       ...this.inputFields,
       ...resolveMaybeThunk(this.options.createInputFields),
-      ...buildAttributesField(this.name, 'create', this.createAttributes)
+      ...buildAttributesField(this.name, 'create', this.createAttributes),
+      ...buildRelationshipsField(this.name, 'create', this.createRelatesToOne, this.createRelatesToMany)
     };
   }
 
@@ -90,7 +134,8 @@ class BaseMutator {
       ...this.inputFields,
       ...resolveMaybeThunk(this.options.updateInputFields),
       ...buildIdInputField(),
-      ...buildAttributesField(this.name, 'update', this.updateAttributes)
+      ...buildAttributesField(this.name, 'update', this.updateAttributes),
+      ...buildRelationshipsField(this.name, 'update', this.createRelatesToOne, this.createRelatesToMany)
     };
   }
 

@@ -16,7 +16,8 @@ const userType = new ApiResourceType('User', () => {
       ...require('./concerns/timestamps')
     },
     relatesToOne: {
-      current_session: requireType('Session')
+      current_session: requireType('Session'),
+      adobe_integration: requireType('AdobeIntegration')
     },
     relatesToMany: {
       organizations: requireType('Organization'),
