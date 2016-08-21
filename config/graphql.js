@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import graphqlHTTP from 'express-graphql';
 import stackTrace from 'stack-trace';
-import JSONAPIonify from '../../jsonapionify-client/src';
+import JSONAPIonify from 'jsonapionify-client';
 
 import schema from '../graph/schema';
 import Honeybadger from './honeybadger';
