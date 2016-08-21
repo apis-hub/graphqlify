@@ -17,8 +17,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.10.4",
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.0",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
@@ -30,16 +30,14 @@
     "cors": "^2.7.1",
     "css-loader": "^0.23.1",
     "deepmerge": "^0.2.10",
-    "eslint": "^2.13.1",
-    "eslint-plugin-babel": "^3.3.0",
-    "eslint-plugin-react": "^5.2.2",
     "exenv": "^1.2.1",
     "express": "^4.14.0",
     "express-graphql": "^0.5.3",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "glob": "^7.0.5",
-    "graphiql": "^0.7.3",
-    "graphql": "^0.6.0",
+    "graphiql": "^0.7.4",
+    "graphql": "^0.6.2",
     "graphql-relay": "^0.4.2",
     "honeybadger": "^1.1.1",
     "imports-loader": "^0.6.5",
@@ -51,9 +49,9 @@
     "lodash-inflection": "^1.4.0",
     "morgan": "^1.7.0",
     "node-sass": "^3.8.0",
-    "react": "15.1.0",
-    "react-bootstrap": "^0.29.5",
-    "react-dom": "15.1.0",
+    "react": "15.3.1",
+    "react-bootstrap": "^0.30.3",
+    "react-dom": "15.3.1",
     "resolve-url-loader": "^1.6.0",
     "sass-loader": "^4.0.0",
     "stack-trace": "^0.0.9",
@@ -71,6 +69,6 @@
     "babel-eslint": "^6.1",
     "eslint": "^3.0",
     "eslint-plugin-babel": "^3.2",
-    "eslint-plugin-react": "^5.1.1"
+    "eslint-plugin-react": "^6.1.2"
   }
 }
