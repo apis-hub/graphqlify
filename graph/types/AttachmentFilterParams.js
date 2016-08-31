@@ -1,6 +1,6 @@
 import * as types from './standard';
 
-import ParamsType from '../builders/ParamsType';
+import ParamsType from './ParamsType';
 
 export const type = new ParamsType('AttachmentFilter', {
   description: 'The params for filtering attachment.',

@@ -1,4 +1,5 @@
 import cors from 'cors';
+import compression from 'compression';
 import express from 'express';
 import path from 'path';
 import { printSchema } from 'graphql/utilities';
@@ -10,6 +11,9 @@ import webpack from './config/webpack';
 import Honeybadger from './config/honeybadger';
 
 const app = express();
+
+// Enable compression
+app.use(compression());
 
 // Enable Logger
 app.use('/graphql', logger);

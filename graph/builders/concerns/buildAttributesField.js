@@ -1,4 +1,4 @@
-import AttributesType from '../AttributesType';
+import Attributes from '../../types/Attributes';
 
 function buildAttributesField(name, type, attrs) {
   if (Object.keys(attrs).length === 0) {
@@ -6,7 +6,7 @@ function buildAttributesField(name, type, attrs) {
   }
   return {
     attributes: {
-      type: new AttributesType(name, type, attrs)
+      type: new Attributes(name, type, attrs)
     }
   };
 }

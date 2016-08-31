@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import graphqlHTTP from 'express-graphql';
 import stackTrace from 'stack-trace';
-import { JSONAPIonify, jsonApionifyLogger } from 'jsonapionify-client';
+import JSONAPIonify from 'jsonapionify-client';
 
 import schema from '../graph/schema';
 import Honeybadger from './honeybadger';
@@ -54,7 +54,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
     headers
   });
 
-  api.addMiddleware(jsonApionifyLogger);
+  api.addMiddleware(JSONAPIonify.Logger);
 
   return {
     formatError: logError,
