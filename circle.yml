@@ -3,10 +3,10 @@
 machine:
   services:
     - docker
+  environment:
+    FLYNN_APP_NAME: graphqlify
 
 dependencies:
-  pre:
-    - ./bin/prep-deployment
   override:
     - 'true'
     - docker build --tag app .
@@ -17,36 +17,45 @@ test:
   override:
     - docker run app npm run lint .
 
-# Deployment Scripts to Deploy the various environments to heroku
+# Deploy the apps to flynn
 deployment:
 
-  # Deploy the pre-release develop branch to staging
+  # Deploy develop to staging
   staging:
     branch: develop
     commands:
-      # Pull unshallow
-      - git fetch --unshallow
+      # === Flynn ===
+      # Prepare Flynn
+      - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
+      - flynn cluster add -p $FLYNN_STAGING_TLS_PIN staging $FLYNN_STAGING_CONTROLLER_DOMAIN $FLYNN_STAGING_CONTROLLER_KEY
+      - flynn -a $FLYNN_APP_NAME remote add
 
-      # Deploy
-      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-staging.git $CIRCLE_BRANCH:master'
-      - if [ "`git rev-parse HEAD`" = "`deis run -a graphql-staging 'echo $GIT_SHA' | tail -1`" ] ; then true ; else false ; fi
+      # Deploy to flynn
+      - git push flynn $CIRCLE_SHA1:master
+      - flynn env set MSHA=$CIRCLE_SHA1
 
-      # Upcheck
-      - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-staging.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
+      # Flynn Upcheck
+      - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://$FLYNN_APP_NAME.staging.brandfolder.tv); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
 
-  # Deploy the production apps, production and admin
+  # Deploy master to production
   production:
     branch: master
     commands:
-      # Pull unshallow
-      - git fetch --unshallow
+      # === Flynn ===
+      # Prepare Flynn
+      - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
+      - flynn cluster add -p $FLYNN_PRODUCTION_TLS_PIN production $FLYNN_PRODUCTION_CONTROLLER_DOMAIN $FLYNN_PRODUCTION_CONTROLLER_KEY
+      - flynn -a $FLYNN_APP_NAME remote add
 
-      # Deploy
-      - 'git push ssh://deis.brandfolder.ninja:2222/graphql-production.git $CIRCLE_BRANCH:master'
-      - if [ "`git rev-parse HEAD`" = "`deis run -a graphql-production 'echo $GIT_SHA' | tail -1`" ] ; then true ; else false ; fi
+      # Deploy to flynn
+      - git push flynn $CIRCLE_SHA1:master
+      - flynn env set MSHA=$CIRCLE_SHA1
 
-      # Upcheck
-      - bash -c "sec=0 ; until \$(curl --output /dev/null --silent --head --fail https://graphql-production.brandfolder.ninja); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
+      # Flynn Upcheck
+      - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://$FLYNN_APP_NAME.staging.brandfolder.tv); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
+
+      # Tag
+      - ./bin/create-release
 
 notify:
   webhooks:
