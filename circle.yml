@@ -24,9 +24,6 @@ deployment:
   staging:
     branch: develop
     commands:
-      # Rebuild db
-      - rake db:rebuild
-
       # === Flynn ===
       # Prepare Flynn
       - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
@@ -47,9 +44,6 @@ deployment:
   production:
     branch: master
     commands:
-      # Rebuild db
-      - rake db:rebuild
-
       # === Flynn ===
       # Prepare Flynn
       - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
