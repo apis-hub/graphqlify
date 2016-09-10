@@ -3,6 +3,8 @@
 machine:
   services:
     - docker
+  environment:
+    FLYNN_APP_NAME: graphqlify
 
 dependencies:
   pre:
@@ -12,9 +14,6 @@ dependencies:
     - docker build --tag app .
   cache_directories:
     - "~/docker"
-
-environment:
-  FLYNN_APP_NAME: graphqlify
 
 test:
   override:
