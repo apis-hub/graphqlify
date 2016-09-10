@@ -54,9 +54,6 @@ deployment:
       # Flynn Upcheck
       - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://$FLYNN_APP_NAME.staging.brandfolder.tv); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
 
-      # Tag
-      - ./bin/create-release
-
 notify:
   webhooks:
     - url: https://cha-ching:l0ckd0wn@brandfolder-cha-ching.herokuapp.com/circle-webhook
