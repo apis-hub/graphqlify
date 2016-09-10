@@ -7,8 +7,6 @@ machine:
     FLYNN_APP_NAME: graphqlify
 
 dependencies:
-  pre:
-    - ./bin/prep-deployment
   override:
     - 'true'
     - docker build --tag app .
