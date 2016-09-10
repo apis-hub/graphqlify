@@ -37,9 +37,6 @@ deployment:
       # Flynn Upcheck
       - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://$FLYNN_APP_NAME.staging.brandfolder.tv); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
 
-      # Notify Honey Badger
-      - flynn run honeybadger deploy
-
   # Deploy master to production
   production:
     branch: master
@@ -56,9 +53,6 @@ deployment:
 
       # Flynn Upcheck
       - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://$FLYNN_APP_NAME.staging.brandfolder.tv); do if [ \$sec -lt 60 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
-
-      # Notify Honey Badger
-      - flynn run honeybadger deploy
 
       # Tag
       - ./bin/create-release
