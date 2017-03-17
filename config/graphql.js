@@ -43,7 +43,7 @@ const graphQLMiddleware = graphqlHTTP(request => {
   headers.forwarded = `for=${request.ip}`;
   headers['x-forwarded-for'] = request.ip;
   Object.assign(headers, _.pick(request.headers, 'user-agent', 'referer'));
-  headers.Accept = 'application/vnd.api+json;brandfolder-api=private';
+  headers.Accept = 'application/vnd.api+json';
 
   if (request.headers.authorization) {
     headers.authorization = request.headers.authorization;
