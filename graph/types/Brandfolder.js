@@ -8,6 +8,7 @@ import { slugInterface } from '../interfaces/slug';
 const brandfolderType = new ApiResourceType('Brandfolder', () => ({
   attributes: {
     name: new types.GraphQLNonNull(types.GraphQLString),
+    key: types.GraphQLString,
     slug: new types.GraphQLNonNull(types.GraphQLString),
     tagline: types.GraphQLString,
     public: new types.GraphQLNonNull(types.GraphQLBoolean),
