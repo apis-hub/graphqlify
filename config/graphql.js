@@ -4,7 +4,6 @@ import stackTrace from 'stack-trace';
 import JSONAPIonify from 'jsonapionify-client';
 
 import schema from '../graph/schema';
-import Honeybadger from './honeybadger';
 
 function logError(error) {
   console.error('');
@@ -28,7 +27,6 @@ function logError(error) {
   }
 
   console.error('');
-  Honeybadger.notify(error);
 
   return {
     message,

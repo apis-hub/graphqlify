@@ -8,7 +8,6 @@ import graphql from './config/graphql';
 import logger from './config/logger';
 import schema from './graph/schema.js';
 import webpack from './config/webpack';
-import Honeybadger from './config/honeybadger';
 
 const app = express();
 
@@ -18,9 +17,6 @@ app.use(compression());
 // Enable Logger
 app.use('/graphql', logger);
 
-// Enable Honeybadger
-app.use(Honeybadger.requestHandler);
-app.use(Honeybadger.metricsHandler);
 
 // Enable Cors
 app.use('/graphql', cors({
@@ -32,8 +28,6 @@ app.use('/graphql', cors({
 // Serve Webpack
 app.use('/assets', webpack);
 
-// Catch Errors
-app.use(Honeybadger.errorHandler);
 
 // Serve GraphQL
 app.use('/graphql', graphql);
