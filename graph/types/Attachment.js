@@ -6,7 +6,6 @@ import ApiResourceType from '../builders/ApiResourceType';
 const attachmentType = new ApiResourceType('Attachment', () => ({
   attributes: {
     file_url: new types.GraphQLNonNull(types.GraphQLString),
-    attachment_key: types.GraphQLString,
     mimetype: types.GraphQLString,
     extension: types.GraphQLString,
     filename: types.GraphQLString,
