@@ -27,11 +27,14 @@ deployment:
       # === Flynn ===
       # Prepare Flynn
       - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
-      - flynn cluster add -p $FLYNN_STAGING_TLS_PIN staging $FLYNN_STAGING_CONTROLLER_DOMAIN $FLYNN_STAGING_CONTROLLER_KEY
-      - flynn -a $FLYNN_APP_NAME remote add
+      - flynn cluster add --git-url $FLYNN_STAGING_GIT_URL -p $FLYNN_STAGING_TLS_PIN staging $FLYNN_STAGING_CONTROLLER_DOMAIN $FLYNN_STAGING_CONTROLLER_KEY
+      - flynn -a $FLYNN_APP_NAME remote add staging
 
       # Deploy to flynn
-      - git push flynn $CIRCLE_SHA1:master
+      - git fetch --unshallow
+      - git push staging $CIRCLE_SHA1:refs/heads/master -f
+
+      # Restart app
       - flynn env set MSHA=$CIRCLE_SHA1
 
       # Flynn Upcheck
@@ -44,11 +47,14 @@ deployment:
       # === Flynn ===
       # Prepare Flynn
       - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
-      - flynn cluster add -p $FLYNN_PRODUCTION_TLS_PIN production $FLYNN_PRODUCTION_CONTROLLER_DOMAIN $FLYNN_PRODUCTION_CONTROLLER_KEY
-      - flynn -a $FLYNN_APP_NAME remote add
+      - flynn cluster add --git-url $FLYNN_PRODUCTION_GIT_URL -p $FLYNN_PRODUCTION_TLS_PIN production $FLYNN_PRODUCTION_CONTROLLER_DOMAIN $FLYNN_PRODUCTION_CONTROLLER_KEY
+      - flynn -a $FLYNN_APP_NAME remote add production
 
       # Deploy to flynn
-      - git push flynn $CIRCLE_SHA1:master
+      - git fetch --unshallow
+      - git push production $CIRCLE_SHA1:refs/heads/master -f
+
+      # Restart app
       - flynn env set MSHA=$CIRCLE_SHA1
 
       # Flynn Upcheck
